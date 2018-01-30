@@ -171,11 +171,11 @@ component accessors="true"{
 						type 		= "warning",
 						category 	= "docbox",
 						inline 		= "true",
-						text 		= "Warning! The following script has errors: " & packagePath & cfcName & ": #e.message() & e.detail & e.stacktrace#"
+						text 		= "Warning! The following script has errors: " & packagePath & cfcName & ": #e.message & e.detail & e.stacktrace#"
 					);
 					if( structKeyExists( server, "lucee" ) ){
 						systemOutput( "Warning! The following script has errors: " & packagePath & cfcName, true );
-						systemOutput( "#e.message() & e.detail#", true );
+						systemOutput( "#e.message & e.detail#", true );
 						systemOutput( e.stackTrace );
 					}
 				}

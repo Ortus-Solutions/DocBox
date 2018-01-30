@@ -1,6 +1,9 @@
 CHANGELOG
 =========
 
+## 2.2.1
+* Bug on DocBox tracing errors, left over a couple of `()`
+
 ## 2.2.0
 * Better output of trace commands for CLI integration
 * Added `@throws` annotation to function definitions
