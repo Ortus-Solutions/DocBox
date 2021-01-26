@@ -106,4 +106,4 @@ I THANK GOD FOR HIS WISDOM FOR THIS PROJECT
 Come find us on the [CFML Slack](http://cfml-slack.herokuapp.com/) (#box-products channel) and ask us there.  We'd be happy to help!
 
 ## Ortus Community
-Join us in our Ortus Community and become a valuable member of this project https://community.ortussolutions.com/c/communities/docbox/17. We will looking forward to hearing from you!!
+Join us in our Ortus Community and become a valuable member of this project https://community.ortussolutions.com/c/communities/docbox/17. We will be looking forward to hearing from you!!
