@@ -1,38 +1,48 @@
 {
-    "name": "DocBox",
-    "version": "@build.version@+@build.number@",
-    "author": "Ortus Solutions, Corp",
-    "location": "http://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
-    "homepage": "https://www.ortussolutions.com",
-    "documentation": "https://github.com/Ortus-Solutions/DocBox/wiki",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Ortus-Solutions/DocBox"
+    "name":"DocBox",
+    "version":"3.0.0",
+    "author":"Ortus Solutions, Corp",
+    "location":"http://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
+    "homepage":"https://forgebox.io/view/docbox",
+    "documentation":"https://docbox.ortusbooks.com/",
+    "repository":{
+        "type":"git",
+        "url":"https://github.com/Ortus-Solutions/DocBox"
     },
-    "bugs": "https://ortussolutions.atlassian.net/projects/DOCBOX",
-    "slug": "docbox",
-    "shortDescription": "API Documentation generator for ColdFusion (CFML)",
-    "type": "projects",
-    "keywords": "apidocs, coldfusion docs, javadocs, cfc docs",
-    "license": [{
-        "type": "Apache2",
-        "url": "https://www.apache.org/licenses/LICENSE-2.0"
-    }],
-    "contributors": [
+    "bugs":"https://ortussolutions.atlassian.net/projects/DOCBOX",
+    "slug":"docbox",
+    "shortDescription":"CFC API Documentation generator for ColdFusion (CFML) using JavaDoc conventions",
+    "type":"projects",
+    "keywords":"apidocs, coldfusion docs, javadocs, cfc docs",
+    "license":[
+        {
+            "type":"Apache2",
+            "url":"https://www.apache.org/licenses/LICENSE-2.0"
+        }
+    ],
+    "contributors":[
         "Brad Wood <brad@bradwood.com>"
     ],
-    "dependencies": {
-
+    "dependencies":{},
+    "devDependencies":{
+        "testbox":"^4.1.0+384"
     },
-    "devDependencies": {
-
+    "installPaths":{
+        "testbox":"testbox/"
     },
-    "installPaths": {
-
-    },
-    "ignore": [
+    "ignore":[
         "**/.*",
         "tests/**",
-        "run.cfm"
-    ]
+        ".git*",
+        "coldbox-5-router-documentation.png"
+    ],
+    "scripts":{
+        "release":"recipe build/release.boxr",
+        "format":"cfformat run DocBox.cfc,strategy,tests",
+        "format:watch":"cfformat watch DocBox.cfc,strategy,tests ./.cfformat.json",
+        "format:check":"cfformat check DocBox.cfc,strategy,tests"
+    },
+    "testbox":{
+        "runner":"http://localhost:60299/tests/runner.cfm"
+    }
 }

@@ -3,10 +3,9 @@
 	local.classTree = {};
 	// Loop over classes
 	for( local.row in qMetaData ) {
-		
-		//var class = local.row.name;			
+		//var class = local.row.name;
 		local.bracketPath = '';
-		// Build bracket notation 
+		// Build bracket notation
 		for( local.item in listToArray( local.row.package, '.' ) ) {
 			local.bracketPath &= '[ "#local.item#" ]';
 		}
@@ -14,42 +13,12 @@
 		local.link = replace( local.row.package, ".", "/", "all") & '/' & local.row.name & '.html';
 		local.packagelink = replace( local.row.package, ".", "/", "all") & '/package-summary.html';
 		local.searchList = listAppend( local.row.package, local.row.name, '.' );
-	
+
 		evaluate( 'local.classTree#local.bracketPath#[ "$link" ] = local.packageLink' );
 		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"] = structNew()' );
 		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"].link = local.link' );
 		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"].searchList = local.searchList' );
 		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"].type = local.row.type' );
-	}
-		
-	// Recursive function to output data
-	function writeItems( struct startingLevel ) {
-		for( var item in startingLevel ) {
-			// Skip this key as it isn't a class, just the link for the package.
-			if( item == '$link' ) { continue; }
-			var itemValue = startingLevel[ item ];
-			
-			//  If this is a class, output it
-			if( structKeyExists( itemValue, '$class' ) ) {
-				writeOutput( '<li data-jstree=''{ "type" : "#itemValue.$class.type#" }'' linkhref="#itemValue.$class.link#" searchlist="#itemValue.$class.searchList#" thissort="2">' );
-				writeOutput( item );
-				writeOutput( '</li>' );
-			// If this is a package, output it and its children
-			} else {
-				var link = '';
-				if( structKeyExists( itemValue, '$link' ) ) {
-					link = itemValue.$link;
-				}
-				writeOutput( '<li data-jstree=''{ "type" : "package" }'' linkhref="#link#" searchlist="#item#" thissort="1">' );
-				writeOutput( item );
-				writeOutput( '<ul>' );
-					// Recursive call
-					writeItems( itemValue );
-				writeOutput( '</ul>' );
-				writeOutput( '</li>' );
-			}
-			
-		}
 	}
 </cfscript>
 <cfoutput>
@@ -74,10 +43,10 @@
 			#writeItems( classTree )#
 		</ul>
 	</div>
-	
+
 	<script src="jstree/jstree.min.js"></script>
 	<script language="javascript">
-		$(function () { 
+		$(function () {
 			// Initialize tree
 			$('##classTree')
 				.jstree({
@@ -93,7 +62,7 @@
 				        "icon" : "glyphicon glyphicon-info-sign"
 				      }
 				    },
-				    // Smart search callback to do lookups on full class name and aliases 
+				    // Smart search callback to do lookups on full class name and aliases
 				    "search" : {
 				    	"show_only_matches" : true,
 				    	"search_callback" : function( q, node ) {
@@ -119,18 +88,18 @@
 				    			// Concat sort to name and use that
 					    		var node1String = node1.li_attr.thissort + node1.text;
 					    		var node2String = node2.li_attr.thissort + node2.text;
-					    		
-								return ( node1String > node2String ? 1 : -1);						
+
+								return ( node1String > node2String ? 1 : -1);
 				    },
 				    "plugins" : [ "types", "search", "sort" ]
 				  })
 				.on("changed.jstree", function (e, data) {
 					var obj = data.instance.get_node(data.selected[0]).li_attr;
 					if( obj.linkhref ) {
-						window.parent.frames['classFrame'].location.href = obj.linkhref;					
+						window.parent.frames['classFrame'].location.href = obj.linkhref;
 					}
 			});
-			
+
 			// Bind search to text box
 			var to = false;
 			$('##classSearch').keyup(function () {
@@ -140,7 +109,7 @@
 					$('##classTree').jstree(true).search(v);
 				}, 250);
 			});
-			
+
 		 });
 	</script>
 </body>
