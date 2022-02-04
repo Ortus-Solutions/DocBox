@@ -197,7 +197,9 @@ component accessors="true" {
 					packagePath = listAppend( thisInput.mapping, currentPath, "." );
 				}
 				// setup cfc name
-				var cfcName = listFirst( getFileFromPath( thisFile ), "." );
+				var fileName = listLast( getFileFromPath( thisFile ), "/\" );
+				var cfcName = fileName.replace( ".cfc", "" );
+				var cfcPath = packagePath & "." & cfcName;
 
 				// Core Excludes, don't document the Application.cfc
 				if ( cfcName == "Application" ) {
@@ -208,14 +210,14 @@ component accessors="true" {
 					// Get component metadatata
 					var meta = "";
 					if ( len( packagePath ) ) {
-						meta = getComponentMetadata( packagePath & "." & cfcName );
+						meta = getComponentMetadata( cfcPath );
 					} else {
 						meta = getComponentMetadata( cfcName );
 					}
 
 					// let's do some cleanup, in case CF sucks.
 					if ( len( packagePath ) AND NOT meta.name contains packagePath ) {
-						meta.name = packagePath & "." & cfcName;
+						meta.name = cfcPath;
 					}
 
 					// Add row
@@ -264,11 +266,11 @@ component accessors="true" {
 						type     = "warning",
 						category = "docbox",
 						inline   = "true",
-						text     = "Warning! The following script has errors: " & packagePath & "." & cfcName & ": #e.message & e.detail & e.stacktrace#"
+						text     = "Warning! The following script has errors: " & cfcPath & ": #e.message & e.detail & e.stacktrace#"
 					);
 					if ( structKeyExists( server, "lucee" ) ) {
 						systemOutput(
-							"Warning! The following script has errors: " & packagePath & "." & cfcName,
+							"Warning! The following script has errors: " & cfcPath,
 							true
 						);
 						systemOutput( "#e.message & e.detail#", true );
