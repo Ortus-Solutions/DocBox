@@ -550,6 +550,15 @@ Class
 		</dl>
 	</cfif>
 
+
+	<ul>
+		<cfloop collection="#local.func#" item="keyName">
+			<cfif not listFindNoCase( "hint,name,deprecated,access,type,parameters,return,throws,required,returnformat,returntype,output,modifier,owner,default,closure,serializable,description", keyName ) && isSimpleValue( local.func[ keyName ] ) >
+			<li class="label label-default label-annotations">#lcase( keyName )# = #local.func[ keyName ]#</li>
+			</cfif>
+		</cfloop>
+	</ul>
+
 	</dl>
 	<hr>
 </cfloop>
