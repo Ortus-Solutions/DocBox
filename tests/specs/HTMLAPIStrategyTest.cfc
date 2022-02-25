@@ -1,7 +1,23 @@
 /**
  * Test HTML documentation strategy
+ * 
+ * @myComponentTag is a custom docblock tag on a component
  */
 component extends="testbox.system.BaseSpec" {
+
+    /**
+     * test the custom tag support
+     * 
+     * @myMethodTag is a custom docblock tag on a component method
+     */
+    public numeric function roundToFive(){}
+
+    /**
+     * test the custom tag support
+     * 
+     * @myPropertyTag is a custom docblock tag on a component property
+     */
+    property name="maxRows" type="numeric" default="1";
 
 	variables.testOutputDir = expandPath( "/tests/tmp/html" );
 
@@ -94,6 +110,25 @@ component extends="testbox.system.BaseSpec" {
 				);
 			} );
 
+			it( "supports custom tags in the component, property and method output", function() {
+				variables.docbox.generate(
+					source   = expandPath( "/tests" ),
+					mapping  = "tests",
+					excludes = "(coldbox|build\-docbox)"
+				);
+				var testFile = variables.testOutputDir & "/tests/specs/HTMLAPIStrategyTest.html";
+				expect( fileExists( testFile ) ).toBeTrue(
+					"should generate #testFile# to document HTMLAPIStrategyTest.cfc"
+				);
+
+				var documentationOutput = fileRead( testFile );
+				expect( documentationOutput ).toInclude( "myComponentTag" )
+												.toInclude( "is a custom docblock tag on a component" );
+				expect( documentationOutput ).toInclude( "myPropertyTag" )
+														.toInclude( "is a custom docblock tag on a component property" );
+				expect( documentationOutput ).toInclude( "myMethodTag" )
+														.toInclude( "is a custom docblock tag on a component method" );
+			});
 			it( "allows HTML in docblocks", function() {
 				variables.docbox.generate(
 					source   = expandPath( "/tests" ),
