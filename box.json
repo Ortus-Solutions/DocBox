@@ -14,6 +14,7 @@
     "shortDescription":"CFC API Documentation generator for ColdFusion (CFML) using JavaDoc conventions",
     "type":"projects",
     "keywords":"apidocs, coldfusion docs, javadocs, cfc docs",
+    "organization": "ortus-solutions",
     "license":[
         {
             "type":"Apache2",
