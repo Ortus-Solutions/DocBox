@@ -33,32 +33,30 @@ component extends="BaseTest" {
 
 			it( "Supports strategy alias", function(){
 				new docbox.DocBox(
-						"CommandBox",
-						{
-							outputDir : variables.testOutputDir,
-							projectTitle : "custom CommandBox module"
-						}
-					)
-					.generate(
-						source   = expandPath( "/tests/resources/commandbox-docbox/commands" ),
-						mapping  = "commands",
-						excludes = "(coldbox|build\-docbox)"
-					);
+					"CommandBox",
+					{
+						outputDir    : variables.testOutputDir,
+						projectTitle : "custom CommandBox module"
+					}
+				).generate(
+					source   = expandPath( "/tests/resources/commandbox-docbox/commands" ),
+					mapping  = "commands",
+					excludes = "(coldbox|build\-docbox)"
+				);
 
-					var overviewFile = variables.testOutputDir & "/overview-frame.html";
-					expect( fileExists( overviewFile ) ).toBeTrue(
-						"should generate overview-frame.html file to list all commands"
-					);
-	
-					var overviewHTML = fileRead( overviewFile );
-					expect( overviewHTML ).toInclude(
-						"Generate",
-						"should document commands/generate.cfc in list of classes."
-					);
+				var overviewFile = variables.testOutputDir & "/overview-frame.html";
+				expect( fileExists( overviewFile ) ).toBeTrue(
+					"should generate overview-frame.html file to list all commands"
+				);
 
-			});
+				var overviewHTML = fileRead( overviewFile );
+				expect( overviewHTML ).toInclude(
+					"Generate",
+					"should document commands/generate.cfc in list of classes."
+				);
+			} );
 
-			xit( "throws exception when outputDir does not exist", function() {
+			xit( "throws exception when outputDir does not exist", function(){
 				expect( function(){
 					var testDocBox = new docbox.DocBox(
 						strategy   = "docbox.strategy.CommandBox.CommandBoxStrategy",
@@ -72,8 +70,8 @@ component extends="BaseTest" {
 						mapping  = "commands",
 						excludes = "(coldbox|build\-docbox)"
 					);
-				}).toThrow( "InvalidConfigurationException" );
-			});
+				} ).toThrow( "InvalidConfigurationException" );
+			} );
 
 			it( "produces HTML output in the correct directory", function(){
 				variables.docbox.generate(
@@ -109,14 +107,20 @@ component extends="BaseTest" {
 				expect( fileExists( testFile ) ).toBeTrue();
 
 				var fileContents = fileRead( testFile );
-				
+
 				expect( fileContents )
-						.toInclude( "Creates documentation for CFCs JavaDoc style via DocBox", "docs should include component hint" )
-						.toInclude( "The base mapping for the folder.", "docs should include property description" );
+					.toInclude(
+						"Creates documentation for CFCs JavaDoc style via DocBox",
+						"docs should include component hint"
+					)
+					.toInclude(
+						"The base mapping for the folder.",
+						"docs should include property description"
+					);
 
 				// ugh! This method hint is not included in the output.
-				//expect( fileContents )
-						// .toInclude( "Run DocBox to generate your docs", "docs should include method hint" )
+				// expect( fileContents )
+				// .toInclude( "Run DocBox to generate your docs", "docs should include method hint" )
 			} );
 		} );
 	}

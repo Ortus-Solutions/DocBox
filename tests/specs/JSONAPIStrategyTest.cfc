@@ -14,7 +14,7 @@ component extends="BaseTest" {
 						outputDir    : variables.JSONOutputDir
 					}
 				);
-				resetTmpDirectory(variables.JSONOutputDir);
+				resetTmpDirectory( variables.JSONOutputDir );
 			} );
 
 			it( "can run without failure", function(){
@@ -27,7 +27,7 @@ component extends="BaseTest" {
 				} ).notToThrow();
 			} );
 
-			it( "throws exception when source does not exist", function() {
+			it( "throws exception when source does not exist", function(){
 				expect( function(){
 					var testDocBox = new docbox.DocBox(
 						strategy   = "docbox.strategy.json.JSONAPIStrategy",
@@ -41,10 +41,10 @@ component extends="BaseTest" {
 						mapping  = "tests",
 						excludes = "(coldbox|build\-docbox)"
 					);
-				}).toThrow( "InvalidConfigurationException" );
-			});
+				} ).toThrow( "InvalidConfigurationException" );
+			} );
 
-			it( "throws exception when outputDir does not exist", function() {
+			it( "throws exception when outputDir does not exist", function(){
 				expect( function(){
 					var testDocBox = new docbox.DocBox(
 						strategy   = "docbox.strategy.json.JSONAPIStrategy",
@@ -58,8 +58,8 @@ component extends="BaseTest" {
 						mapping  = "tests",
 						excludes = "(coldbox|build\-docbox)"
 					);
-				}).toThrow( "InvalidConfigurationException" );
-			});
+				} ).toThrow( "InvalidConfigurationException" );
+			} );
 
 			it( "produces JSON output in the correct directory", function(){
 				variables.docbox.generate(

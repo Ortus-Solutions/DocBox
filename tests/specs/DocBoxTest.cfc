@@ -19,7 +19,7 @@ component extends="BaseTest" {
 				resetTmpDirectory( variables.HTMLOutputDir );
 				resetTmpDirectory( variables.JSONOutputDir );
 
-				if ( fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ){
+				if ( fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ) {
 					fileDelete( expandPath( "/tests/FunkyComponent.cfc" ) );
 				}
 
@@ -45,16 +45,18 @@ component extends="BaseTest" {
 			} );
 
 			it( "defaults to HTML if no strategy is set", function(){
-				variables.docbox.init(
-					properties = {
-						projectTitle = "Test", outputDir = variables.HTMLOutputDir
-					}
-				)
-				.generate(
-					source   = expandPath( "/tests" ),
-					mapping  = "tests",
-					excludes = "(coldbox|build\-docbox)"
-				);
+				variables.docbox
+					.init(
+						properties = {
+							projectTitle : "Test",
+							outputDir    : variables.HTMLOutputDir
+						}
+					)
+					.generate(
+						source   = expandPath( "/tests" ),
+						mapping  = "tests",
+						excludes = "(coldbox|build\-docbox)"
+					);
 				expect( variables.docbox.getStrategies() ).notTobeEmpty();
 			} );
 
@@ -156,51 +158,59 @@ component extends="BaseTest" {
 			 * Skipped due to issues with trace() messing up the CLI testbox runner.
 			 * i.e. a trace() looks like an error to GHA, and totally borks the testbox report format as well.
 			 */
-			xit( "throws on invalid component if throwOnError=true", function() {
+			xit( "throws on invalid component if throwOnError=true", function(){
 				var componentCode = "componentxyz{}";
-				if ( !fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ){
-					fileWrite( expandPath( "/tests/FunkyComponent.cfc" ), componentCode );
+				if ( !fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ) {
+					fileWrite(
+						expandPath( "/tests/FunkyComponent.cfc" ),
+						componentCode
+					);
 				}
 				expect( function(){
-					variables.docbox.init(
-						properties = {
-							projectTitle = "Test",
-							outputDir = variables.HTMLOutputDir
-						}
-					)
-					.generate(
-						source       = expandPath( "/tests" ),
-						mapping      = "tests",
-						excludes     = "(coldbox|build\-docbox)",
-						throwOnError = true
-					);
-				}).toThrow( "InvalidComponentException" );
-			});
+					variables.docbox
+						.init(
+							properties = {
+								projectTitle : "Test",
+								outputDir    : variables.HTMLOutputDir
+							}
+						)
+						.generate(
+							source       = expandPath( "/tests" ),
+							mapping      = "tests",
+							excludes     = "(coldbox|build\-docbox)",
+							throwOnError = true
+						);
+				} ).toThrow( "InvalidComponentException" );
+			} );
 
 			/**
 			 * Skipped due to issues with trace() messing up the CLI testbox runner.
 			 * i.e. a trace() looks like an error to GHA, and totally borks the testbox report format as well.
 			 */
-			xit( "does not throw on invalid component if throwOnError=false", function() {
+			xit( "does not throw on invalid component if throwOnError=false", function(){
 				var componentCode = "componentxyz{}";
-				if ( !fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ){
-					fileWrite( expandPath( "/tests/FunkyComponent.cfc" ), componentCode );
+				if ( !fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ) {
+					fileWrite(
+						expandPath( "/tests/FunkyComponent.cfc" ),
+						componentCode
+					);
 				}
 				expect( function(){
-					variables.docbox.init(
-						properties = {
-							projectTitle = "Test",
-							outputDir = variables.HTMLOutputDir
-						}
-					)
-					.generate(
-						source       = expandPath( "/tests" ),
-						mapping      = "tests",
-						excludes     = "(coldbox|build\-docbox)",
-						throwOnError = false
-					);
-				}).notToThrow( "InvalidComponentException" );
-			});
+					variables.docbox
+						.init(
+							properties = {
+								projectTitle : "Test",
+								outputDir    : variables.HTMLOutputDir
+							}
+						)
+						.generate(
+							source       = expandPath( "/tests" ),
+							mapping      = "tests",
+							excludes     = "(coldbox|build\-docbox)",
+							throwOnError = false
+						);
+				} ).notToThrow( "InvalidComponentException" );
+			} );
 		} );
 	}
 

@@ -11,11 +11,12 @@
  * {code:bash}
  * docbox generate mappings:v1.models=/path/to/modules_app/v1/models mappings:v2.models=/path/to/modules_app/v2/models strategy-outputDir=/output/path strategy-projectTitle="My Docs"
  * {code}
- * 
+ *
  * @cite https://github.com/Ortus-Solutions/commandbox-docbox/blob/development/commands/docbox/Generate.cfc
  **/
-component{
-    /**
+component {
+
+	/**
 	 * Run DocBox to generate your docs
 	 *
 	 * @strategy The strategy class to use to generate the docs.
@@ -32,6 +33,7 @@ component{
 		string excludes,
 		struct mappings
 	){
-        // Big thanks to https://github.com/Ortus-Solutions/commandbox-docbox/blob/development/commands/docbox/Generate.cfc
-    }
+		// Big thanks to https://github.com/Ortus-Solutions/commandbox-docbox/blob/development/commands/docbox/Generate.cfc
+	}
+
 }
