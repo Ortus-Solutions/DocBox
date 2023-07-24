@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 📦 NEW
 
 * Added support for Adobe 2021
+* Added support for `@myCustomTag` custom docblock tags on methods. (Already supported on components and properties, but missing on methods).
 * Added GitHub Actions CI for automated testing, format checking, releases and more
 
 ### 🐛 FIX:
