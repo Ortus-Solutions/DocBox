@@ -40,7 +40,7 @@
     ],
     "scripts":{
         "release":"recipe build/release.boxr",
-        "format":"cfformat run DocBox.cfc,strategy,tests",
+        "format":"cfformat run --overwrite DocBox.cfc,strategy,tests",
         "format:watch":"cfformat watch DocBox.cfc,strategy,tests ./.cfformat.json",
         "format:check":"cfformat check DocBox.cfc,strategy,tests"
     },
