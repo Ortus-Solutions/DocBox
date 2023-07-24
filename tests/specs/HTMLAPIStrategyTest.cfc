@@ -8,20 +8,20 @@ component extends="BaseTest" {
 	/**
 	 * test the custom tag support
 	 *
-	 * @myMethodTag is a custom docblock tag on a component method
-	 */
-	public numeric function roundToFive(){
-	}
-
-	/**
-	 * test the custom tag support
-	 *
 	 * @myPropertyTag is a custom docblock tag on a component property
 	 */
 	property
 		name   ="maxRows"
 		type   ="numeric"
 		default="1";
+
+	/**
+	 * test the custom tag support
+	 *
+	 * @myMethodTag is a custom docblock tag on a component method
+	 */
+	public numeric function roundToFive(){
+	}
 
 	variables.testOutputDir = expandPath( "/tests/tmp/html" );
 
