@@ -111,13 +111,16 @@ component accessors="true" {
 	 */
 	DocBox function generate(
 		required source,
-		string mapping  = "",
-		string excludes = "",
+		string mapping       = "",
+		string excludes      = "",
 		boolean throwOnError = false
 	){
 		// verify we have at least one strategy defined, if not, auto add the HTML strategy
 		if ( isNull( getStrategies() ) || !getStrategies().len() ) {
-			this.addStrategy( strategy : "HTML", properties : variables.properties );
+			this.addStrategy(
+				strategy  : "HTML",
+				properties: variables.properties
+			);
 		}
 
 		// inflate the incoming input and mappings
@@ -134,7 +137,11 @@ component accessors="true" {
 		}
 
 		// build metadata collection
-		var metadata = buildMetaDataCollection( thisSource, arguments.excludes, arguments.throwOnError );
+		var metadata = buildMetaDataCollection(
+			thisSource,
+			arguments.excludes,
+			arguments.throwOnError
+		);
 
 		getStrategies().each( function( strategy ){
 			strategy.run( metadata );
@@ -171,18 +178,18 @@ component accessors="true" {
 	 */
 	query function buildMetaDataCollection(
 		required array inputSource,
-		string excludes = "",
+		string excludes      = "",
 		boolean throwOnError = false
 	){
 		var metadata = queryNew( "package,name,extends,metadata,type,implements,fullextends,currentMapping" );
 
 		// iterate over input sources
 		for ( var thisInput in arguments.inputSource ) {
-			if ( !directoryExists( thisInput.dir ) ){
+			if ( !directoryExists( thisInput.dir ) ) {
 				throw(
 					message = "Invalid configuration; source directory not found",
-					type = "InvalidConfigurationException",
-					detail ="Configured source #thisInput.dir# does not exist."
+					type    = "InvalidConfigurationException",
+					detail  = "Configured source #thisInput.dir# does not exist."
 				);
 			}
 			var aFiles = directoryList( thisInput.dir, true, "path", "*.cfc" );
@@ -267,11 +274,11 @@ component accessors="true" {
 						querySetCell( metadata, "extends", "-" );
 					}
 				} catch ( Any e ) {
-					if ( arguments.throwOnError ){
+					if ( arguments.throwOnError ) {
 						throw(
-							type = "InvalidComponentException",
-							message = e.message,
-							detail = e.detail,
+							type         = "InvalidComponentException",
+							message      = e.message,
+							detail       = e.detail,
 							extendedInfo = serializeJSON( e )
 						);
 					} else {

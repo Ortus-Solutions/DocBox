@@ -1,23 +1,27 @@
 /**
  * Test HTML documentation strategy
- * 
+ *
  * @myComponentTag is a custom docblock tag on a component
  */
 component extends="BaseTest" {
 
-    /**
-     * test the custom tag support
-     * 
-     * @myMethodTag is a custom docblock tag on a component method
-     */
-    public numeric function roundToFive(){}
+	/**
+	 * test the custom tag support
+	 *
+	 * @myMethodTag is a custom docblock tag on a component method
+	 */
+	public numeric function roundToFive(){
+	}
 
-    /**
-     * test the custom tag support
-     * 
-     * @myPropertyTag is a custom docblock tag on a component property
-     */
-    property name="maxRows" type="numeric" default="1";
+	/**
+	 * test the custom tag support
+	 *
+	 * @myPropertyTag is a custom docblock tag on a component property
+	 */
+	property
+		name   ="maxRows"
+		type   ="numeric"
+		default="1";
 
 	variables.testOutputDir = expandPath( "/tests/tmp/html" );
 
@@ -44,7 +48,7 @@ component extends="BaseTest" {
 			} );
 
 			// TODO: Implement
-			xit( "throws exception when source does not exist", function() {
+			xit( "throws exception when source does not exist", function(){
 				expect( function(){
 					var testDocBox = new docbox.DocBox(
 						strategy   = "docbox.strategy.api.HTMLAPIStrategy",
@@ -58,10 +62,10 @@ component extends="BaseTest" {
 						mapping  = "tests",
 						excludes = "(coldbox|build\-docbox)"
 					);
-				}).toThrow( "InvalidConfigurationException" );
-			});
+				} ).toThrow( "InvalidConfigurationException" );
+			} );
 
-			it( "throws exception when outputDir does not exist", function() {
+			it( "throws exception when outputDir does not exist", function(){
 				expect( function(){
 					var testDocBox = new docbox.DocBox(
 						strategy   = "docbox.strategy.api.HTMLAPIStrategy",
@@ -75,8 +79,8 @@ component extends="BaseTest" {
 						mapping  = "tests",
 						excludes = "(coldbox|build\-docbox)"
 					);
-				}).toThrow( "InvalidConfigurationException" );
-			});
+				} ).toThrow( "InvalidConfigurationException" );
+			} );
 
 			it( "produces HTML output in the correct directory", function(){
 				variables.docbox.generate(
@@ -102,7 +106,7 @@ component extends="BaseTest" {
 				);
 			} );
 
-			it( "supports custom tags in the component, property and method output", function() {
+			it( "supports custom tags in the component, property and method output", function(){
 				variables.docbox.generate(
 					source   = expandPath( "/tests" ),
 					mapping  = "tests",
@@ -114,14 +118,17 @@ component extends="BaseTest" {
 				);
 
 				var documentationOutput = fileRead( testFile );
-				expect( documentationOutput ).toInclude( "myComponentTag" )
-												.toInclude( "is a custom docblock tag on a component" );
-				expect( documentationOutput ).toInclude( "myPropertyTag" )
-														.toInclude( "is a custom docblock tag on a component property" );
-				expect( documentationOutput ).toInclude( "myMethodTag" )
-														.toInclude( "is a custom docblock tag on a component method" );
-			});
-			it( "allows HTML in docblocks", function() {
+				expect( documentationOutput )
+					.toInclude( "myComponentTag" )
+					.toInclude( "is a custom docblock tag on a component" );
+				expect( documentationOutput )
+					.toInclude( "myPropertyTag" )
+					.toInclude( "is a custom docblock tag on a component property" );
+				expect( documentationOutput )
+					.toInclude( "myMethodTag" )
+					.toInclude( "is a custom docblock tag on a component method" );
+			} );
+			it( "allows HTML in docblocks", function(){
 				variables.docbox.generate(
 					source   = expandPath( "/tests" ),
 					mapping  = "tests",
@@ -133,10 +140,11 @@ component extends="BaseTest" {
 
 				var fileContents = fileRead( testFile );
 
-				expect( fileContents ).toInclude( "<code>" )
-						.toInclude( "testHTML( 'foo' )" )
-						.toInclude( "</code>" );
-			})
+				expect( fileContents )
+					.toInclude( "<code>" )
+					.toInclude( "testHTML( 'foo' )" )
+					.toInclude( "</code>" );
+			} )
 		} );
 	}
 
@@ -151,6 +159,8 @@ component extends="BaseTest" {
 	 * 	testHTML( 'foo' )
 	 * </code>
 	 */
-	function testHTML(){}
+	function testHTML(){
+	}
+
 }
 

@@ -61,7 +61,7 @@ component extends="BaseTest" {
 					"should find and document the XMIStrategyTest.cfc class in tests/specs directory"
 				);
 			} );
-			it( "throws exception when outputFile path does not exist", function() {
+			it( "throws exception when outputFile path does not exist", function(){
 				expect( function(){
 					var testDocBox = new docbox.DocBox(
 						strategy   = "XMI",
@@ -75,8 +75,8 @@ component extends="BaseTest" {
 						mapping  = "tests",
 						excludes = "(coldbox|build\-docbox)"
 					);
-				}).toThrow( "InvalidConfigurationException" );
-			});
+				} ).toThrow( "InvalidConfigurationException" );
+			} );
 		} );
 	}
 

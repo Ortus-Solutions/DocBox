@@ -26,7 +26,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	/**
 	 * Static assets used in HTML templates
 	 */
-	variables.ASSETS_PATH   = "/docbox/strategy/api/resources/static";
+	variables.ASSETS_PATH = "/docbox/strategy/api/resources/static";
 
 	/**
 	 * Constructor
@@ -47,16 +47,16 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 
 	/**
 	 * Run this strategy
-	 * 
+	 *
 	 * @qMetaData The metadata
 	 * @throws InvalidConfigurationException if directory does not exist or other invalid configuration is detected
 	 */
 	HTMLAPIStrategy function run( required query qMetadata ){
-		if ( !directoryExists( getOutputDir() ) ){
+		if ( !directoryExists( getOutputDir() ) ) {
 			throw(
 				message = "Invalid configuration; output directory not found",
-				type = "InvalidConfigurationException",
-				detail = "OutputDir #getOutputDir()# does not exist."
+				type    = "InvalidConfigurationException",
+				detail  = "OutputDir #getOutputDir()# does not exist."
 			);
 		}
 		// copy over the static assets

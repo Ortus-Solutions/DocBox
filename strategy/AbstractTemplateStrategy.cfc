@@ -17,17 +17,17 @@ component doc_abstract="true" accessors="true" {
 
 	/**
 	 * Custom annotation for noting `abstract` components
-	 * 
+	 *
 	 * @url https://docbox.ortusbooks.com/getting-started/annotating-your-code#custom-docbox-blocks
 	 */
 	variables.META_ABSTRACT = "doc_abstract";
 
 	/**
 	 * Custom annotation for noting generic method return types or argument types.
-	 * 
+	 *
 	 * @url https://docbox.ortusbooks.com/getting-started/annotating-your-code#custom-docbox-blocks
 	 */
-	variables.META_GENERIC  = "doc_generic";
+	variables.META_GENERIC = "doc_generic";
 
 	/**
 	 * Constructor
@@ -465,7 +465,11 @@ component doc_abstract="true" accessors="true" {
 	}
 
 	// Recursive function to output data
-	function writeItems( struct startingLevel, string packageTerm = "package", classTerm = "class" ){
+	function writeItems(
+		struct startingLevel,
+		string packageTerm = "package",
+		classTerm          = "class"
+	){
 		for ( var item in startingLevel ) {
 			// Skip this key as it isn't a class, just the link for the package.
 			if ( item == "$link" ) {
@@ -479,7 +483,7 @@ component doc_abstract="true" accessors="true" {
 				writeOutput( "<li data-jstree='{ ""type"" : ""#arguments.classTerm#"" }' linkhref=""#linkData.link#"" searchlist=""#linkData.searchList#"" thissort=""2"">" );
 				writeOutput( item );
 				writeOutput( "</li>" );
-			// If this is a package, output it and its children
+				// If this is a package, output it and its children
 			} else {
 				var link = "";
 				if ( structKeyExists( itemValue, "$link" ) ) {
@@ -491,7 +495,11 @@ component doc_abstract="true" accessors="true" {
 				writeOutput( item );
 				writeOutput( "<ul>" );
 				// Recursive call
-				writeItems( itemValue, arguments.packageTerm, arguments.classTerm );
+				writeItems(
+					itemValue,
+					arguments.packageTerm,
+					arguments.classTerm
+				);
 				writeOutput( "</ul>" );
 				writeOutput( "</li>" );
 			}
