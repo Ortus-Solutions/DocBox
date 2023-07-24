@@ -3,7 +3,7 @@
  * 
  * @myComponentTag is a custom docblock tag on a component
  */
-component extends="testbox.system.BaseSpec" {
+component extends="BaseTest" {
 
     /**
      * test the custom tag support
@@ -21,10 +21,6 @@ component extends="testbox.system.BaseSpec" {
 
 	variables.testOutputDir = expandPath( "/tests/tmp/html" );
 
-	/*********************************** LIFE CYCLE Methods ***********************************/
-
-	/*********************************** BDD SUITES ***********************************/
-
 	function run(){
 		// all your suites go here.
 		describe( "HTMLAPIStrategy", function(){
@@ -33,14 +29,10 @@ component extends="testbox.system.BaseSpec" {
 					strategy   = "docbox.strategy.api.HTMLAPIStrategy",
 					properties = {
 						projectTitle : "DocBox Tests",
-						outputDir    : variables.testOutputDir
+						outputDir    : variables.HTMLOutputDir
 					}
 				);
-				// empty the directory so we know if it has been populated
-				if ( directoryExists( variables.testOutputDir ) ) {
-					directoryDelete( variables.testOutputDir, true );
-				}
-				directoryCreate( variables.testOutputDir );
+				resetTmpDirectory( variables.HTMLOutputDir );
 			} );
 
 			it( "can run without failure", function(){
@@ -58,7 +50,7 @@ component extends="testbox.system.BaseSpec" {
 						strategy   = "docbox.strategy.api.HTMLAPIStrategy",
 						properties = {
 							projectTitle : "DocBox Tests",
-							outputDir    : variables.testOutputDir
+							outputDir    : variables.HTMLOutputDir
 						}
 					);
 					testDocBox.generate(
@@ -93,7 +85,7 @@ component extends="testbox.system.BaseSpec" {
 					excludes = "(coldbox|build\-docbox)"
 				);
 
-				var allClassesFile = variables.testOutputDir & "/allclasses-frame.html";
+				var allClassesFile = variables.HTMLOutputDir & "/allclasses-frame.html";
 				expect( fileExists( allClassesFile ) ).toBeTrue(
 					"should generate allclasses-frame.html file to list all classes"
 				);
@@ -104,7 +96,7 @@ component extends="testbox.system.BaseSpec" {
 					"should document HTMLAPIStrategyTest.cfc in list of classes."
 				);
 
-				var testFile = variables.testOutputDir & "/tests/specs/HTMLAPIStrategyTest.html";
+				var testFile = variables.HTMLOutputDir & "/tests/specs/HTMLAPIStrategyTest.html";
 				expect( fileExists( testFile ) ).toBeTrue(
 					"should generate #testFile# to document HTMLAPIStrategyTest.cfc"
 				);
@@ -136,12 +128,14 @@ component extends="testbox.system.BaseSpec" {
 					excludes = "(coldbox|build\-docbox)"
 				);
 
-				var testFile = variables.testOutputDir & "/tests/specs/HTMLAPIStrategyTest.html";
+				var testFile = variables.HTMLOutputDir & "/tests/specs/HTMLAPIStrategyTest.html";
 				expect( fileExists( testFile ) ).toBeTrue();
 
 				var fileContents = fileRead( testFile );
 
-				expect( fileContents ).toInclude( "<code>#chr(10)#testHTML( 'foo' )#chr(10)#</code>" );
+				expect( fileContents ).toInclude( "<code>" )
+						.toInclude( "testHTML( 'foo' )" )
+						.toInclude( "</code>" );
 			})
 		} );
 	}

@@ -1,60 +1,37 @@
 <cfscript>
 	// Build out data
-	var namespaces = {};
-	var topLevel = {};
+	variables.namespaces = {};
+	variables.topLevel = {};
 	// Loop over commands
-	for( var row in qMetaData ) {
+	for( local.row in qMetaData ) {
 		// Skip our template CFC
 		if( row.name == 'CommandTemplate' ) {
 			continue;
 		}
-		var command = row.command;
-		var bracketPath = '';
+		local.command = row.command;
+		local.bracketPath = '';
 		// Build bracket notation
-		for( var item in listToArray( row.namespace, ' ' ) ) {
+		for( local.item in listToArray( row.namespace, ' ' ) ) {
 			bracketPath &= '[ "#item#" ]';
 		}
 		// Set "deep" struct to create nested data
-		var link = replace( row.package, ".", "/", "all") & '/' & row.name & '.html';
-		var packagelink = replace( row.package, ".", "/", "all") & '/package-summary.html';
-		var searchList = row.command;
+		local.link = replace( row.package, ".", "/", "all") & '/' & row.name & '.html';
+		local.packagelink = replace( row.package, ".", "/", "all") & '/package-summary.html';
+		local.searchList = row.command;
 		if( !isNull( row.metadata.aliases ) && len( row.metadata.aliases ) ) {
 			searchList &= ',' & row.metadata.aliases;
 		}
 
-		var thisTree = ( listLen( command, ' ' ) == 1 ? "topLevel" : "namespaces" );
-		evaluate( '#thisTree##bracketPath#[ "$link" ] = packageLink' );
+		local.thisTree = ( listLen( command, ' ' ) == 1 ? "topLevel" : "namespaces" );
+		evaluate( '#local.thisTree##local.bracketPath#[ local.row.name ] = structNew()' );
+		evaluate( '#local.thisTree##local.bracketPath#[ local.row.name ][ "$command"] = structNew()' );
+		evaluate( '#local.thisTree#[ "$link" ] = packageLink' );
 		if( row.name != 'help') {
-			evaluate( '#thisTree##bracketPath#[ row.name ][ "$command"].link = link' );
-			evaluate( '#thisTree##bracketPath#[ row.name ][ "$command"].searchList = searchList' );
+			evaluate( '#local.thisTree##local.bracketPath#[ row.name ][ "$command"].link = link' );
+			evaluate( '#local.thisTree##local.bracketPath#[ row.name ][ "$command"].searchList = searchList' );
 		}
 	}
-
-	// Recursive function to output data
-	function writeItems( struct startingLevel ) {
-		for( var item in startingLevel ) {
-			// Skip this key as it isn't a command, just the link for the namespace.
-			if( item == '$link' ) { continue; }
-			var itemValue = startingLevel[ item ];
-
-			//  If this is a command, output it
-			if( structKeyExists( itemValue, '$command' ) ) {
-				writeOutput( '<li data-jstree=''{ "type" : "command" }'' linkhref="#itemValue.$command.link#" searchlist="#itemValue.$command.searchList#" thissort="2">' );
-				writeOutput( item );
-				writeOutput( '</li>' );
-			// If this is a namespace, output it and its children
-			} else {
-				writeOutput( '<li data-jstree=''{ "type" : "namespace" }'' linkhref="#itemValue.$link#" searchlist="#item#" thissort="1">' );
-				writeOutput( item );
-				writeOutput( '<ul>' );
-					// Recursive call
-					writeItems( itemValue );
-				writeOutput( '</ul>' );
-				writeOutput( '</li>' );
-			}
-
-		}
-	}
+	// writeDump( variables.topLevel );abort;
 </cfscript>
 <cfoutput>
 <!DOCTYPE html>
@@ -62,7 +39,7 @@
 <head>
 	<title>	#arguments.projectTitle# overview </title>
 	<meta name="keywords" content="overview">
-	<cfmodule template="inc/common.html" rootPath="">
+	<cfmodule template="inc/common.cfm" rootPath="">
 	<link rel="stylesheet" href="jstree/themes/default/style.min.css" />
 </head>
 
@@ -75,12 +52,12 @@
 	<div id="commandTree">
 		<ul>
 			<!--- Output namespaces and their children --->
-			#writeItems( namespaces )#
+			#writeItems( namespaces, "namespace", "command" )#
 			<li data-jstree='{ "type" : "system" }' linkhref="#topLevel.$link#" searchlist="System" thissort="3">
 				System Commands
 				<ul>
 					<!--- These are all commands not in a namespace.--->
-					#writeItems( topLevel )#
+					#writeItems( topLevel, "namespace", "command" )#
 				</ul>
 			</li>
 		</ul>

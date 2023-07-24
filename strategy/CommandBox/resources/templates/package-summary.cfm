@@ -5,11 +5,11 @@
 <head>
 	<title> #arguments.projectTitle# #arguments.namespace# </title>
 	<meta name="keywords" content="#arguments.namespace# namespace">
-	<cfmodule template="inc/common.html" rootPath="#assetPath#">
+	<cfmodule template="inc/common.cfm" rootPath="#assetPath#">
 </head>
 <body class="withNavbar">
 
-	<cfmodule template="inc/nav.html"
+	<cfmodule template="inc/nav.cfm"
 				page="Package"
 				projectTitle= "#arguments.projectTitle#"
 				package = "#arguments.package#"

@@ -18,7 +18,7 @@ component extends="docbox.strategy.api.HTMLAPIStrategy"{
 	property name="projectTitle" default="Untitled" type="string";
 
 	// Static variables.
-	variables.TEMPLATE_PATH	= "/strategy/commandbox/resources/templates";
+	variables.TEMPLATE_PATH	= "/docbox/strategy/CommandBox/resources/templates";
 	variables.ASSETS_PATH 	= "/docbox/strategy/api/resources/static";
 
 	/**
@@ -37,8 +37,12 @@ component extends="docbox.strategy.api.HTMLAPIStrategy"{
 	*/
 	function run( required query qMetadata ){
 
-		queryAddColumn( arguments.qMetadata, 'command' );
-		queryAddColumn( arguments.qMetadata, 'namespace' );
+		// ACF requires an array of values, and hiccups in QoQ's if we don't populate that array.
+		var values = [];
+		queryEach( arguments.qMetadata, ( row ) => values.append( "" ) );
+		queryAddColumn( arguments.qMetadata, 'command', values );
+		queryAddColumn( arguments.qMetadata, 'namespace', values );
+
 		var index = 1;
 		for( var thisRow in arguments.qMetadata ){
 			var thisCommand 	= listAppend( thisRow.package, thisRow.name, '.' );
@@ -74,10 +78,10 @@ component extends="docbox.strategy.api.HTMLAPIStrategy"{
 	* @qMetaData The metadata
 	*/
 	function writeOverviewSummaryAndFrame( required query qMetadata ){
-		var qPackages = new Query( dbtype="query", md=arguments.qMetadata, sql="
-			SELECT DISTINCT package, namespace
+		var qPackages = new Query( dbtype="query", md=arguments.qMetadata, sql='
+			SELECT DISTINCT [package], [namespace]
 			FROM md
-			ORDER BY package" )
+			ORDER BY [package]' )
 			.execute()
 			.getResult();
 

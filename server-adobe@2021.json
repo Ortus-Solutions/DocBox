@@ -1,0 +1,21 @@
+{
+    "name":"docbox-adobe@2021",
+    "app":{
+        "cfengine":"adobe@2021"
+    },
+    "web":{
+        "http":{
+            "port":"60299"
+        },
+        "rewrites":{
+            "enable":"true"
+        }
+    },
+    "jvm":{
+        "heapSize":"1024"
+    },
+    "openBrowser":"false",
+    "scripts":{
+        "onServerInstall":"cfpm install zip,debugger"
+    }
+}

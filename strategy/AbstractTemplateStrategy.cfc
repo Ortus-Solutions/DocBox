@@ -465,7 +465,7 @@ component doc_abstract="true" accessors="true" {
 	}
 
 	// Recursive function to output data
-	function writeItems( struct startingLevel ){
+	function writeItems( struct startingLevel, string packageTerm = "package", classTerm = "class" ){
 		for ( var item in startingLevel ) {
 			// Skip this key as it isn't a class, just the link for the package.
 			if ( item == "$link" ) {
@@ -474,25 +474,24 @@ component doc_abstract="true" accessors="true" {
 			var itemValue = startingLevel[ item ];
 
 			//  If this is a class, output it
-			if ( structKeyExists( itemValue, "$class" ) ) {
-				writeOutput(
-					"<li data-jstree='{ ""type"" : ""#itemValue.$class.type#"" }' linkhref=""#itemValue.$class.link#"" searchlist=""#itemValue.$class.searchList#"" thissort=""2"">"
-				);
+			if ( structKeyExists( itemValue, "$#arguments.classTerm#" ) ) {
+				var linkData = itemValue[ "$#arguments.classTerm#" ];
+				writeOutput( "<li data-jstree='{ ""type"" : ""#arguments.classTerm#"" }' linkhref=""#linkData.link#"" searchlist=""#linkData.searchList#"" thissort=""2"">" );
 				writeOutput( item );
 				writeOutput( "</li>" );
-				// If this is a package, output it and its children
+			// If this is a package, output it and its children
 			} else {
 				var link = "";
 				if ( structKeyExists( itemValue, "$link" ) ) {
 					link = itemValue.$link;
 				}
 				writeOutput(
-					"<li data-jstree='{ ""type"" : ""package"" }' linkhref=""#link#"" searchlist=""#item#"" thissort=""1"">"
+					"<li data-jstree='{ ""type"" : ""#arguments.packageTerm#"" }' linkhref=""#link#"" searchlist=""#item#"" thissort=""1"">"
 				);
 				writeOutput( item );
 				writeOutput( "<ul>" );
 				// Recursive call
-				writeItems( itemValue );
+				writeItems( itemValue, arguments.packageTerm, arguments.classTerm );
 				writeOutput( "</ul>" );
 				writeOutput( "</li>" );
 			}

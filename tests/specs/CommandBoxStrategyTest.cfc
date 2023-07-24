@@ -1,7 +1,7 @@
 /**
  * Test HTML documentation strategy
  */
-component extends="testbox.system.BaseSpec" {
+component extends="BaseTest" {
 
 	variables.testOutputDir = expandPath( "/tests/tmp/commandbox-docbox" );
 
@@ -20,11 +20,7 @@ component extends="testbox.system.BaseSpec" {
 						outputDir    : variables.testOutputDir
 					}
 				);
-				// empty the directory so we know if it has been populated
-				if ( directoryExists( variables.testOutputDir ) ) {
-					directoryDelete( variables.testOutputDir, true );
-				}
-				directoryCreate( variables.testOutputDir );
+				resetTmpDirectory( variables.testOutputDir );
 			} );
 
 			it( "can run without failure", function(){

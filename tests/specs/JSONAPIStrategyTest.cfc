@@ -1,14 +1,7 @@
 /**
  * My BDD Test
  */
-component extends="testbox.system.BaseSpec" {
-
-	variables.testOutputDir = expandPath( "/tests/tmp/json" );
-
-	/*********************************** LIFE CYCLE Methods ***********************************/
-
-
-	/*********************************** BDD SUITES ***********************************/
+component extends="BaseTest" {
 
 	function run(){
 		// all your suites go here.
@@ -18,14 +11,10 @@ component extends="testbox.system.BaseSpec" {
 					strategy   = "docbox.strategy.json.JSONAPIStrategy",
 					properties = {
 						projectTitle : "DocBox Tests",
-						outputDir    : variables.testOutputDir
+						outputDir    : variables.JSONOutputDir
 					}
 				);
-				// empty the directory so we know if it has been populated
-				if ( directoryExists( variables.testOutputDir ) ) {
-					directoryDelete( variables.testOutputDir, true );
-				}
-				directoryCreate( variables.testOutputDir );
+				resetTmpDirectory(variables.JSONOutputDir);
 			} );
 
 			it( "can run without failure", function(){
@@ -44,7 +33,7 @@ component extends="testbox.system.BaseSpec" {
 						strategy   = "docbox.strategy.json.JSONAPIStrategy",
 						properties = {
 							projectTitle : "DocBox Tests",
-							outputDir    : variables.testOutputDir
+							outputDir    : variables.JSONOutputDir
 						}
 					);
 					testDocBox.generate(
@@ -80,7 +69,7 @@ component extends="testbox.system.BaseSpec" {
 				);
 
 				var results = directoryList(
-					variables.testOutputDir,
+					variables.JSONOutputDir,
 					true,
 					"name"
 				);
@@ -100,15 +89,15 @@ component extends="testbox.system.BaseSpec" {
 					mapping  = "tests",
 					excludes = "(coldbox|build\-docbox)"
 				);
-				expect( directoryExists( variables.testOutputDir & "/tests/specs" ) ).toBeTrue(
+				expect( directoryExists( variables.JSONOutputDir & "/tests/specs" ) ).toBeTrue(
 					"should generate tests/specs directory for output"
 				);
 
-				expect( fileExists( variables.testOutputDir & "/tests/specs/JSONAPIStrategyTest.json" ) ).toBeTrue(
+				expect( fileExists( variables.JSONOutputDir & "/tests/specs/JSONAPIStrategyTest.json" ) ).toBeTrue(
 					"should generate JSONAPIStrategyTest.json documentation file"
 				);
 
-				expect( fileExists( variables.testOutputDir & "/tests/specs/HTMLAPIStrategyTest.json" ) ).toBeTrue(
+				expect( fileExists( variables.JSONOutputDir & "/tests/specs/HTMLAPIStrategyTest.json" ) ).toBeTrue(
 					"should generate HTMLAPIStrategyTest.json documentation file"
 				);
 			} );
@@ -120,12 +109,12 @@ component extends="testbox.system.BaseSpec" {
 					excludes = "(coldbox|build\-docbox)"
 				);
 
-				expect( fileExists( variables.testOutputDir & "/tests/specs/package-summary.json" ) ).toBeTrue(
+				expect( fileExists( variables.JSONOutputDir & "/tests/specs/package-summary.json" ) ).toBeTrue(
 					"should generate package summary file"
 				);
 
 				var packageSummary = deserializeJSON(
-					fileRead( variables.testOutputDir & "/tests/specs/package-summary.json" )
+					fileRead( variables.JSONOutputDir & "/tests/specs/package-summary.json" )
 				);
 
 				expect( packageSummary ).toBeTypeOf( "struct" ).toHaveKey( "classes" );
@@ -141,7 +130,7 @@ component extends="testbox.system.BaseSpec" {
 						.toHaveKey( "path" )
 						.toHaveKey( "name" );
 					expect( listLast( class.path, "." ) ).toBe( "json" );
-					expect( fileExists( variables.testOutputDir & "/" & class.path ) ).toBeTrue(
+					expect( fileExists( variables.JSONOutputDir & "/" & class.path ) ).toBeTrue(
 						"should point to existing class documentation file"
 					);
 				} );

@@ -6,7 +6,7 @@
 	<title>#arguments.projectTitle# #arguments.command#</title>
 	<meta name="keywords" content="#arguments.package# #arguments.command# CommandBox Command CLI">
 	<!-- common assets -->
-	<cfmodule template="inc/common.html" rootPath="#instance.class.root#">
+	<cfmodule template="inc/common.cfm" rootPath="#instance.class.root#">
 	<!-- syntax highlighter -->
 	<link type="text/css" rel="stylesheet" href="#instance.class.root#highlighter/styles/shCoreEmacs.css">
 	<script src="#instance.class.root#highlighter/scripts/shCore.js"></script>
@@ -31,7 +31,7 @@
 
 <body class="withNavbar">
 
-<cfmodule template="inc/nav.html"
+<cfmodule template="inc/nav.cfm"
 			page="Class"
 			projectTitle= "#arguments.projectTitle#"
 			package = "#arguments.package#"
@@ -41,7 +41,7 @@
 <h1>#arguments.command#</h1>
 
 <cfif structKeyExists( arguments.metadata, 'aliases' ) and len( arguments.metadata.aliases ) >
-	<cfset var aliases = listToArray( arguments.metadata.aliases )>
+	<cfset aliases = listToArray( arguments.metadata.aliases )>
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<strong>Aliases:&nbsp;</strong>

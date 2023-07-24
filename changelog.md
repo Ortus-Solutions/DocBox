@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
+## Unreleased
+
+### ⚠ BREAKING
+
+* Dropped support for Adobe 2016. Adobe doesn't support ACF 16 anymore, so neither do we.
+
+### 📦 NEW
+
+* Added support for Adobe 2021
+* Added GitHub Actions CI for automated testing, format checking, releases and more
+
+### 🐛 FIX:
+
+* Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
+
 ## 3.0.0
 
 ### Added
