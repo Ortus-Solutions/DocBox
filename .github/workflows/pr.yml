@@ -15,7 +15,8 @@ on:
 jobs:
   tests:
     uses: ./.github/workflows/tests.yml
-    secrets: inherit
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   formatCheck:
     name: Checks Source Code Formatting
