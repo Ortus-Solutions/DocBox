@@ -15,9 +15,19 @@ component doc_abstract="true" accessors="true" {
 	 */
 	property name="propertyQueryCache" type="struct";
 
-	// static constants
-	variables.static.META_ABSTRACT = "doc_abstract";
-	variables.static.META_GENERIC  = "doc_generic";
+	/**
+	 * Custom annotation for noting `abstract` components
+	 *
+	 * @url https://docbox.ortusbooks.com/getting-started/annotating-your-code#custom-docbox-blocks
+	 */
+	variables.META_ABSTRACT = "doc_abstract";
+
+	/**
+	 * Custom annotation for noting generic method return types or argument types.
+	 *
+	 * @url https://docbox.ortusbooks.com/getting-started/annotating-your-code#custom-docbox-blocks
+	 */
+	variables.META_GENERIC = "doc_generic";
 
 	/**
 	 * Constructor
@@ -455,7 +465,11 @@ component doc_abstract="true" accessors="true" {
 	}
 
 	// Recursive function to output data
-	function writeItems( struct startingLevel ){
+	function writeItems(
+		struct startingLevel,
+		string packageTerm = "package",
+		classTerm          = "class"
+	){
 		for ( var item in startingLevel ) {
 			// Skip this key as it isn't a class, just the link for the package.
 			if ( item == "$link" ) {
@@ -464,10 +478,9 @@ component doc_abstract="true" accessors="true" {
 			var itemValue = startingLevel[ item ];
 
 			//  If this is a class, output it
-			if ( structKeyExists( itemValue, "$class" ) ) {
-				writeOutput(
-					"<li data-jstree='{ ""type"" : ""#itemValue.$class.type#"" }' linkhref=""#itemValue.$class.link#"" searchlist=""#itemValue.$class.searchList#"" thissort=""2"">"
-				);
+			if ( structKeyExists( itemValue, "$#arguments.classTerm#" ) ) {
+				var linkData = itemValue[ "$#arguments.classTerm#" ];
+				writeOutput( "<li data-jstree='{ ""type"" : ""#arguments.classTerm#"" }' linkhref=""#linkData.link#"" searchlist=""#linkData.searchList#"" thissort=""2"">" );
 				writeOutput( item );
 				writeOutput( "</li>" );
 				// If this is a package, output it and its children
@@ -477,12 +490,16 @@ component doc_abstract="true" accessors="true" {
 					link = itemValue.$link;
 				}
 				writeOutput(
-					"<li data-jstree='{ ""type"" : ""package"" }' linkhref=""#link#"" searchlist=""#item#"" thissort=""1"">"
+					"<li data-jstree='{ ""type"" : ""#arguments.packageTerm#"" }' linkhref=""#link#"" searchlist=""#item#"" thissort=""1"">"
 				);
 				writeOutput( item );
 				writeOutput( "<ul>" );
 				// Recursive call
-				writeItems( itemValue );
+				writeItems(
+					itemValue,
+					arguments.packageTerm,
+					arguments.classTerm
+				);
 				writeOutput( "</ul>" );
 				writeOutput( "</li>" );
 			}
@@ -514,8 +531,8 @@ component doc_abstract="true" accessors="true" {
 		// get metadata
 		var meta        = getComponentMetadata( arguments.class );
 		// verify we have abstract class
-		if ( structKeyExists( meta, variables.static.META_ABSTRACT ) ) {
-			return meta[ variables.static.META_ABSTRACT ];
+		if ( structKeyExists( meta, variables.META_ABSTRACT ) ) {
+			return meta[ variables.META_ABSTRACT ];
 		}
 
 		return false;
@@ -536,10 +553,10 @@ component doc_abstract="true" accessors="true" {
 		if (
 			structKeyExists(
 				arguments.meta,
-				variables.static.META_GENERIC
+				variables.META_GENERIC
 			)
 		) {
-			var generics = listToArray( arguments.meta[ variables.static.META_GENERIC ] );
+			var generics = listToArray( arguments.meta[ variables.META_GENERIC ] );
 			// iterate and resolve
 			for ( var thisGeneric in generics ) {
 				if ( NOT isPrimitive( thisGeneric ) ) {

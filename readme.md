@@ -21,7 +21,7 @@ DocBox is a JavaDoc-style documentation generator for your CFML codebase based o
 
 [Docs][1] | [Github][2] | [Ortus Community][3]
 
-![Coldbox 5 Router class documentation, generated via DocBox](coldbox-5-router-documentation.png)
+![Coldbox 5 Router class documentation, generated via DocBox](https://github.com/Ortus-Solutions/DocBox/blob/development/coldbox-5-router-documentation.png)
 
 ## FEATURES
 
@@ -78,7 +78,7 @@ docbox.generate( source="/my/path", mapping="coldbox" );
 
 docbox.generate(
     source  = "#expandPath( '/docbox' )#",
-    mapping = "coldbox",
+    mapping = "docbox",
     excludes = "tests"
 );
 ```

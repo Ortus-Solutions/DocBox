@@ -1,7 +1,7 @@
 /**
- * My BDD Test
+ * Test the main DocBox model
  */
-component extends="testbox.system.BaseSpec" {
+component extends="BaseTest" {
 
 	variables.HTMLOutputDir = expandPath( "/tests/tmp/html" );
 	variables.JSONOutputDir = expandPath( "/tests/tmp/json" );
@@ -15,9 +15,13 @@ component extends="testbox.system.BaseSpec" {
 		// all your suites go here.
 		describe( "DocBox", function(){
 			beforeEach( function(){
+				resetTmpDirectory( getDirectoryFromPath( variables.XMIOutputFile ) );
 				resetTmpDirectory( variables.HTMLOutputDir );
 				resetTmpDirectory( variables.JSONOutputDir );
-				resetTmpDirectory( getDirectoryFromPath( variables.XMIOutputFile ) );
+
+				if ( fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ) {
+					fileDelete( expandPath( "/tests/FunkyComponent.cfc" ) );
+				}
 
 				variables.docbox = new docbox.DocBox();
 			} );
@@ -41,16 +45,18 @@ component extends="testbox.system.BaseSpec" {
 			} );
 
 			it( "defaults to HTML if no strategy is set", function(){
-				variables.docbox.init(
-					properties = {
-						projectTitle = "Test", outputDir = variables.HTMLOutputDir
-					}
-				)
-				.generate(
-					source   = expandPath( "/tests" ),
-					mapping  = "tests",
-					excludes = "(coldbox|build\-docbox)"
-				);
+				variables.docbox
+					.init(
+						properties = {
+							projectTitle : "Test",
+							outputDir    : variables.HTMLOutputDir
+						}
+					)
+					.generate(
+						source   = expandPath( "/tests" ),
+						mapping  = "tests",
+						excludes = "(coldbox|build\-docbox)"
+					);
 				expect( variables.docbox.getStrategies() ).notTobeEmpty();
 			} );
 
@@ -147,15 +153,65 @@ component extends="testbox.system.BaseSpec" {
 					"should generate overview-summary.json class index file"
 				);
 			} );
-		} );
-	}
 
-	function resetTmpDirectory( directory ){
-		// empty the directory so we know if it has been populated
-		if ( directoryExists( arguments.directory ) ) {
-			directoryDelete( arguments.directory, true );
-		}
-		directoryCreate( arguments.directory );
+			/**
+			 * Skipped due to issues with trace() messing up the CLI testbox runner.
+			 * i.e. a trace() looks like an error to GHA, and totally borks the testbox report format as well.
+			 */
+			xit( "throws on invalid component if throwOnError=true", function(){
+				var componentCode = "componentxyz{}";
+				if ( !fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ) {
+					fileWrite(
+						expandPath( "/tests/FunkyComponent.cfc" ),
+						componentCode
+					);
+				}
+				expect( function(){
+					variables.docbox
+						.init(
+							properties = {
+								projectTitle : "Test",
+								outputDir    : variables.HTMLOutputDir
+							}
+						)
+						.generate(
+							source       = expandPath( "/tests" ),
+							mapping      = "tests",
+							excludes     = "(coldbox|build\-docbox)",
+							throwOnError = true
+						);
+				} ).toThrow( "InvalidComponentException" );
+			} );
+
+			/**
+			 * Skipped due to issues with trace() messing up the CLI testbox runner.
+			 * i.e. a trace() looks like an error to GHA, and totally borks the testbox report format as well.
+			 */
+			xit( "does not throw on invalid component if throwOnError=false", function(){
+				var componentCode = "componentxyz{}";
+				if ( !fileExists( expandPath( "/tests/FunkyComponent.cfc" ) ) ) {
+					fileWrite(
+						expandPath( "/tests/FunkyComponent.cfc" ),
+						componentCode
+					);
+				}
+				expect( function(){
+					variables.docbox
+						.init(
+							properties = {
+								projectTitle : "Test",
+								outputDir    : variables.HTMLOutputDir
+							}
+						)
+						.generate(
+							source       = expandPath( "/tests" ),
+							mapping      = "tests",
+							excludes     = "(coldbox|build\-docbox)",
+							throwOnError = false
+						);
+				} ).notToThrow( "InvalidComponentException" );
+			} );
+		} );
 	}
 
 }

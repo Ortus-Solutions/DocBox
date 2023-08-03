@@ -1,9 +1,11 @@
 /**
- * Default Document Strategy for DocBox
- * <br>
- * <small><em>Copyright 2015 Ortus Solutions, Corp <a href="www.ortussolutions.com">www.ortussolutions.com</a></em></small>
+ * CommandBox CLI
+ * Copyright since 2012 by Ortus Solutions, Corp
+ * www.ortussolutions.com/products/commandbox
+ * ---
+ * Custom DocBox strategy for CommandBox commands and namespaces
  */
-component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
+component extends="docbox.strategy.api.HTMLAPIStrategy" {
 
 	/**
 	 * The output directory
@@ -18,47 +20,73 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		default="Untitled"
 		type   ="string";
 
-	/**
-	 * Where HTML templates are stored
-	 */
-	variables.TEMPLATE_PATH = "/docbox/strategy/api/resources/templates";
-
-	/**
-	 * Static assets used in HTML templates
-	 */
-	variables.ASSETS_PATH = "/docbox/strategy/api/resources/static";
+	// Static variables.
+	variables.TEMPLATE_PATH = "/docbox/strategy/CommandBox/resources/templates";
+	variables.ASSETS_PATH   = "/docbox/strategy/api/resources/static";
 
 	/**
 	 * Constructor
 	 * @outputDir The output directory
 	 * @projectTitle The title used in the HTML output
 	 */
-	HTMLAPIStrategy function init(
+	function init(
 		required outputDir,
 		string projectTitle = "Untitled"
 	){
-		super.init();
-
-		variables.outputDir    = arguments.outputDir;
-		variables.projectTitle = arguments.projectTitle;
-
+		super.init( argumentCollection = arguments );
 		return this;
 	}
 
 	/**
 	 * Run this strategy
-	 *
 	 * @qMetaData The metadata
-	 * @throws InvalidConfigurationException if directory does not exist or other invalid configuration is detected
 	 */
-	HTMLAPIStrategy function run( required query qMetadata ){
-		if ( !directoryExists( getOutputDir() ) ) {
-			throw(
-				message = "Invalid configuration; output directory not found",
-				type    = "InvalidConfigurationException",
-				detail  = "OutputDir #getOutputDir()# does not exist."
+	function run( required query qMetadata ){
+		// ACF requires an array of values, and hiccups in QoQ's if we don't populate that array.
+		var values = [];
+		queryEach( arguments.qMetadata, ( row ) => values.append( "" ) );
+		queryAddColumn(
+			arguments.qMetadata,
+			"command",
+			values
+		);
+		queryAddColumn(
+			arguments.qMetadata,
+			"namespace",
+			values
+		);
+
+		var index = 1;
+		for ( var thisRow in arguments.qMetadata ) {
+			var thisCommand = listAppend( thisRow.package, thisRow.name, "." );
+			thisCommand     = replaceNoCase(
+				thisCommand,
+				thisRow.currentMapping,
+				"",
+				"one"
 			);
+			thisCommand       = listChangeDelims( thisCommand, " ", "." );
+			var thisNamespace = listDeleteAt(
+				thisCommand,
+				listLen( thisCommand, " " ),
+				" "
+			);
+
+			querySetCell(
+				arguments.qMetadata,
+				"command",
+				thisCommand,
+				index
+			);
+			querySetCell(
+				arguments.qMetadata,
+				"namespace",
+				thisNamespace,
+				index
+			);
+			index++;
 		}
+
 		// copy over the static assets
 		directoryCopy(
 			expandPath( variables.ASSETS_PATH ),
@@ -75,10 +103,41 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		writeTemplate( argumentCollection = args )
 			// Write overview summary and frame
 			.writeOverviewSummaryAndFrame( arguments.qMetaData )
-			// Write classes frame
-			.writeAllClassesFrame( arguments.qMetaData )
 			// Write packages
 			.writePackagePages( arguments.qMetaData );
+
+		return this;
+	}
+
+	/**
+	 * writes the overview-summary.html
+	 * @qMetaData The metadata
+	 */
+	function writeOverviewSummaryAndFrame( required query qMetadata ){
+		var qPackages = new Query(
+			dbtype = "query",
+			md     = arguments.qMetadata,
+			sql    = "
+			SELECT DISTINCT [package], [namespace]
+			FROM md
+			ORDER BY [package]"
+		).execute().getResult();
+
+		// overview summary
+		writeTemplate(
+			path         = getOutputDir() & "/overview-summary.html",
+			template     = "#variables.TEMPLATE_PATH#/overview-summary.cfm",
+			projectTitle = getProjectTitle(),
+			qPackages    = qPackages
+		);
+
+		// overview frame
+		writeTemplate(
+			path         = getOutputDir() & "/overview-frame.html",
+			template     = "#variables.TEMPLATE_PATH#/overview-frame.cfm",
+			projectTitle = getProjectTitle(),
+			qMetadata    = arguments.qMetadata
+		);
 
 		return this;
 	}
@@ -87,7 +146,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * writes the package summaries
 	 * @qMetaData The metadata
 	 */
-	HTMLAPIStrategy function writePackagePages( required query qMetadata ){
+	function writePackagePages( required query qMetadata ){
 		var currentDir  = 0;
 		var qPackage    = 0;
 		var qClasses    = 0;
@@ -104,7 +163,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * @qPackage the query for a specific package
 	 * @qMetaData The metadata
 	 */
-	HTMLAPIStrategy function buildClassPages(
+	function buildClassPages(
 		required query qPackage,
 		required query qMetadata
 	){
@@ -144,62 +203,10 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 				qSubClass     = qSubClass,
 				qImplementing = qImplementing,
 				qMetadata     = qMetaData,
-				metadata      = safeMeta
+				metadata      = safeMeta,
+				command       = thisRow.command
 			);
 		}
-
-		return this;
-	}
-
-
-	/**
-	 * writes the overview-summary.html
-	 * @qMetaData The metadata
-	 */
-	HTMLAPIStrategy function writeOverviewSummaryAndFrame( required query qMetadata ){
-		var qPackages = new Query(
-			dbtype = "query",
-			md     = arguments.qMetadata,
-			sql    = "
-			SELECT DISTINCT package
-			FROM md
-			ORDER BY package"
-		).execute().getResult();
-
-		// overview summary
-		writeTemplate(
-			path         = getOutputDir() & "/overview-summary.html",
-			template     = "#variables.TEMPLATE_PATH#/overview-summary.cfm",
-			projectTitle = getProjectTitle(),
-			qPackages    = qPackages
-		);
-
-		// overview frame
-		writeTemplate(
-			path         = getOutputDir() & "/overview-frame.html",
-			template     = "#variables.TEMPLATE_PATH#/overview-frame.cfm",
-			projectTitle = getProjectTitle(),
-			qMetadata    = arguments.qMetadata
-		);
-
-		return this;
-	}
-
-	/**
-	 * writes the allclasses-frame.html
-	 * @qMetaData The metadata
-	 */
-	HTMLAPIStrategy function writeAllClassesFrame( required query qMetadata ){
-		arguments.qMetadata = getMetaSubquery(
-			query   = arguments.qMetaData,
-			orderby = "name asc"
-		);
-
-		writeTemplate(
-			path      = getOutputDir() & "/allclasses-frame.html",
-			template  = "#variables.TEMPLATE_PATH#/allclasses-frame.cfm",
-			qMetaData = arguments.qMetaData
-		);
 
 		return this;
 	}

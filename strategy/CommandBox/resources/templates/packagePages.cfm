@@ -12,9 +12,12 @@
 			projectTitle 	= this.getProjectTitle(),
 			package 		= package,
 			qClasses 		= qClasses,
-			qInterfaces 	= qInterfaces
+			qInterfaces 	= qInterfaces,
+			qMetadata 		= arguments.qMetadata,
+			namespace 		= arguments.qMetadata.namespace
 		);
 
+		/**
 		writeTemplate(
 			path			= currentDir & "/package-frame.html",
 			template		= "#variables.TEMPLATE_PATH#/package-frame.cfm",
@@ -22,6 +25,7 @@
 			package 		= package,
 			qClasses 		= qClasses,
 			qInterfaces 	= qInterfaces);
+		**/
 
 		buildClassPages( qPackage, arguments.qMetadata );
 	</cfscript>

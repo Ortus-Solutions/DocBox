@@ -18,10 +18,6 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		default="Untitled"
 		type   ="string";
 
-	// Static variables.
-	variables.static.TEMPLATE_PATH = "/docbox/strategy/json/resources/templates";
-	variables.static.ASSETS_PATH   = "/docbox/strategy/json/resources/static";
-
 	/**
 	 * Constructor
 	 *
@@ -46,6 +42,13 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * @metadata All component metadata, sourced from DocBox.
 	 */
 	component function run( required query metadata ){
+		if ( !directoryExists( getOutputDir() ) ) {
+			throw(
+				message = "Invalid configuration; output directory not found",
+				type    = "InvalidConfigurationException",
+				detail  = "OutputDir #getOutputDir()# does not exist."
+			);
+		}
 		ensureDirectory( getOutputDir() );
 
 		var classes = normalizePackages(
@@ -150,13 +153,13 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 			if ( !isNull( arguments.row.metadata.functions ) ) {
 				var metaFunctions = arrayMap( arguments.row.metadata.functions, function( method ){
 					return {
-						"returnType"   : arguments.method.returnType,
+						"returnType"   : arguments.method.returnType ?: "any",
 						"returnFormat" : isNull( arguments.method.returnFormat ) ? "plain" : arguments.method.returnFormat,
 						"parameters"   : arguments.method.parameters,
 						"name"         : arguments.method.name,
 						"hint"         : arguments.method.keyExists( "hint" ) ? arguments.method.hint : "",
 						"description"  : arguments.method.keyExists( "description" ) ? arguments.method.description : "",
-						"access"       : arguments.method.access,
+						"access"       : arguments.method.access ?: "public",
 						"position"     : arguments.method.keyExists( "position" ) ? arguments.method.position : {
 							"start" : 0,
 							"end"   : 0

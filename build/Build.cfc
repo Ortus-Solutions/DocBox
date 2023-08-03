@@ -7,31 +7,31 @@ component {
 	 * Constructor
 	 */
 	function init(){
-		// Setup artifact name
-		variables.projectName 	= "docbox";
 		// Setup Pathing
-		variables.cwd          	= getCWD().reReplace( "\.$", "" );
-		variables.artifactsDir 	= variables.cwd & "/.artifacts";
-		variables.buildDir     	= variables.cwd & "/.tmp";
-		variables.apiDocsDir 	= variables.cwd & "/tests/apidocs";
-		variables.apiDocsURL   	= "http://localhost:60299/tests/run.cfm";
-		variables.testRunner   	= "http://localhost:60299/tests/runner.cfm";
+		variables.cwd          = getCWD().reReplace( "\.$", "" );
+		variables.artifactsDir = cwd & "/.artifacts";
+		variables.buildDir     = cwd & "/.tmp";
+		variables.apiDocsURL   = "http://localhost:60299/apidocs/";
+		variables.testRunner   = "http://localhost:60299/tests/runner.cfm";
 
 		// Source Excludes Not Added to final binary
 		variables.excludes = [
 			"build",
-			"tests",
+			"node-modules",
+			"resources",
+			"test-harness",
+			"(package|package-lock).json",
+			"webpack.config.js",
+			"server-.*\.json",
+			"docker-compose.yml",
 			"^\..*",
-			"server\-",
-			"testbox",
 			"coldbox-5-router-documentation.png"
 		];
 
 		// Cleanup + Init Build Directories
 		[
 			variables.buildDir,
-			variables.artifactsDir,
-			variables.apidocsDir
+			variables.artifactsDir
 		].each( function( item ){
 			if ( directoryExists( item ) ) {
 				directoryDelete( item, true );
@@ -40,14 +40,10 @@ component {
 			directoryCreate( item, true, true );
 		} );
 
-		// Create Global Mappings
-		fileSystemUtil.createMapping(
-			"docbox",
-			variables.cwd
-		);
+		// Create Mappings
 		fileSystemUtil.createMapping(
 			"coldbox",
-			variables.cwd & "tests/coldbox"
+			variables.cwd & "test-harness/coldbox"
 		);
 
 		return this;
@@ -56,22 +52,23 @@ component {
 	/**
 	 * Run the build process: test, build source, docs, checksums
 	 *
+	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
-	 * @branch The branch you are building
 	 */
 	function run(
+		required projectName,
 		version = "1.0.0",
-		buildID = createUUID(),
-		branch  = "development"
+		buildID = createUUID()
 	){
-		// Run the tests
-		runTests();
+		// Create project mapping
+		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
 
 		// Build the source
 		buildSource( argumentCollection = arguments );
 
 		// Build Docs
+		arguments.outputDir = variables.buildDir & "/apidocs";
 		docs( argumentCollection = arguments );
 
 		// checksums
@@ -81,7 +78,8 @@ component {
 		latestChangelog();
 
 		// Finalize Message
-		print.line()
+		print
+			.line()
 			.boldMagentaLine( "Build Process is done! Enjoy your build!" )
 			.toConsole();
 	}
@@ -97,7 +95,8 @@ component {
 			.params(
 				runner     = variables.testRunner,
 				verbose    = true,
-				outputFile = "build/results.json"
+				outputFile = "#variables.cwd#/tests/results/test-results",
+				outputFormats="json,antjunit"
 			)
 			.run();
 
@@ -110,28 +109,28 @@ component {
 	/**
 	 * Build the source
 	 *
+	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
-	 * @branch The branch you are building
 	 */
 	function buildSource(
+		required projectName,
 		version = "1.0.0",
-		buildID = createUUID(),
-		branch  = "development"
+		buildID = createUUID()
 	){
+
 		// Build Notice ID
-		print.line()
+		print
+			.line()
 			.boldMagentaLine(
-				"Building #variables.projectName# v#arguments.version#+#arguments.buildID# from #variables.cwd# using the #arguments.branch# branch."
+				"Building #arguments.projectName# v#arguments.version#"
 			)
 			.toConsole();
 
-		// Prepare exports directory
-		variables.exportsDir = variables.artifactsDir & "/#variables.projectName#/#arguments.version#";
-		directoryCreate( variables.exportsDir, true, true );
+		ensureExportDir( argumentCollection = arguments );
 
 		// Project Build Dir
-		variables.projectBuildDir = variables.buildDir & "/#variables.projectName#";
+		variables.projectBuildDir = variables.buildDir & "/#projectName#";
 		directoryCreate(
 			variables.projectBuildDir,
 			true,
@@ -147,7 +146,7 @@ component {
 
 		// Create build ID
 		fileWrite(
-			"#variables.projectBuildDir#/#variables.projectName#-#version#+#buildID#",
+			"#variables.projectBuildDir#/#projectName#-#version#",
 			"Built with love on #dateTimeFormat( now(), "full" )#"
 		);
 
@@ -161,17 +160,8 @@ component {
 			)
 			.run();
 
-		print.greenLine( "Updating build identifier to #arguments.buildID#" ).toConsole();
-		command( "tokenReplace" )
-			.params(
-				path        = "/#variables.projectBuildDir#/**",
-				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
-				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot" )
-			)
-			.run();
-
 		// zip up source
-		var destination = "#variables.exportsDir#/#variables.projectName#-#version#.zip";
+		var destination = "#variables.exportsDir#/#projectName#-#version#.zip";
 		print.greenLine( "Zipping code to #destination#" ).toConsole();
 		cfzip(
 			action    = "zip",
@@ -191,26 +181,36 @@ component {
 	/**
 	 * Produce the API Docs
 	 */
-	function docs( version = "1.0.0" ){
+	function docs(
+		required projectName,
+		version   = "1.0.0",
+		outputDir = ".tmp/apidocs"
+	){
+		ensureExportDir( argumentCollection = arguments );
+		directoryCreate( arguments.outputDir, true, true );
+
+		// Create project mapping
+		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
 		// Generate Docs
 		print.greenLine( "Generating API Docs, please wait..." ).toConsole();
 
-		var cfhttpResponse = "";
-		cfhttp(
-			method 		= "GET",
-			charset		= "UTF-8",
-			url 		= variables.apiDocsURL & "?version=#arguments.version#",
-			result		= "cfhttpResponse"
-		);
+		command( "docbox generate" )
+			.params(
+				"source"                = "models",
+				"mapping"               = "models",
+				"strategy-projectTitle" = "#arguments.projectName# v#arguments.version#",
+				"strategy-outputDir"    = arguments.outputDir
+			)
+			.run();
 
-		print.greenLine( "API Docs produced at #variables.apiDocsDir#" ).toConsole();
+		print.greenLine( "API Docs produced at #arguments.outputDir#" ).toConsole();
 
-		var destination = "#variables.exportsDir#/#variables.projectName#-docs-#version#.zip";
+		var destination = "#variables.exportsDir#/#projectName#-docs-#version#.zip";
 		print.greenLine( "Zipping apidocs to #destination#" ).toConsole();
 		cfzip(
 			action    = "zip",
 			file      = "#destination#",
-			source    = "#variables.apiDocsDir#",
+			source    = "#arguments.outputDir#",
 			overwrite = true,
 			recurse   = true
 		);
@@ -303,4 +303,18 @@ component {
 		return ( createObject( "java", "java.lang.System" ).getProperty( "cfml.cli.exitCode" ) ?: 0 );
 	}
 
+	/**
+	 * Ensure the export directory exists at artifacts/NAME/VERSION/
+	 */
+	private function ensureExportDir(
+		required projectName,
+		version   = "1.0.0"
+	){
+		if ( structKeyExists( variables, "exportsDir" ) && directoryExists( variables.exportsDir ) ){
+			return;
+		}
+		// Prepare exports directory
+		variables.exportsDir = variables.artifactsDir & "/#projectName#/#arguments.version#";
+		directoryCreate( variables.exportsDir, true, true );
+	}
 }

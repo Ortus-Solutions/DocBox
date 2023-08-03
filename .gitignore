@@ -20,9 +20,11 @@ modules/*
 
 ## Builds (DocBox-specific)
 *.iml
+tests/results
 tests/output/*
 tests/apidocs/*
 tests/tmp/
 .artifacts/*
 .tmp/*
 changelog-latest.md
+tests/FunkyComponent.cfc

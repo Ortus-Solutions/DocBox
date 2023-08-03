@@ -1,6 +1,6 @@
 {
     "name":"DocBox",
-    "version":"3.0.0",
+    "version":"3.1.0",
     "author":"Ortus Solutions, Corp",
     "location":"http://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
     "homepage":"https://forgebox.io/view/docbox",
@@ -14,6 +14,7 @@
     "shortDescription":"CFC API Documentation generator for ColdFusion (CFML) using JavaDoc conventions",
     "type":"projects",
     "keywords":"apidocs, coldfusion docs, javadocs, cfc docs",
+    "organization": "ortus-solutions",
     "license":[
         {
             "type":"Apache2",
@@ -34,11 +35,12 @@
         "**/.*",
         "tests/**",
         ".git*",
+        "docs/",
         "coldbox-5-router-documentation.png"
     ],
     "scripts":{
         "release":"recipe build/release.boxr",
-        "format":"cfformat run DocBox.cfc,strategy,tests",
+        "format":"cfformat run --overwrite DocBox.cfc,strategy,tests",
         "format:watch":"cfformat watch DocBox.cfc,strategy,tests ./.cfformat.json",
         "format:check":"cfformat check DocBox.cfc,strategy,tests"
     },
