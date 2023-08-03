@@ -168,7 +168,7 @@ component {
 			.params(
 				path        = "/#variables.projectBuildDir#/**",
 				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
-				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot" )
+				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot+" & arguments.buildID )
 			)
 			.run();
 

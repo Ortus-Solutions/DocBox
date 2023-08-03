@@ -9,6 +9,7 @@ on:
 
 env:
   MODULE_ID: docbox
+  SNAPSHOT: ${{ github.ref_name != 'main' && github.ref_name != 'master' }}
 
 jobs:
   #############################################
@@ -51,7 +52,7 @@ jobs:
         with:
           forgeboxAPIKey: ${{ secrets.FORGEBOX_TOKEN }}
 
-      - name: Setup Environment Variables For Build Process
+      - name: Read version
         id: current_version
         run: |
           echo "VERSION=`cat box.json | jq '.version' -r`" >> $GITHUB_ENV
@@ -63,6 +64,7 @@ jobs:
           then
             echo "BRANCH=development" >> $GITHUB_ENV
           fi
+
       - name: Build ${{ env.MODULE_ID }}
         run: |
           box install commandbox-docbox
