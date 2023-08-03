@@ -1,6 +1,6 @@
 {
     "name":"DocBox",
-    "version":"3.2.0",
+    "version":"3.3.0",
     "author":"Ortus Solutions, Corp",
     "location":"http://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
     "homepage":"https://forgebox.io/view/docbox",
@@ -14,7 +14,7 @@
     "shortDescription":"CFC API Documentation generator for ColdFusion (CFML) using JavaDoc conventions",
     "type":"projects",
     "keywords":"apidocs, coldfusion docs, javadocs, cfc docs",
-    "organization": "ortus-solutions",
+    "organization":"ortus-solutions",
     "license":[
         {
             "type":"Apache2",
