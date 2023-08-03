@@ -9,7 +9,6 @@ on:
 
 env:
   MODULE_ID: docbox
-  SNAPSHOT: ${{ github.ref_name != 'main' && github.ref_name != 'master' }}
 
 jobs:
   #############################################
@@ -60,7 +59,7 @@ jobs:
           # master or snapshot
           echo "Github Ref is $GITHUB_REF"
           echo "VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-          if [ $SNAPSHOT ]
+          if [ $GITHUB_REF == 'refs/heads/development' ]
           then
             echo "VERSION=$PACKAGE_VERSION-snapshot+${{ github.run_number}}" >> $GITHUB_ENV
           fi
