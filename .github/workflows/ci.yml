@@ -55,20 +55,20 @@ jobs:
       - name: Read version
         id: current_version
         run: |
-          echo "VERSION=`cat box.json | jq '.version' -r`" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=`cat box.json | jq '.version' -r`" >> $GITHUB_ENV
           box package set version=@build.version@
           # master or snapshot
           echo "Github Ref is $GITHUB_REF"
-          echo "BRANCH=master" >> $GITHUB_ENV
-          if [ $GITHUB_REF == 'refs/heads/development' ]
+          echo "VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          if [ $SNAPSHOT ]
           then
-            echo "BRANCH=development" >> $GITHUB_ENV
+            echo "VERSION=$PACKAGE_VERSION-snapshot+${{ github.run_number}}" >> $GITHUB_ENV
           fi
 
       - name: Build ${{ env.MODULE_ID }}
         run: |
           box install commandbox-docbox
-          box task run taskfile=build/Build target=run :version=${{ env.VERSION }} :projectName=${{ env.MODULE_ID }} :buildID=${{ github.run_number }} :branch=${{ env.BRANCH }}
+          box task run taskfile=build/Build target=run :version=${{ env.VERSION }} :projectName=${{ env.MODULE_ID }} :buildID=${{ github.run_number }}
 
       - name: Upload Build Artifacts
         if: success()
@@ -87,7 +87,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
           SOURCE_DIR: ".artifacts/${{ env.MODULE_ID }}"
-          DEST_DIR: "ortussolutions/coldbox-modules/${{ env.MODULE_ID }}"
+          DEST_DIR: "ortussolutions/${{ env.MODULE_ID }}"
 
       - name: Upload API Docs to S3
         uses: jakejarvis/s3-sync-action@master
@@ -98,7 +98,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
           SOURCE_DIR: ".tmp/apidocs"
-          DEST_DIR: "coldbox-modules/${{ env.MODULE_ID }}/${{ env.VERSION }}"
+          DEST_DIR: "${{ env.MODULE_ID }}/${{ env.VERSION }}"
 
       - name: Publish To ForgeBox
         run: |

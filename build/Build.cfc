@@ -55,13 +55,11 @@ component {
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
-	 * @branch The branch you are building
 	 */
 	function run(
 		required projectName,
 		version = "1.0.0",
-		buildID = createUUID(),
-		branch  = "development"
+		buildID = createUUID()
 	){
 		// Create project mapping
 		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
@@ -114,25 +112,18 @@ component {
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
-	 * @branch The branch you are building
 	 */
 	function buildSource(
 		required projectName,
 		version = "1.0.0",
-		buildID = createUUID(),
-		branch  = "development"
+		buildID = createUUID()
 	){
-		/**
-		 * Overwrite the arguments.version from here out so that the artifacts match the box version
-		 */
-		var buildNumber = ( arguments.branch == "master" ? "+#arguments.buildID#" : "-snapshot+" & arguments.buildID );
-		arguments.version = "#arguments.version##buildNumber#";
 
 		// Build Notice ID
 		print
 			.line()
 			.boldMagentaLine(
-				"Building #arguments.projectName# v#arguments.version# from #cwd# using the #arguments.branch# branch."
+				"Building #arguments.projectName# v#arguments.version#"
 			)
 			.toConsole();
 
