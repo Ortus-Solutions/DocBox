@@ -19,6 +19,8 @@ component extends="BaseTest" {
 	 * test the custom tag support
 	 *
 	 * @myMethodTag is a custom docblock tag on a component method
+	 * @author Michael Born
+	 * @version 23.2.1-PENGUINS
 	 */
 	public numeric function roundToFive(){
 	}
