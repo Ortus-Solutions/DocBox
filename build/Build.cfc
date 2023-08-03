@@ -130,6 +130,32 @@ component {
 			)
 			.toConsole();
 
+		// Updating Placeholders
+		print.greenLine( "Updating version identifier to #arguments.version#" ).toConsole();
+		command( "tokenReplace" )
+			.params(
+				path        = "/#variables.projectBuildDir#/**",
+				token       = "@build.version@",
+				replacement = arguments.version
+			)
+			.run();
+
+		print.greenLine( "Updating build identifier to #arguments.buildID#" ).toConsole();
+		var newBuildID = ( arguments.branch == "master" ? arguments.buildID : "-snapshot+" & arguments.buildID );
+		command( "tokenReplace" )
+			.params(
+				path        = "/#variables.projectBuildDir#/**",
+				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
+				replacement = newBuildID
+			)
+			.run();
+
+		/**
+		 * Overwrite the arguments.version from here out so that the artifacts match the box version
+		 */
+		if ( arguments.branch == "master" ){ newBuildID = "+#newBuildID#"; }
+		arguments.version = "#arguments.version##newBuildID#";
+
 		ensureExportDir( argumentCollection = arguments );
 
 		// Project Build Dir
@@ -152,25 +178,6 @@ component {
 			"#variables.projectBuildDir#/#projectName#-#version#+#buildID#",
 			"Built with love on #dateTimeFormat( now(), "full" )#"
 		);
-
-		// Updating Placeholders
-		print.greenLine( "Updating version identifier to #arguments.version#" ).toConsole();
-		command( "tokenReplace" )
-			.params(
-				path        = "/#variables.projectBuildDir#/**",
-				token       = "@build.version@",
-				replacement = arguments.version
-			)
-			.run();
-
-		print.greenLine( "Updating build identifier to #arguments.buildID#" ).toConsole();
-		command( "tokenReplace" )
-			.params(
-				path        = "/#variables.projectBuildDir#/**",
-				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
-				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot+" & arguments.buildID )
-			)
-			.run();
 
 		// zip up source
 		var destination = "#variables.exportsDir#/#projectName#-#version#.zip";
