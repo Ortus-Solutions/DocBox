@@ -122,19 +122,19 @@ component {
 		buildID = createUUID(),
 		branch  = "development"
 	){
+		/**
+		 * Overwrite the arguments.version from here out so that the artifacts match the box version
+		 */
+		var buildNumber = ( arguments.branch == "master" ? "+#arguments.buildID#" : "-snapshot+" & arguments.buildID );
+		arguments.version = "#arguments.version##buildNumber#";
+
 		// Build Notice ID
 		print
 			.line()
 			.boldMagentaLine(
-				"Building #arguments.projectName# v#arguments.version#+#arguments.buildID# from #cwd# using the #arguments.branch# branch."
+				"Building #arguments.projectName# v#arguments.version# from #cwd# using the #arguments.branch# branch."
 			)
 			.toConsole();
-
-		/**
-		 * Overwrite the arguments.version from here out so that the artifacts match the box version
-		 */
-		var newBuildID = ( arguments.branch == "master" ? "+#arguments.buildID#" : "-snapshot+" & arguments.buildID );
-		arguments.version = "#arguments.version##newBuildID#";
 
 		ensureExportDir( argumentCollection = arguments );
 
@@ -155,7 +155,7 @@ component {
 
 		// Create build ID
 		fileWrite(
-			"#variables.projectBuildDir#/#projectName#-#version#+#buildID#",
+			"#variables.projectBuildDir#/#projectName#-#version#",
 			"Built with love on #dateTimeFormat( now(), "full" )#"
 		);
 
@@ -166,15 +166,6 @@ component {
 				path        = "/#variables.projectBuildDir#/**",
 				token       = "@build.version@",
 				replacement = arguments.version
-			)
-			.run();
-
-		print.greenLine( "Updating build identifier to #arguments.buildID#" ).toConsole();
-		command( "tokenReplace" )
-			.params(
-				path        = "/#variables.projectBuildDir#/**",
-				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
-				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot+" & arguments.buildID )
 			)
 			.run();
 

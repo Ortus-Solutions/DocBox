@@ -56,7 +56,7 @@ jobs:
         id: current_version
         run: |
           echo "VERSION=`cat box.json | jq '.version' -r`" >> $GITHUB_ENV
-          box package set version=@build.version@+@build.number@
+          box package set version=@build.version@
           # master or snapshot
           echo "Github Ref is $GITHUB_REF"
           echo "BRANCH=master" >> $GITHUB_ENV
