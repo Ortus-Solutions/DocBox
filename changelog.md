@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Build Versions and changelog
 - Removal of `box.zip` in root from old scripts
 
 ### BREAKING
@@ -33,6 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### FIX
 
 - Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
+
+## [4.0.0] - 2023-08-03
+
+### Changed
+
+- Dropped Adobe 2016 support
 
 ## [3.0.0]
 

@@ -159,7 +159,18 @@ component {
 			.params(
 				path        = "/#variables.projectBuildDir#/**",
 				token       = "@build.version@",
-				replacement = arguments.version
+				replacement = arguments.version,
+				verbose     = true
+			)
+			.run();
+
+		print.greenLine( "Updating build identifier to [#arguments.buildID#-#arguments.branch#]..." ).toConsole();
+		command( "tokenReplace" )
+			.params(
+				path        = "/#variables.projectBuildDir#/**",
+				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
+				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot" ),
+				verbose     = true
 			)
 			.run();
 
