@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## Unreleased
+## [Unreleased]
+
+### Added
+
+- Adobe 2023 Testing and Support
+- New Github Actions
+- New supporting files
+
+### Fixed
+
+- Removal of `box.zip` in root from old scripts
 
 ### ⚠ BREAKING
 
@@ -19,11 +29,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added support for `@myCustomTag` custom docblock tags on methods. (Already supported on components and properties, but missing on methods).
 * Added GitHub Actions CI for automated testing, format checking, releases and more
 
-### 🐛 FIX:
+### 🐛 FIX
 
 * Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
 
-## 3.0.0
+## [3.0.0]
 
 ### Added
 
@@ -44,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.2.1
+## [2.2.1]
 
 ### Fixed
 
@@ -52,7 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.2.0
+## [2.2.0]
 
 ### Added
 
@@ -61,7 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `@deprecated` annotation to function definitions
 
 ----
-## 2.1.0
+
+## [2.1.0]
 
 ### Fixed
 
@@ -71,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.7
+## [2.0.7]
 
 ### Fixed
 
@@ -79,7 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.6
+## [2.0.6]
 
 ### Fixed
 
@@ -95,7 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.5
+## [2.0.5]
 
 ### Improved
 
@@ -103,7 +114,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.4
+## [2.0.4]
 
 ### Improved
 
@@ -111,7 +122,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.3
+## [2.0.3]
 
 ### Fixed
 
@@ -119,7 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.2
+## [2.0.2]
 
 ### Fixed
 
@@ -131,7 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.1
+## [2.0.1]
 
 ### Fixed
 
@@ -139,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 2.0.0
+## [2.0.0]
 
 ### Improved
 

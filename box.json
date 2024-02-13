@@ -24,7 +24,10 @@
     "contributors":[
         "Brad Wood <brad@bradwood.com>"
     ],
-    "dependencies":{},
+    "dependencies":{
+		"commandbox-cfformat":"*",
+        "commandbox-docbox":"*"
+	},
     "devDependencies":{
         "testbox":"^4.1.0+384"
     },
