@@ -1,16 +1,12 @@
 [![All Contributors](https://img.shields.io/github/contributors/Ortus-Solutions/DocBox?style=flat-square)](https://github.com/michaelborn/DocBox/graphs/contributors)
 |
-[![Master Branch Build Status](https://img.shields.io/travis/Ortus-Solutions/DocBox/master.svg?style=flat-square&label=master)](https://travis-ci.org/Ortus-Solutions/DocBox) 
-| 
-[![Development Branch Build Status](https://img.shields.io/travis/Ortus-Solutions/DocBox/development.svg?style=flat-square&label=development)](https://travis-ci.org/Ortus-Solutions/DocBox)
-|
 ![Latest release](https://img.shields.io/github/v/release/Ortus-Solutions/DocBox?style=flat-square)
 
 ```text
 ██████╗  ██████╗  ██████╗██████╗  ██████╗ ██╗  ██╗
 ██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔═══██╗╚██╗██╔╝
-██║  ██║██║   ██║██║     ██████╔╝██║   ██║ ╚███╔╝ 
-██║  ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗ 
+██║  ██║██║   ██║██║     ██████╔╝██║   ██║ ╚███╔╝
+██║  ██║██║   ██║██║     ██╔══██╗██║   ██║ ██╔██╗
 ██████╔╝╚██████╔╝╚██████╗██████╔╝╚██████╔╝██╔╝ ██╗
 ╚═════╝  ╚═════╝  ╚═════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝
 ```
@@ -33,8 +29,8 @@ DocBox is a JavaDoc-style documentation generator for your CFML codebase based o
 
 ## SYSTEM REQUIREMENTS
 
-- Lucee 5+
-- ColdFusion 2016+
+* Lucee 5+
+* ColdFusion 2016+
 
 ## Usage
 
@@ -42,7 +38,7 @@ Use the DocBox library to generate API docs from your CFC files.  Install Docbox
 
 ```bash
 box install docbox
-```  
+```
 
 ### Standalone Application
 
@@ -55,8 +51,8 @@ docbox = new docbox.DocBox( strategy="class.path", properties={} );
 // create with HTML strategy
 docbox = new docbox.DocBox(
   strategy = "HTML",
-  properties = { 
-    projectTitle="My Docs", 
+  properties = {
+    projectTitle="My Docs",
     outputDir="#expandPath( '/docs' )#"
   }
 );
@@ -103,6 +99,7 @@ There is a related project you can install which wraps up the DocBox library in 
 ```bash
 box install commandbox-docbox
 ```
+
 Read more here: https://github.com/Ortus-Solutions/commandbox-docbox
 
 ----

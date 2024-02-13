@@ -20,17 +20,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removal of `box.zip` in root from old scripts
 
-### ⚠ BREAKING
+### BREAKING
 
 - Dropped support for Adobe 2016. Adobe doesn't support ACF 16 anymore, so neither do we.
 
-### 📦 NEW
+### NEW
 
 - Added support for Adobe 2021
 - Added support for `@myCustomTag` custom docblock tags on methods. (Already supported on components and properties, but missing on methods).
 - Added GitHub Actions CI for automated testing, format checking, releases and more
 
-### 🐛 FIX
+### FIX
 
 - Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
 
