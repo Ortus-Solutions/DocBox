@@ -20,7 +20,8 @@ component {
 			"tests",
 			"server-.*\.json",
 			"^\..*",
-			"coldbox-5-router-documentation.png"
+			"coldbox-5-router-documentation.png",
+			"docs"
 		];
 
 		// Cleanup + Init Build Directories
