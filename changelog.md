@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.1] - 2024-02-13
+
 ### Fixed
 
 - Missed branch identifier in build process
@@ -166,6 +168,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to DocBox styles
 
-[Unreleased]: https://github.com/Ortus-Solutions/DocBox/compare/v4.1.0...HEAD
+[Unreleased]: https://github.com/Ortus-Solutions/DocBox/compare/v4.1.1...HEAD
+
+[4.1.1]: https://github.com/Ortus-Solutions/DocBox/compare/v4.1.0...v4.1.1
 
 [4.1.0]: https://github.com/Ortus-Solutions/DocBox/compare/e6d838c31f224f6a162e95612762f8fa9ee87280...v4.1.0
