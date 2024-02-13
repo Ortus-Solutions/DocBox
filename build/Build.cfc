@@ -16,13 +16,9 @@ component {
 		// Source Excludes Not Added to final binary
 		variables.excludes = [
 			"build",
-			"node-modules",
-			"resources",
-			"test-harness",
-			"(package|package-lock).json",
-			"webpack.config.js",
+			"testbox",
+			"tests",
 			"server-.*\.json",
-			"docker-compose.yml",
 			"^\..*",
 			"coldbox-5-router-documentation.png"
 		];
