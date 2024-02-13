@@ -47,7 +47,7 @@ jobs:
       - name: Setup Environment Variables For Build Process
         id: current_version
         run: |
-          echo "PACKAGE_VERSION=`cat box.json | jq '.version' -r`" >> $GITHUB_ENV
+          echo "VERSION=`cat box.json | jq '.version' -r`" >> $GITHUB_ENV
           box package set version=@build.version@+@build.number@
           # master or snapshot
           echo "Github Ref is $GITHUB_REF"
@@ -66,7 +66,7 @@ jobs:
         if: env.SNAPSHOT == 'false'
         with:
           changelogPath: ./changelog.md
-          tag: v${{ env.PACKAGE_VERSION }}
+          tag: v${{ env.VERSION }}
 
       - name: Build ${{ env.MODULE_ID }}
         run: |
@@ -82,16 +82,16 @@ jobs:
         with:
           author_name: Github Actions
           author_email: info@ortussolutions.com
-          message: 'Finalized changelog for v${{ env.PACKAGE_VERSION }}'
+          message: 'Finalized changelog for v${{ env.VERSION }}'
           add: changelog.md
 
       - name: Tag Version
         uses: rickstaa/action-create-tag@v1.7.2
         if: env.SNAPSHOT == 'false'
         with:
-          tag: "v${{ env.PACKAGE_VERSION }}"
+          tag: "v${{ env.VERSION }}"
           force_push_tag: true
-          message: "Latest Release v${{ env.PACKAGE_VERSION }}"
+          message: "Latest Release v${{ env.VERSION }}"
 
       - name: Upload Build Artifacts
         if: success()
@@ -135,10 +135,10 @@ jobs:
         continue-on-error: true
         if: env.SNAPSHOT == 'false'
         with:
-          title: ${{ env.PACKAGE_VERSION }}
+          title: ${{ env.VERSION }}
           changelog: changelog.md
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: refs/tags/v${{ env.PACKAGE_VERSION }}
+          ref: refs/tags/v${{ env.VERSION }}
 
       - name: Inform Slack
         if: ${{ always() }}
