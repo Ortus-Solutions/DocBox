@@ -42,8 +42,8 @@ component {
 
 		// Create Mappings
 		fileSystemUtil.createMapping(
-			"coldbox",
-			variables.cwd & "test-harness/coldbox"
+			"docbox",
+			variables.cwd
 		);
 
 		return this;
@@ -55,11 +55,13 @@ component {
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
+	 * @branch The branch you are building
 	 */
 	function run(
 		required projectName,
 		version = "1.0.0",
-		buildID = createUUID()
+		buildID = createUUID(),
+		branch  = "development"
 	){
 		// Create project mapping
 		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
@@ -74,11 +76,8 @@ component {
 		// checksums
 		buildChecksums();
 
-		// Build latest changelog
-		latestChangelog();
-
 		// Finalize Message
-		print
+		variables.print
 			.line()
 			.boldMagentaLine( "Build Process is done! Enjoy your build!" )
 			.toConsole();
@@ -88,8 +87,14 @@ component {
 	 * Run the test suites
 	 */
 	function runTests(){
-		// Tests First, if they fail then exit
-		print.blueLine( "Testing the package, please wait..." ).toConsole();
+		variables.print
+			.line()
+			.boldGreenLine( "------------------------------------------------" )
+			.boldGreenLine( "Starting to execute your tests..." )
+			.boldGreenLine( "------------------------------------------------" )
+			.toConsole();
+
+		var sTime = getTickCount();
 
 		command( "testbox run" )
 			.params(
@@ -103,6 +108,13 @@ component {
 		// Check Exit Code?
 		if ( shell.getExitCode() ) {
 			return error( "Cannot continue building, tests failed!" );
+		} else {
+			variables.print
+				.line()
+				.boldGreenLine( "------------------------------------------------" )
+				.boldGreenLine( "All tests passed in #getTickCount() - sTime#ms! Ready to go, great job!" )
+				.boldGreenLine( "------------------------------------------------" )
+				.toConsole();
 		}
 	}
 
@@ -112,15 +124,17 @@ component {
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
+	 * @branch The branch you are building
 	 */
 	function buildSource(
 		required projectName,
 		version = "1.0.0",
-		buildID = createUUID()
+		buildID = createUUID(),
+		branch  = "development"
 	){
 
 		// Build Notice ID
-		print
+		variables.print
 			.line()
 			.boldMagentaLine(
 				"Building #arguments.projectName# v#arguments.version#"
@@ -187,13 +201,11 @@ component {
 		outputDir = ".tmp/apidocs"
 	){
 		ensureExportDir( argumentCollection = arguments );
-		directoryCreate( arguments.outputDir, true, true );
-
-		// Create project mapping
-		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
 		// Generate Docs
 		print.greenLine( "Generating API Docs, please wait..." ).toConsole();
+		directoryCreate( arguments.outputDir, true, true );
 
+		// Generate the docs
 		command( "docbox generate" )
 			.params(
 				"source"                = "models",
@@ -216,26 +228,6 @@ component {
 		);
 	}
 
-	/**
-	 * Build the latest changelog file: changelog-latest.md
-	 */
-	function latestChangelog(){
-		print.blueLine( "Building latest changelog..." ).toConsole();
-
-		if ( !fileExists( variables.cwd & "changelog.md" ) ) {
-			return error( "Cannot continue building, changelog.md file doesn't exist!" );
-		}
-
-		fileWrite(
-			variables.cwd & "changelog-latest.md",
-			fileRead( variables.cwd & "changelog.md" ).split( "----" )[ 2 ].trim() & chr( 13 ) & chr( 10 )
-		);
-
-		print
-			.greenLine( "Latest changelog file created at `changelog-latest.md`" )
-			.line()
-			.line( fileRead( variables.cwd & "changelog-latest.md" ) );
-	}
 
 	/********************************************* PRIVATE HELPERS *********************************************/
 
