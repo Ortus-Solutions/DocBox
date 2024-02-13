@@ -7,140 +7,155 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
-## 4.0.0
-
-### ⚠ BREAKING
-
-* Dropped support for Adobe 2016. Adobe doesn't support ACF 16 anymore, so neither do we.
-
-### 📦 NEW
-
-* Added support for Adobe 2021
-* Added support for `@myCustomTag` custom docblock tags on methods. (Already supported on components and properties, but missing on methods).
-* Added GitHub Actions CI for automated testing, format checking, releases and more
-
-### 🐛 FIX:
-
-* Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
-
-## 3.0.0
+## [Unreleased]
 
 ### Added
 
-* New `json` output strategy for machine-readable documentation
-* New `addStrategy()` method for multiple strategy support
+- Adobe 2023 Testing and Support
+- New Github Actions
+- New supporting files
+- New `build/Docs.cfc` task for building the documentation using itself, before we where getting away with it because there was a previous DocBox version. Now we need to build the docs with the current version of DocBox.
+
+### Fixed
+
+- Build Versions and changelog
+- Removal of `box.zip` in root from old scripts
+
+## [4.0.0] - 2023-08-03
+
+### BREAKING
+
+- Dropped support for Adobe 2016. Adobe doesn't support ACF 16 anymore, so neither do we.
+
+### NEW
+
+- Added support for Adobe 2021
+- Added support for `@myCustomTag` custom docblock tags on methods. (Already supported on components and properties, but missing on methods).
+- Added GitHub Actions CI for automated testing, format checking, releases and more
+
+### FIX
+
+- Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
+
+## [3.0.0]
+
+### Added
+
+- New `json` output strategy for machine-readable documentation
+- New `addStrategy()` method for multiple strategy support
 
 ### Changed
 
-* Can configure strategy with "alias" name, like `strategy="HTML"`.
+- Can configure strategy with "alias" name, like `strategy="HTML"`.
 
 ### Removed
 
-* Removed HTML as the default strategy. You will need to explicitly pass this to the constructor or to `docbox.addStrategy( "HTML", props )` to set your desired output format.
+- Removed HTML as the default strategy. You will need to explicitly pass this to the constructor or to `docbox.addStrategy( "HTML", props )` to set your desired output format.
 
 ### Fixed
 
-* Fixed failing XMI strategy
+- Fixed failing XMI strategy
 
 ----
 
-## 2.2.1
+## [2.2.1]
 
 ### Fixed
 
-* Bug on DocBox tracing errors, left over a couple of `()`
+- Bug on DocBox tracing errors, left over a couple of `()`
 
 ----
 
-## 2.2.0
+## [2.2.0]
 
 ### Added
 
-* Better output of trace commands for CLI integration
-* Added `@throws` annotation to function definitions
-* Added `@deprecated` annotation to function definitions
-
-----
-## 2.1.0
-
-### Fixed
-
-* Varscoping issue to help with COMMANDBOX-399
-* BUGFIX: Missing pound sign in ExpandPath(), added better wording for custom strategy path
-* Fix cleanPath without a leading slash with regex updates
+- Better output of trace commands for CLI integration
+- Added `@throws` annotation to function definitions
+- Added `@deprecated` annotation to function definitions
 
 ----
 
-## 2.0.7
+## [2.1.0]
 
 ### Fixed
 
-* Build process messed up folder structure. Basically 2.0.6 was unusable
+- Varscoping issue to help with COMMANDBOX-399
+- BUGFIX: Missing pound sign in ExpandPath(), added better wording for custom strategy path
+- Fix cleanPath without a leading slash with regex updates
 
 ----
 
-## 2.0.6
+## [2.0.7]
 
 ### Fixed
 
-* DOCBOX-1 - Extra slash breaks some links on S3-hosted docs
+- Build process messed up folder structure. Basically 2.0.6 was unusable
+
+----
+
+## [2.0.6]
+
+### Fixed
+
+- DOCBOX-1 - Extra slash breaks some links on S3-hosted docs
 
 ### Improved
 
-* Updated build process
+- Updated build process
 
 ### Added
 
-* Travis integration
+- Travis integration
 
 ----
 
-## 2.0.5
+## [2.0.5]
 
 ### Improved
 
-* Moved CommandBox command to its own repo
+- Moved CommandBox command to its own repo
 
 ----
 
-## 2.0.4
+## [2.0.4]
 
 ### Improved
 
-* Update package directory and location for CommandBox command
+- Update package directory and location for CommandBox command
 
 ----
 
-## 2.0.3
+## [2.0.3]
 
 ### Fixed
 
-* FireFox location bug
+- FireFox location bug
 
 ----
 
-## 2.0.2
+## [2.0.2]
 
 ### Fixed
 
-* Fixes on conversion to script
+- Fixes on conversion to script
 
 ### Improved
 
-* Updates on box.json for standalone installations
+- Updates on box.json for standalone installations
 
 ----
 
-## 2.0.1
+## [2.0.1]
 
 ### Fixed
 
-* Fixes for ACF
+- Fixes for ACF
 
 ----
 
-## 2.0.0
+## [2.0.0]
 
 ### Improved
 
-* Updated to DocBox styles
+- Updated to DocBox styles

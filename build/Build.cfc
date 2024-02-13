@@ -11,19 +11,14 @@ component {
 		variables.cwd          = getCWD().reReplace( "\.$", "" );
 		variables.artifactsDir = cwd & "/.artifacts";
 		variables.buildDir     = cwd & "/.tmp";
-		variables.apiDocsURL   = "http://localhost:60299/apidocs/";
 		variables.testRunner   = "http://localhost:60299/tests/runner.cfm";
 
 		// Source Excludes Not Added to final binary
 		variables.excludes = [
 			"build",
-			"node-modules",
-			"resources",
-			"test-harness",
-			"(package|package-lock).json",
-			"webpack.config.js",
+			"testbox",
+			"tests",
 			"server-.*\.json",
-			"docker-compose.yml",
 			"^\..*",
 			"coldbox-5-router-documentation.png"
 		];
@@ -41,25 +36,24 @@ component {
 		} );
 
 		// Create Mappings
-		fileSystemUtil.createMapping(
-			"coldbox",
-			variables.cwd & "test-harness/coldbox"
-		);
+		fileSystemUtil.createMapping( "docbox", variables.cwd );
 
 		return this;
 	}
 
 	/**
-	 * Run the build process: test, build source, docs, checksums
+	 * Run the build process: test, build source, checksums
 	 *
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
+	 * @branch The branch you are building
 	 */
 	function run(
 		required projectName,
 		version = "1.0.0",
-		buildID = createUUID()
+		buildID = createUUID(),
+		branch  = "development"
 	){
 		// Create project mapping
 		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
@@ -67,18 +61,11 @@ component {
 		// Build the source
 		buildSource( argumentCollection = arguments );
 
-		// Build Docs
-		arguments.outputDir = variables.buildDir & "/apidocs";
-		docs( argumentCollection = arguments );
-
 		// checksums
 		buildChecksums();
 
-		// Build latest changelog
-		latestChangelog();
-
 		// Finalize Message
-		print
+		variables.print
 			.line()
 			.boldMagentaLine( "Build Process is done! Enjoy your build!" )
 			.toConsole();
@@ -88,21 +75,34 @@ component {
 	 * Run the test suites
 	 */
 	function runTests(){
-		// Tests First, if they fail then exit
-		print.blueLine( "Testing the package, please wait..." ).toConsole();
+		variables.print
+			.line()
+			.boldGreenLine( "------------------------------------------------" )
+			.boldGreenLine( "Starting to execute your tests..." )
+			.boldGreenLine( "------------------------------------------------" )
+			.toConsole();
+
+		var sTime = getTickCount();
 
 		command( "testbox run" )
 			.params(
-				runner     = variables.testRunner,
-				verbose    = true,
-				outputFile = "#variables.cwd#/tests/results/test-results",
-				outputFormats="json,antjunit"
+				runner        = variables.testRunner,
+				verbose       = true,
+				outputFile    = "#variables.cwd#/tests/results/test-results",
+				outputFormats = "json,antjunit"
 			)
 			.run();
 
 		// Check Exit Code?
 		if ( shell.getExitCode() ) {
 			return error( "Cannot continue building, tests failed!" );
+		} else {
+			variables.print
+				.line()
+				.boldGreenLine( "------------------------------------------------" )
+				.boldGreenLine( "All tests passed in #getTickCount() - sTime#ms! Ready to go, great job!" )
+				.boldGreenLine( "------------------------------------------------" )
+				.toConsole();
 		}
 	}
 
@@ -112,19 +112,18 @@ component {
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
 	 * @buldID The build identifier
+	 * @branch The branch you are building
 	 */
 	function buildSource(
 		required projectName,
 		version = "1.0.0",
-		buildID = createUUID()
+		buildID = createUUID(),
+		branch  = "development"
 	){
-
 		// Build Notice ID
-		print
+		variables.print
 			.line()
-			.boldMagentaLine(
-				"Building #arguments.projectName# v#arguments.version#"
-			)
+			.boldMagentaLine( "Building #arguments.projectName# v#arguments.version#" )
 			.toConsole();
 
 		ensureExportDir( argumentCollection = arguments );
@@ -156,7 +155,18 @@ component {
 			.params(
 				path        = "/#variables.projectBuildDir#/**",
 				token       = "@build.version@",
-				replacement = arguments.version
+				replacement = arguments.version,
+				verbose     = true
+			)
+			.run();
+
+		print.greenLine( "Updating build identifier to [#arguments.buildID#-#arguments.branch#]..." ).toConsole();
+		command( "tokenReplace" )
+			.params(
+				path        = "/#variables.projectBuildDir#/**",
+				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
+				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot" ),
+				verbose     = true
 			)
 			.run();
 
@@ -176,65 +186,6 @@ component {
 			"#variables.projectBuildDir#/box.json",
 			variables.exportsDir
 		);
-	}
-
-	/**
-	 * Produce the API Docs
-	 */
-	function docs(
-		required projectName,
-		version   = "1.0.0",
-		outputDir = ".tmp/apidocs"
-	){
-		ensureExportDir( argumentCollection = arguments );
-		directoryCreate( arguments.outputDir, true, true );
-
-		// Create project mapping
-		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
-		// Generate Docs
-		print.greenLine( "Generating API Docs, please wait..." ).toConsole();
-
-		command( "docbox generate" )
-			.params(
-				"source"                = "models",
-				"mapping"               = "models",
-				"strategy-projectTitle" = "#arguments.projectName# v#arguments.version#",
-				"strategy-outputDir"    = arguments.outputDir
-			)
-			.run();
-
-		print.greenLine( "API Docs produced at #arguments.outputDir#" ).toConsole();
-
-		var destination = "#variables.exportsDir#/#projectName#-docs-#version#.zip";
-		print.greenLine( "Zipping apidocs to #destination#" ).toConsole();
-		cfzip(
-			action    = "zip",
-			file      = "#destination#",
-			source    = "#arguments.outputDir#",
-			overwrite = true,
-			recurse   = true
-		);
-	}
-
-	/**
-	 * Build the latest changelog file: changelog-latest.md
-	 */
-	function latestChangelog(){
-		print.blueLine( "Building latest changelog..." ).toConsole();
-
-		if ( !fileExists( variables.cwd & "changelog.md" ) ) {
-			return error( "Cannot continue building, changelog.md file doesn't exist!" );
-		}
-
-		fileWrite(
-			variables.cwd & "changelog-latest.md",
-			fileRead( variables.cwd & "changelog.md" ).split( "----" )[ 2 ].trim() & chr( 13 ) & chr( 10 )
-		);
-
-		print
-			.greenLine( "Latest changelog file created at `changelog-latest.md`" )
-			.line()
-			.line( fileRead( variables.cwd & "changelog-latest.md" ) );
 	}
 
 	/********************************************* PRIVATE HELPERS *********************************************/
@@ -308,13 +259,14 @@ component {
 	 */
 	private function ensureExportDir(
 		required projectName,
-		version   = "1.0.0"
+		version = "1.0.0"
 	){
-		if ( structKeyExists( variables, "exportsDir" ) && directoryExists( variables.exportsDir ) ){
+		if ( structKeyExists( variables, "exportsDir" ) && directoryExists( variables.exportsDir ) ) {
 			return;
 		}
 		// Prepare exports directory
 		variables.exportsDir = variables.artifactsDir & "/#projectName#/#arguments.version#";
 		directoryCreate( variables.exportsDir, true, true );
 	}
+
 }
