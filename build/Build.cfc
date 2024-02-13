@@ -11,7 +11,6 @@ component {
 		variables.cwd          = getCWD().reReplace( "\.$", "" );
 		variables.artifactsDir = cwd & "/.artifacts";
 		variables.buildDir     = cwd & "/.tmp";
-		variables.apiDocsURL   = "http://localhost:60299/apidocs/";
 		variables.testRunner   = "http://localhost:60299/tests/runner.cfm";
 
 		// Source Excludes Not Added to final binary
@@ -41,16 +40,13 @@ component {
 		} );
 
 		// Create Mappings
-		fileSystemUtil.createMapping(
-			"docbox",
-			variables.cwd
-		);
+		fileSystemUtil.createMapping( "docbox", variables.cwd );
 
 		return this;
 	}
 
 	/**
-	 * Run the build process: test, build source, docs, checksums
+	 * Run the build process: test, build source, checksums
 	 *
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
@@ -68,10 +64,6 @@ component {
 
 		// Build the source
 		buildSource( argumentCollection = arguments );
-
-		// Build Docs
-		arguments.outputDir = variables.buildDir & "/apidocs";
-		docs( argumentCollection = arguments );
 
 		// checksums
 		buildChecksums();
@@ -98,10 +90,10 @@ component {
 
 		command( "testbox run" )
 			.params(
-				runner     = variables.testRunner,
-				verbose    = true,
-				outputFile = "#variables.cwd#/tests/results/test-results",
-				outputFormats="json,antjunit"
+				runner        = variables.testRunner,
+				verbose       = true,
+				outputFile    = "#variables.cwd#/tests/results/test-results",
+				outputFormats = "json,antjunit"
 			)
 			.run();
 
@@ -132,13 +124,10 @@ component {
 		buildID = createUUID(),
 		branch  = "development"
 	){
-
 		// Build Notice ID
 		variables.print
 			.line()
-			.boldMagentaLine(
-				"Building #arguments.projectName# v#arguments.version#"
-			)
+			.boldMagentaLine( "Building #arguments.projectName# v#arguments.version#" )
 			.toConsole();
 
 		ensureExportDir( argumentCollection = arguments );
@@ -191,43 +180,6 @@ component {
 			variables.exportsDir
 		);
 	}
-
-	/**
-	 * Produce the API Docs
-	 */
-	function docs(
-		required projectName,
-		version   = "1.0.0",
-		outputDir = ".tmp/apidocs"
-	){
-		ensureExportDir( argumentCollection = arguments );
-		// Generate Docs
-		print.greenLine( "Generating API Docs, please wait..." ).toConsole();
-		directoryCreate( arguments.outputDir, true, true );
-
-		// Generate the docs
-		command( "docbox generate" )
-			.params(
-				"source"                = "models",
-				"mapping"               = "models",
-				"strategy-projectTitle" = "#arguments.projectName# v#arguments.version#",
-				"strategy-outputDir"    = arguments.outputDir
-			)
-			.run();
-
-		print.greenLine( "API Docs produced at #arguments.outputDir#" ).toConsole();
-
-		var destination = "#variables.exportsDir#/#projectName#-docs-#version#.zip";
-		print.greenLine( "Zipping apidocs to #destination#" ).toConsole();
-		cfzip(
-			action    = "zip",
-			file      = "#destination#",
-			source    = "#arguments.outputDir#",
-			overwrite = true,
-			recurse   = true
-		);
-	}
-
 
 	/********************************************* PRIVATE HELPERS *********************************************/
 
@@ -300,13 +252,14 @@ component {
 	 */
 	private function ensureExportDir(
 		required projectName,
-		version   = "1.0.0"
+		version = "1.0.0"
 	){
-		if ( structKeyExists( variables, "exportsDir" ) && directoryExists( variables.exportsDir ) ){
+		if ( structKeyExists( variables, "exportsDir" ) && directoryExists( variables.exportsDir ) ) {
 			return;
 		}
 		// Prepare exports directory
 		variables.exportsDir = variables.artifactsDir & "/#projectName#/#arguments.version#";
 		directoryCreate( variables.exportsDir, true, true );
 	}
+
 }

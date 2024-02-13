@@ -15,15 +15,14 @@ on:
 jobs:
   tests:
     uses: ./.github/workflows/tests.yml
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    secrets: inherit
 
   formatCheck:
     name: Checks Source Code Formatting
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: Ortus-Solutions/commandbox-action@v1.0.3
         with:

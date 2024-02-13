@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adobe 2023 Testing and Support
 - New Github Actions
 - New supporting files
+- New `build/Docs.cfc` task for building the documentation using itself, before we where getting away with it because there was a previous DocBox version. Now we need to build the docs with the current version of DocBox.
 
 ### Fixed
 
@@ -21,36 +22,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ BREAKING
 
-* Dropped support for Adobe 2016. Adobe doesn't support ACF 16 anymore, so neither do we.
+- Dropped support for Adobe 2016. Adobe doesn't support ACF 16 anymore, so neither do we.
 
 ### 📦 NEW
 
-* Added support for Adobe 2021
-* Added support for `@myCustomTag` custom docblock tags on methods. (Already supported on components and properties, but missing on methods).
-* Added GitHub Actions CI for automated testing, format checking, releases and more
+- Added support for Adobe 2021
+- Added support for `@myCustomTag` custom docblock tags on methods. (Already supported on components and properties, but missing on methods).
+- Added GitHub Actions CI for automated testing, format checking, releases and more
 
 ### 🐛 FIX
 
-* Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
+- Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
 
 ## [3.0.0]
 
 ### Added
 
-* New `json` output strategy for machine-readable documentation
-* New `addStrategy()` method for multiple strategy support
+- New `json` output strategy for machine-readable documentation
+- New `addStrategy()` method for multiple strategy support
 
 ### Changed
 
-* Can configure strategy with "alias" name, like `strategy="HTML"`.
+- Can configure strategy with "alias" name, like `strategy="HTML"`.
 
 ### Removed
 
-* Removed HTML as the default strategy. You will need to explicitly pass this to the constructor or to `docbox.addStrategy( "HTML", props )` to set your desired output format.
+- Removed HTML as the default strategy. You will need to explicitly pass this to the constructor or to `docbox.addStrategy( "HTML", props )` to set your desired output format.
 
 ### Fixed
 
-* Fixed failing XMI strategy
+- Fixed failing XMI strategy
 
 ----
 
@@ -58,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Bug on DocBox tracing errors, left over a couple of `()`
+- Bug on DocBox tracing errors, left over a couple of `()`
 
 ----
 
@@ -66,9 +67,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Better output of trace commands for CLI integration
-* Added `@throws` annotation to function definitions
-* Added `@deprecated` annotation to function definitions
+- Better output of trace commands for CLI integration
+- Added `@throws` annotation to function definitions
+- Added `@deprecated` annotation to function definitions
 
 ----
 
@@ -76,9 +77,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Varscoping issue to help with COMMANDBOX-399
-* BUGFIX: Missing pound sign in ExpandPath(), added better wording for custom strategy path
-* Fix cleanPath without a leading slash with regex updates
+- Varscoping issue to help with COMMANDBOX-399
+- BUGFIX: Missing pound sign in ExpandPath(), added better wording for custom strategy path
+- Fix cleanPath without a leading slash with regex updates
 
 ----
 
@@ -86,7 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Build process messed up folder structure. Basically 2.0.6 was unusable
+- Build process messed up folder structure. Basically 2.0.6 was unusable
 
 ----
 
@@ -94,15 +95,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* DOCBOX-1 - Extra slash breaks some links on S3-hosted docs
+- DOCBOX-1 - Extra slash breaks some links on S3-hosted docs
 
 ### Improved
 
-* Updated build process
+- Updated build process
 
 ### Added
 
-* Travis integration
+- Travis integration
 
 ----
 
@@ -110,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Improved
 
-* Moved CommandBox command to its own repo
+- Moved CommandBox command to its own repo
 
 ----
 
@@ -118,7 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Improved
 
-* Update package directory and location for CommandBox command
+- Update package directory and location for CommandBox command
 
 ----
 
@@ -126,7 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* FireFox location bug
+- FireFox location bug
 
 ----
 
@@ -134,11 +135,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Fixes on conversion to script
+- Fixes on conversion to script
 
 ### Improved
 
-* Updates on box.json for standalone installations
+- Updates on box.json for standalone installations
 
 ----
 
@@ -146,7 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Fixes for ACF
+- Fixes for ACF
 
 ----
 
@@ -154,4 +155,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Improved
 
-* Updated to DocBox styles
+- Updated to DocBox styles

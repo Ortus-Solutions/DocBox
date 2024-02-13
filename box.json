@@ -25,11 +25,10 @@
         "Brad Wood <brad@bradwood.com>"
     ],
     "dependencies":{
-		"commandbox-cfformat":"*",
-        "commandbox-docbox":"*"
+		"commandbox-cfformat":"*"
 	},
     "devDependencies":{
-        "testbox":"^4.1.0+384"
+        "testbox":"^5"
     },
     "installPaths":{
         "testbox":"testbox/"
@@ -42,10 +41,13 @@
         "coldbox-5-router-documentation.png"
     ],
     "scripts":{
+		"build":"task run taskFile=build/Build.cfc :projectName=docbox :version=`package show version`",
+		"build:docs" : "task run build/Docs.cfc",
+		"tests" : "task run taskFile=build/Build.cfc target=runTests",
         "release":"recipe build/release.boxr",
-        "format":"cfformat run --overwrite DocBox.cfc,strategy,tests",
-        "format:watch":"cfformat watch DocBox.cfc,strategy,tests ./.cfformat.json",
-        "format:check":"cfformat check DocBox.cfc,strategy,tests"
+        "format":"cfformat run --overwrite DocBox.cfc,build,strategy,tests",
+        "format:watch":"cfformat watch DocBox.cfc,build,strategy,tests ./.cfformat.json",
+        "format:check":"cfformat check DocBox.cfc,build,strategy,tests"
     },
     "testbox":{
         "runner":"http://localhost:60299/tests/runner.cfm"
