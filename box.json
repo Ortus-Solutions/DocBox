@@ -1,8 +1,8 @@
 {
     "name":"DocBox",
-    "version":"4.1.1",
+    "version":"4.2.1",
     "author":"Ortus Solutions, Corp",
-    "location":"http://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
+    "location":"https://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
     "homepage":"https://forgebox.io/view/docbox",
     "documentation":"https://docbox.ortusbooks.com/",
     "repository":{
