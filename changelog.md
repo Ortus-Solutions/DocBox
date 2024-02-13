@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build Versions and changelog
 - Removal of `box.zip` in root from old scripts
 
+## [4.0.0] - 2023-08-03
+
 ### BREAKING
 
 - Dropped support for Adobe 2016. Adobe doesn't support ACF 16 anymore, so neither do we.
@@ -34,12 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### FIX
 
 - Fixes support for Adobe 2018. (Mainly in the CommandBox strategy.)
-
-## [4.0.0] - 2023-08-03
-
-### Changed
-
-- Dropped Adobe 2016 support
 
 ## [3.0.0]
 
