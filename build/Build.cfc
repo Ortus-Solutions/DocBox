@@ -21,7 +21,7 @@ component {
 			"server-.*\.json",
 			"^\..*",
 			"coldbox-5-router-documentation.png",
-			"pages"
+			"docs"
 		];
 
 		// Cleanup + Init Build Directories
