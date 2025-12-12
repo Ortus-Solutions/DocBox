@@ -1,5 +1,7 @@
 <cfoutput>
 <cfset instance.class.root = RepeatString( '../', ListLen( arguments.package, ".") ) />
+<cfset annotations = server.keyExists( "boxlang" ) ? arguments.metadata.annotations : arguments.metadata>
+<cfset documentation = server.keyExists( "boxlang" ) ? arguments.metadata.documentation : arguments.metadata>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,19 +41,21 @@
 	</a>
 </div>
 
+<!--- Class + Modifiers --->
 <h2>
-<cfif arguments.metadata.type eq "interface">
-Interface
-<cfelse>
-	<cfif isAbstractClass( arguments.name, arguments.package )>
-	Abstract
+	<cfif arguments.metadata.type eq "interface">
+	Interface
+	<cfelse>
+		<cfif isAbstractClass( arguments.name, arguments.package )>
+		Abstract
+		</cfif>
+		Class
 	</cfif>
-	Class
-</cfif>
- #arguments.name#</h2>
+	#arguments.name#
+</h2>
 
+<!--- INHERITANCE COMPOSITION --->
 <cfset local.i = 0 />
-
 <cfset local.ls = createObject("java", "java.lang.System").getProperty("line.separator") />
 <cfset local.buffer = createObject("java", "java.lang.StringBuilder").init() />
 <cfset local.thisClass = arguments.package & "." & arguments.name/>
@@ -103,6 +107,7 @@ Interface
 	</cfif>
 </cfif>
 
+<!--- All subclasses / subinterfaces --->
 <cfif arguments.qSubclass.recordCount>
 <div class="card mb-3">
 	<div class="card-header"><strong><cfif arguments.metadata.type eq "component">Direct Known Subclasses<cfelse>All Known Subinterfaces</cfif>:</strong></div>
@@ -115,43 +120,44 @@ Interface
 </div>
 </cfif>
 
-<cfif StructKeyExists(arguments.metadata, "hint")>
+<!--- Documentation --->
+<cfif documentation.keyExists( "hint" ) AND len( documentation.hint )>
 <div id="class-hint">
-	<p>#arguments.metadata.hint#</p>
+	<p>#documentation.hint#</p>
 </div>
 </cfif>
 
-<!-- Clas Attributes -->
+<!-- Class Attributes -->
 <div class="card mb-3 border-info">
-	<div class="card-header bg-info text-white"><strong>Class Attributes:</strong></div>
+	<div class="card-header bg-info text-white">
+		<strong>Class Attributes:</strong></div>
 		<div class="card-body">
-		<cfset local.cfcAttributesCount = 0>
-		<cfloop collection="#arguments.metadata#" item="local.cfcmeta">
-		<cfif isSimpleValue( arguments.metadata[ local.cfcmeta ] ) AND
-			  !listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.cfcmeta ) >
-		<cfset local.cfcAttributesCount++>
-		<li class="badge bg-danger label-annotations">
-			#lcase( local.cfcmeta )#
-				<cfif len( arguments.metadata[ local.cfcmeta ] )>
-				: #arguments.metadata[ local.cfcmeta ]#
-				</cfif>
-			</li>
-			&nbsp;
+			<cfset local.attributesCount = 0>
+			<cfloop collection="#annotations#" item="local.classMeta">
+			<cfif isSimpleValue( annotations[ local.classMeta ] ) AND
+					!listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
+				<cfset local.attributesCount++>
+				<li class="badge bg-danger label-annotations">
+					#lcase( local.classMeta )#
+						<cfif len( annotations[ local.classMeta ] )>
+						: #annotations[ local.classMeta ]#
+						</cfif>
+				</li>
+				&nbsp;
 			</cfif>
-		</cfloop>
-		<cfif local.cfcAttributesCount eq 0>
-			<span class="badge bg-warning text-dark"><em>None</em></span>
-		</cfif>
+			</cfloop>
+			<cfif local.attributesCount eq 0>
+				<span class="badge bg-warning text-dark"><em>None</em></span>
+			</cfif>
+		</div>
 	</div>
 </div>
 
 <cfscript>
 	instance.class.cache = StructNew();
 	local.localFunctions = StructNew();
-
 	local.qFunctions = buildFunctionMetaData(arguments.metadata);
 	local.qProperties = buildPropertyMetadata(arguments.metadata);
-
 	local.qInit = getMetaSubQuery(local.qFunctions, "UPPER(name)='INIT'");
 </cfscript>
 
@@ -184,40 +190,52 @@ Interface
 	</tr>
 
 	<cfloop query="local.qproperties">
-	<cfset local.prop = local.qproperties.metadata />
-	<cfset local.localproperties[ local.prop.name ] = 1 />
+	<cfset local.propMeta = local.qproperties.metadata />
+	<cfset local.propDocumentation = server.keyExists( "boxlang" ) ? local.propMeta.documentation : local.propMeta />
+	<cfset local.propAnnotations = server.keyExists( "boxlang" ) ? local.propMeta.annotations : local.propMeta />
+	<cfset local.localproperties[ local.propMeta.name ] = 1 />
 	<tr>
+		<!--- Property Type --->
 		<td align="right" valign="top" width="1%">
-			<code>#writetypelink(local.prop.type, arguments.package, arguments.qmetadata, local.prop)#</code>
+			<code>#writetypelink( local.propMeta.type, arguments.package, arguments.qmetadata, local.propMeta )#</code>
 		</td>
+		<!--- Property Name and Description --->
 		<td>
-			#writeMethodLink(arguments.name, arguments.package, local.prop, arguments.qMetaData)#
+			#writeMethodLink( arguments.name, arguments.package, local.propMeta, arguments.qMetaData )#
 			<br>
-			<cfif StructKeyExists( local.prop, "hint" ) AND Len( local.prop.hint )>
-			<!-- only grab the first sentence of the hint -->
-			#repeatString( '&nbsp;', 5)# #listGetAt( local.prop.hint, 1, chr(13)&chr(10)&'.' )#.
+			<cfif local.propDocumentation.keyExists( "hint" ) AND len( local.propDocumentation.hint )>
+				<!-- only grab the first sentence of the hint -->
+				#repeatString( '&nbsp;', 5)# #listGetAt( local.propDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
 			</cfif>
 			<br><br>
-		<ul>
-		<cfloop collection="#local.prop#" item="local.propmeta">
-			<cfif not listFindNoCase( "hint,name,default,type,serializable,required,annotations,documentation", local.propmeta ) >
-			<li class="badge bg-secondary label-annotations">#lcase( local.propmeta )# = #local.prop[ local.propmeta ]#</li>
-			</cfif>
-		</cfloop>
-		</ul>		</td>
+			<!--- Property Annotations --->
+			<ul>
+			<cfloop collection="#local.propAnnotations#" item="local.propAnnotationKey">
+				<cfif not listFindNoCase( "hint,name,nameAsKey,default,type,serializable,required", local.propAnnotationKey ) >
+				<li class="badge bg-secondary label-annotations">#lcase( local.propAnnotationKey )# = #local.propAnnotations[ local.propAnnotationKey ]#</li>
+				</cfif>
+			</cfloop>
+			</ul>
+		</td>
+
+		<!--- Property Default Value --->
 		<td align="right" valign="top" width="1%">
-			<cfif len( local.prop.default )>
-				<code>#local.prop.default#</code>
+			<cfif len( local.propAnnotations.default )>
+				<code>#local.propAnnotations.default#</code>
 			</cfif>
 		</td>
+
+		<!--- Property Serializable --->
 		<td align="right" valign="top" width="1%">
 			<code>
-				#local.prop.serializable#
+				#local.propAnnotations.serializable ?: true#
 			</code>
 		</td>
+
+		<!--- Property Required --->
 		<td align="right" valign="top" width="1%">
 			<code>
-				#local.prop.required#
+				#local.propAnnotations.required ?: false#
 			</code>
 		</td>
 	</tr>
@@ -228,7 +246,9 @@ Interface
 
 <cfif local.qInit.recordCount>
 	<cfset local.init = local.qInit.metadata />
-	<cfset local.localFunctions[local.init.name] = 1 />
+	<cfset local.initDocumentation = server.keyExists( "boxlang" ) ? local.init.documentation : local.init />
+	<cfset local.initAnnotations = server.keyExists( "boxlang" ) ? local.init.annotations : local.init />
+	<cfset local.localFunctions[ local.init.name ] = 1 />
 	<!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 	<a name="constructor_summary"><!-- --></a>
@@ -247,18 +267,18 @@ Interface
 			<td>
 				#writemethodlink(arguments.name, arguments.package, local.init, arguments.qmetadata)#
 				<br>
-				<cfif StructKeyExists(local.init, "hint") and len( local.init.hint ) >
-				#repeatString( '&nbsp;', 5)# #listGetAt( local.init.hint, 1, chr(13)&chr(10)&'.' )#.
+				<cfif StructKeyExists(local.initDocumentation, "hint") and len( local.initDocumentation.hint ) >
+				#repeatString( '&nbsp;', 5)# #listGetAt( local.initDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
 				</cfif>
 			</td>
 		</tr>
 	</table>
 </cfif>
 
-<cfset local.qFunctions = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'") />
-
-<cfif local.qFunctions.recordCount>
 <!-- ========== METHOD SUMMARY =========== -->
+
+<cfset local.qFunctions = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'") />
+<cfif local.qFunctions.recordCount>
 
 <a name="method_summary"><!-- --></a>
 <table class="table table-bordered table-hover">
@@ -270,6 +290,8 @@ Interface
 
 	<cfloop query="local.qFunctions">
 	<cfset local.func = local.qFunctions.metadata />
+	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
 	<cfset local.localFunctions[ local.func.name ] = 1 />
 	<tr>
 		<td align="right" valign="top" width="1%">
@@ -278,8 +300,8 @@ Interface
 		<td>
 			#writemethodlink(arguments.name, arguments.package, local.func, arguments.qmetadata)#
 			<br>
-			<cfif StructKeyExists(local.func, "hint") AND Len(local.func.hint)>
-			#repeatString( '&nbsp;', 5)##listGetAt( local.func.hint, 1, chr(13)&chr(10)&'.' )#.
+			<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+			#repeatString( '&nbsp;', 5)##listGetAt( local.funcDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
 			</cfif>
 		</td>
 	</tr>
@@ -294,7 +316,7 @@ Interface
 	<cfscript>
 		if(local.localmeta.type eq "interface")
 		{
-			local.localmeta = local.localmeta.extends[structKeyList(local.localmeta.extends)];
+			local.localmeta = local.localmeta.extends[ structKeyList( local.localmeta.extends ) ];
 		}
 		else
 		{
@@ -302,7 +324,7 @@ Interface
 		}
     </cfscript>
 
-	<cfset local.qFunctions = buildFunctionMetaData(local.localmeta)>
+	<cfset local.qFunctions = buildFunctionMetaData( local.localmeta )>
 
 	&nbsp;
 	<a name="methods_inherited_from_class_#local.localmeta.name#"><!-- --></a>
@@ -318,12 +340,14 @@ Interface
 				<cfset i = 1 />
 				<cfloop query="local.qFunctions">
 					<cfset local.func = local.qFunctions.metadata />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
 					<cfif NOT StructKeyExists(local.localFunctions, local.func.name)>
-					<cfif i++ neq 1>
-						<cfset local.buffer.append(", ") />
-					</cfif>
-					<cfset local.buffer.append('<a href="#instance.class.root##replace(getPackage(local.localmeta.name), '.', '/', 'all')#/#getObjectName(local.localmeta.name)#.html###local.func.name#()">#local.func.name#</a>') />
-					<cfset local.localFunctions[local.func.name] = 1 />
+						<cfif i++ neq 1>
+							<cfset local.buffer.append(", ") />
+						</cfif>
+						<cfset local.buffer.append('<a href="#instance.class.root##replace(getPackage(local.localmeta.name), '.', '/', 'all')#/#getObjectName(local.localmeta.name)#.html###local.func.name#()">#local.func.name#</a>') />
+						<cfset local.localFunctions[local.func.name] = 1 />
 					</cfif>
 				</cfloop>
 
@@ -340,7 +364,7 @@ Interface
 <hr>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
-<cfif StructKeyExists(local, "init")>
+<cfif StructKeyExists( local, "init" )>
 	<a name="constructor_detail"><!-- --></a>
 	<table class="table table-bordered">
 		<tr class="info">
@@ -356,15 +380,16 @@ Interface
 
 	<br><br>
 
-	<cfif StructKeyExists(local.init, "hint")>
-	<p>#local.init.hint#</p>
+	<cfif StructKeyExists( local.initDocumentation, "hint" )>
+	<p>#local.initDocumentation.hint#</p>
 	</cfif>
 
-	<cfif StructKeyExists(local.init, "parameters") AND ArrayLen(local.init.parameters)>
+	<cfif StructKeyExists( local.init, "parameters" ) AND ArrayLen( local.init.parameters )>
 	<dl>
 		<dt><strong>Parameters:</strong></dt>
 		<cfloop array="#local.init.parameters#" index="local.param">
-			<dd><code>#local.param.name#</code><cfif StructKeyExists(local.param, "hint")> - #local.param.hint#</cfif></dd>
+			<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
+			<dd><code>#local.param.name#</code><cfif StructKeyExists(local.paramDocumentation, "hint")> - #local.paramDocumentation.hint#</cfif></dd>
 		</cfloop>
 	</dl>
 	</cfif>
@@ -384,20 +409,22 @@ Interface
 
 	<cfloop query="local.qProperties">
 		<cfset local.prop = local.qProperties.metadata />
+		<cfset local.propDocumentation = server.keyExists( "boxlang" ) ? local.prop.documentation : local.prop />
+		<cfset local.propAnnotations = server.keyExists( "boxlang" ) ? local.prop.annotations : local.prop />
 		<a name="#local.prop.name#()"><!-- --></a>
 		<h3>#local.prop.name#</h3>
 
 		<kbd>
 			property #writeTypeLink(local.prop.type, arguments.package, arguments.qMetaData, local.prop)#
 			#writeMethodLink(arguments.name, arguments.package, local.prop, arguments.qMetaData, false)#
-			<cfif structKeyExists( local.prop, "default" ) and len( local.prop.default )>
-			= [#local.prop.default#]
+			<cfif structKeyExists( local.propAnnotations, "default" ) and len( local.propAnnotations.default )>
+			= [#local.propAnnotations.default#]
 			</cfif>
 		</kbd>
 
 		<br><br>
-		<cfif StructKeyExists(local.prop, "hint") AND Len(local.prop.hint)>
-			<p>#local.prop.hint#</p>
+		<cfif StructKeyExists(local.propDocumentation, "hint") AND Len(local.propDocumentation.hint)>
+			<p>#local.propDocumentation.hint#</p>
 		</cfif>
 
 		<dl>
@@ -417,7 +444,6 @@ Interface
 
 <cfset local.qFunctions = buildFunctionMetaData(arguments.metadata) />
 <cfset local.qFunctions = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'") />
-
 <cfif local.qFunctions.recordCount>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -433,10 +459,12 @@ Interface
 
 <cfloop query="local.qFunctions">
 	<cfset local.func = local.qFunctions.metadata />
+	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
 	<a name="#local.func.name#()"><!-- --></a>
 	<h3>
 		#local.func.name#
-		<cfif structKeyExists( local.func, "deprecated" )>
+		<cfif structKeyExists( local.funcAnnotations, "deprecated" )>
 			<span class="badge bg-danger">Deprecated</span>
 		</cfif>
 	</h3>
@@ -445,18 +473,18 @@ Interface
 
 	<br><br>
 
-	<cfif StructKeyExists(local.func, "hint") AND Len(local.func.hint)>
-		<p>#local.func.hint#</p>
+	<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+		<p>#local.funcDocumentation.hint#</p>
 	</cfif>
 
-	<cfif StructKeyExists(local.func, "deprecated") AND isSimplevalue(local.func.deprecated)>
+	<cfif StructKeyExists(local.funcAnnotations, "deprecated") AND isSimplevalue(local.funcAnnotations.deprecated)>
 		<dl>
 			<dt><span class="badge bg-danger"><strong>Deprecated:</strong></span></dt>
-			<dd>#local.func.deprecated#</dd>
+			<dd>#local.funcAnnotations.deprecated#</dd>
 		</dl>
 	</cfif>
 
-	<cfif arguments.metadata.type eq "component">
+	<cfif listFindNoCase( "component,class", arguments.metadata.type )>
 		<cfset local.specified = findSpecifiedBy(arguments.metaData, local.func.name) />
 		<cfif Len(local.specified)>
 			<dl>
@@ -492,7 +520,8 @@ Interface
 		<dl>
 		<dt><strong>Parameters:</strong></dt>
 		<cfloop array="#local.func.parameters#" index="local.param">
-		<dd><code>#local.param.name#</code><cfif StructKeyExists(local.param, "hint")> - #local.param.hint#</cfif></dd>
+			<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
+		<dd><code>#local.param.name#</code><cfif StructKeyExists(local.paramDocumentation, "hint")> - #local.paramDocumentation.hint#</cfif></dd>
 		</cfloop>
 		</dl>
 	</cfif>
@@ -504,10 +533,10 @@ Interface
 		</dl>
 	</cfif>
 
-	<cfif StructKeyExists(local.func, "throws") AND isSimplevalue(local.func.throws)>
+	<cfif StructKeyExists(local.funcAnnotations, "throws") AND isSimplevalue(local.funcAnnotations.throws)>
 		<dl>
 			<dt><strong>Throws:</strong></dt>
-			<dd>#local.func.throws#</dd>
+			<dd>#local.funcAnnotations.throws#</dd>
 		</dl>
 	</cfif>
 

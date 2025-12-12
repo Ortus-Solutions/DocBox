@@ -1,11 +1,12 @@
 /**
- * @author Luis Majano <lmajano@ortussolutions.com>
  *
  * Core DocBox documentation class that takes care of generating docs for you.
  * You can initialize the object with a strategy and strategy properties or with nothing at all.
  * You can then generate the docs according to 1 or more output strategies via the <code>generate()</code> method.
  * <hr>
  * <small><em>Copyright 2015 Ortus Solutions, Corp <a href="www.ortussolutions.com">www.ortussolutions.com</a></em></small>
+ *
+ * @author Luis Majano <lmajano@ortussolutions.com>
  */
 component accessors="true" {
 
