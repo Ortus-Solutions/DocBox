@@ -5,13 +5,13 @@
 
 <!-- ========= START OF NAVBAR ======= -->
 <a name="navbar_top"></a>
-<a href="#skip-navbar_top" title="skip navigation links"></a>	
+<a href="#skip-navbar_top" title="skip navigation links"></a>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" role="navigation">
 	<div class="container-fluid">
-    
+
 		<a class="navbar-brand" href="#"><strong><cfoutput>#attributes.projecttitle#</cfoutput></strong></a>
-		
+
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#class-navigation" aria-controls="class-navigation" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -61,7 +61,7 @@
 	    </div>
 
 	</div>
-</nav>	
+</nav>
 
 <a name="skip-navbar_top"></a>
 <!-- ========= END OF NAVBAR ========= -->
