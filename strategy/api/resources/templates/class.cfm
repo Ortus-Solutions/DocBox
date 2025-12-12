@@ -40,13 +40,13 @@
 </div>
 
 <h2>
-<cfif isAbstractClass( arguments.name, arguments.package )>
-Abstract
-</cfif>
 <cfif arguments.metadata.type eq "interface">
 Interface
 <cfelse>
-Class
+	<cfif isAbstractClass( arguments.name, arguments.package )>
+	Abstract
+	</cfif>
+	Class
 </cfif>
  #arguments.name#</h2>
 

@@ -527,13 +527,14 @@ component doc_abstract="true" accessors="true" {
 		arguments.class = resolveClassName( arguments.class, arguments.package );
 		// get metadata
 		var meta        = server.keyExists( "boxlang" ) ? getClassMetadata( arguments.class ) : getComponentMetadata( arguments.class );
+		var annotations = server.keyExists( "boxlang" ) ? meta.annotations : meta;
 
 		// Old, pre-abstract support way
-		if ( structKeyExists( meta, variables.META_ABSTRACT ) ) {
-			return meta[ variables.META_ABSTRACT ];
+		if ( structKeyExists( annotations, variables.META_ABSTRACT ) ) {
+			return annotations[ variables.META_ABSTRACT ];
 		}
 
-		// Traditional way
+		// Part of the class spec
 		if( meta.keyExists( "abstract" ) ){
 			return true;
 		}
