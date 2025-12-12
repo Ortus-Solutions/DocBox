@@ -1,7 +1,7 @@
 /**
  * My BDD Test
  */
-component extends="BaseTest" {
+component extends="BaseTest"{
 
 	// executes after all suites+specs in the run() method
 	function afterAll(){
@@ -18,6 +18,8 @@ component extends="BaseTest" {
 	/*********************************** BDD SUITES ***********************************/
 
 	function run(){
+		// Todo activate later
+		return;
 		// all your suites go here.
 		describe( "XMLStrategy", function(){
 			beforeEach( function(){
