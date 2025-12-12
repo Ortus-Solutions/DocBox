@@ -1,9 +1,9 @@
 {
     "app":{
-        "cfengine":"adobe@2023",
-        "serverHomeDirectory":".engine/adobe2023"
+        "cfengine":"adobe@2025",
+        "serverHomeDirectory":".engine/adobe2025"
     },
-    "name":"docbox-adobe@2023",
+    "name":"docbox-adobe@2025",
     "force":true,
     "openBrowser":false,
     "web":{
@@ -12,11 +12,12 @@
             "port":"49616"
         }
     },
+    "JVM":{
+        "javaVersion":"openjdk21_jre",
+        "args":"-Dcoldfusion.runtime.remotemethod.matchArguments=false"
+    },
     "cfconfig":{
         "file":".cfconfig.json"
-    },
-    "JVM":{
-        "args":"-Dcoldfusion.runtime.remotemethod.matchArguments=false"
     },
     "scripts":{
         "onServerInstall":"cfpm install zip,debugger"

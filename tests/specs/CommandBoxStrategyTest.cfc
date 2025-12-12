@@ -126,4 +126,3 @@ component extends="BaseTest" {
 	}
 
 }
-

@@ -1,0 +1,26 @@
+{
+    "name":"docbox-boxlang@1",
+    "force":true,
+    "openBrowser":false,
+    "web":{
+        "directoryBrowsing":true,
+        "http":{
+            "port":"49616"
+        }
+    },
+    "app":{
+        "cfengine":"boxlang@1",
+        "serverHomeDirectory":".engine/boxlang1"
+    },
+    "JVM":{
+        "javaVersion":"openjdk21_jre",
+        "args":"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8888"
+    },
+    "cfconfig":{
+        "file":".cfconfig.json"
+    },
+    "env":{
+        "BOXLANG_DEBUG":true
+    },
+    "scripts":{}
+}

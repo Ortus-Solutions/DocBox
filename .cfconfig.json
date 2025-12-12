@@ -1,0 +1,15 @@
+{
+	"adminPassword" : "testbox",
+	"debuggingEnabled": true,
+	"debuggingReportExecutionTimes":false,
+	"debuggingShowDatabase":true,
+	"debuggingShowException":true,
+	"debuggingShowGeneral":true,
+	"disableInternalCFJavaComponents":false,
+	"inspectTemplate":"always",
+	"maxCFThreads":100,
+	"robustExceptionEnabled":true,
+	"systemErr":"System",
+    "systemOut":"System",
+	"whitespaceManagement":"white-space-pref"
+}

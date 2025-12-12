@@ -1,5 +1,5 @@
 {
-    "name":"docbox-lucee@5",
+    "name":"docbox-lucee@6",
     "force":true,
     "openbrowser":"false",
     "web":{
@@ -9,8 +9,8 @@
         }
     },
     "app":{
-        "cfengine":"lucee@5",
-        "serverHomeDirectory":".engine/lucee5"
+        "cfengine":"lucee@6",
+        "serverHomeDirectory":".engine/lucee6"
     },
     "cfconfig":{
         "file":".cfconfig.json"

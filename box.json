@@ -11,9 +11,9 @@
     },
     "bugs":"https://ortussolutions.atlassian.net/projects/DOCBOX",
     "slug":"docbox",
-    "shortDescription":"CFC API Documentation generator for ColdFusion (CFML) using JavaDoc conventions",
+    "shortDescription":"API Documentation generator for BoxLang and CFML classes using JavaDoc conventions",
     "type":"projects",
-    "keywords":"apidocs, coldfusion docs, javadocs, cfc docs",
+    "keywords":"apidocs, docs, javadocs",
     "organization":"ortus-solutions",
     "license":[
         {
@@ -28,7 +28,7 @@
         "commandbox-cfformat":"*"
     },
     "devDependencies":{
-        "testbox":"^5"
+        "testbox":"*"
     },
     "installPaths":{
         "testbox":"testbox/"
