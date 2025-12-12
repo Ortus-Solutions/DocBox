@@ -25,9 +25,7 @@
 		local.targetTree = ( listLen( command, ' ' ) == 1 ? variables.topLevel : variables.namespaces );
 
 		// Set the package link on the root
-		local.targetTree[ "$link" ] = packageLink;
-
-		// Navigate/create nested namespace structure
+		local.targetTree[ "$link" ] = local.packagelink;		// Navigate/create nested namespace structure
 		local.currentNode = local.targetTree;
 		for( local.namespacePart in local.namespaceParts ) {
 			if( !structKeyExists( local.currentNode, local.namespacePart ) ) {
@@ -45,8 +43,8 @@
 
 		// Add link and searchList for non-help commands
 		if( row.name != 'help') {
-			local.currentNode[ row.name ][ "$command" ].link = link;
-			local.currentNode[ row.name ][ "$command" ].searchList = searchList;
+			local.currentNode[ row.name ][ "$command" ].link = local.link;
+			local.currentNode[ row.name ][ "$command" ].searchList = local.searchList;
 		}
 	}
 	// writeDump( variables.topLevel );abort;

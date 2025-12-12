@@ -107,7 +107,7 @@ component extends="BaseTest" {
 				expect( fileExists( testFile ) ).toBeTrue();
 
 				var fileContents = fileRead( testFile );
-
+				debug( fileContents )
 				expect( fileContents )
 					.toInclude(
 						"Creates documentation for CFCs JavaDoc style via DocBox",
