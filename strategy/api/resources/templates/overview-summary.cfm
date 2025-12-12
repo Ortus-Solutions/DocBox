@@ -18,9 +18,9 @@
 
 <div class="table-responsive">
 <table class="table table-hover table-striped">
-	<thead>
-		<tr class="info">
-			<th colspan="1"><strong>Package Overview</strong></th>
+	<thead class="table-info">
+		<tr>
+			<th colspan="1" class="fs-4"><strong>Package Overview</strong></th>
 		</tr>
 	</thead>
 	<cfloop query="arguments.qPackages">

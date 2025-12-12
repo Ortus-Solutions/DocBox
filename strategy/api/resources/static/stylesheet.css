@@ -3,7 +3,7 @@ body {
 	margin: 10px;
 	font-family: "ubuntu", Helvetica, arial, sans-serif;
 }
-body.withNavbar{ margin-top: 70px;}
+body.withNavbar{ margin-top: 80px; padding-top: 20px;}
 a{ color: #006699; text-decoration: none; }
 hr { color: #c0c0c0; border: 1px dotted #c0c0c0 }
 pre{ margin-top: 10px; margin-bottom: 10px;}

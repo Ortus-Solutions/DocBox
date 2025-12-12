@@ -22,13 +22,13 @@
 	<div class="table-responsive">
 	<cfif arguments.qInterfaces.recordCount>
 		<table class="table table-striped table-hover table-bordered">
-			<thead>
-				<tr class="info">
-					<th align="left" colspan="2"><font size="+2">
-					<b>interface summary</b></font></th>
+			<thead class="table-info">
+				<tr>
+					<th colspan="2" class="fs-4">
+					<strong>Interface Summary</strong></th>
 				</tr>
 			</thead>
-
+			<tbody>
 			<cfloop query="arguments.qinterfaces">
 				<tr>
 					<td width="15%"><b><a href="#name#.html" title="class in #package#">#name#</a></b></td>
@@ -40,19 +40,19 @@
 					</td>
 				</tr>
 			</cfloop>
-
+			</tbody>
 		</table>
 	</cfif>
 
 	<cfif arguments.qClasses.recordCount>
 		<table class="table table-striped table-hover table-bordered">
-			<thead>
-				<tr class="info">
-					<th align="left" colspan="2"><font size="+2">
-					<b>class summary</b></font></th>
+			<thead class="table-info">
+				<tr>
+					<th colspan="2" class="fs-4">
+					<strong>Class Summary</strong></th>
 				</tr>
 			</thead>
-
+			<tbody>
 			<cfloop query="arguments.qclasses">
 				<tr>
 					<td width="15%"><b><a href="#name#.html" title="class in #package#">#name#</a></b></td>
@@ -64,7 +64,7 @@
 					</td>
 				</tr>
 			</cfloop>
-
+			</tbody>
 		</table>
 	</cfif>
 	</div>
