@@ -370,4 +370,16 @@ component accessors="true" {
 	function testFunction( param1, param2 ){
 	}
 
+	static void function staticVoidFunction(){
+
+	}
+
+	static boolean function calculate( required numeric num1, num2 = 0 ){
+		return num1 GT num2;
+	}
+
+	static array function getArrayExample(){
+		return [ 1, 2, 3 ];
+	}
+
 }

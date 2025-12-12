@@ -46,15 +46,14 @@
 <div class="mb-4">
 	<h1 class="display-5">
 		<cfif arguments.metadata.type eq "interface">
-		<i class="bi bi-info-circle text-info"></i> Interface
+			<span class="text-info">🔌</span> Interface #arguments.name#
 		<cfelse>
 			<cfif isAbstractClass( arguments.name, arguments.package )>
-			<i class="bi bi-file-earmark-code text-warning"></i> Abstract Class
+				📄 #arguments.name# <span class="badge bg-warning text-dark ms-2">Abstract</span>
 			<cfelse>
-			<i class="bi bi-file-earmark-code text-primary"></i> Class
+				📦 #arguments.name#
 			</cfif>
 		</cfif>
-		#arguments.name#
 	</h1>
 </div>
 
@@ -373,78 +372,89 @@
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <cfif StructKeyExists( local, "init" )>
 	<a name="constructor_detail"><!-- --></a>
-	<table class="table table-bordered">
-		<tr class="info">
-			<th colspan="1" align="left">
-				<strong>Constructor Detail</strong>
-			</th>
-		</tr>
-	</table>
+	<div class="card mb-4">
+		<div class="card-header bg-light border-bottom">
+			<h4 class="mb-0">🔨 Constructor Detail</h4>
+		</div>
+		<div class="card-body">
+			<a name="#local.init.name#()"><!-- --></a>
+			<h4 class="text-primary mb-3">#local.init.name#</h4>
+			
+			<div class="method-signature mb-3">
+				<code class="language-java">#local.init.access# #writeMethodLink(arguments.name, arguments.package, local.init, arguments.qMetaData, false)#</code>
+			</div>
 
-	<a name="#local.init.name#()"><!-- --></a><h3>
-	#local.init.name#</h3>
-	<kbd>#local.init.access# #writeMethodLink(arguments.name, arguments.package, local.init, arguments.qMetaData, false)#</kbd>
+			<cfif StructKeyExists( local.initDocumentation, "hint" )>
+				<div class="method-description mb-3">
+					<p class="lead">#local.initDocumentation.hint#</p>
+				</div>
+			</cfif>
 
-	<br><br>
-
-	<cfif StructKeyExists( local.initDocumentation, "hint" )>
-	<p>#local.initDocumentation.hint#</p>
-	</cfif>
-
-	<cfif StructKeyExists( local.init, "parameters" ) AND ArrayLen( local.init.parameters )>
-	<dl>
-		<dt><strong>Parameters:</strong></dt>
-		<cfloop array="#local.init.parameters#" index="local.param">
-			<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
-			<dd><code>#local.param.name#</code><cfif StructKeyExists(local.paramDocumentation, "hint")> - #local.paramDocumentation.hint#</cfif></dd>
-		</cfloop>
-	</dl>
-	</cfif>
-	<hr>
+			<cfif StructKeyExists( local.init, "parameters" ) AND ArrayLen( local.init.parameters )>
+				<div class="method-parameters">
+					<h6 class="text-muted mb-2">📋 Parameters:</h6>
+					<ul class="list-unstyled ms-3">
+					<cfloop array="#local.init.parameters#" index="local.param">
+						<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
+						<li class="mb-2">
+							<code class="text-primary">#local.param.name#</code>
+							<cfif StructKeyExists(local.paramDocumentation, "hint")>
+								<span class="text-muted">- #local.paramDocumentation.hint#</span>
+							</cfif>
+						</li>
+					</cfloop>
+					</ul>
+				</div>
+			</cfif>
+		</div>
+	</div>
 </cfif>
 
 <!-- ============ PROPERTY DETAIL ========== -->
 <cfif local.qProperties.recordCount>
 	<a name="property_detail"><!-- --></a>
-	<table class="table table-bordered">
-		<tr class="info">
-			<th colspan="1" align="left">
-				<strong>Property Detail</strong>
-			</th>
-		</tr>
-	</table>
+	<div class="card mb-4">
+		<div class="card-header bg-light border-bottom">
+			<h4 class="mb-0">📦 Property Detail</h4>
+		</div>
+		<div class="card-body">
+		<cfloop query="local.qProperties">
+			<cfset local.prop = local.qProperties.metadata />
+			<cfset local.propDocumentation = server.keyExists( "boxlang" ) ? local.prop.documentation : local.prop />
+			<cfset local.propAnnotations = server.keyExists( "boxlang" ) ? local.prop.annotations : local.prop />
+			
+			<div class="property-detail-item <cfif local.qProperties.currentRow lt local.qProperties.recordCount>mb-4 pb-4 border-bottom</cfif>">
+				<a name="#local.prop.name#()"><!-- --></a>
+				<h4 class="text-primary mb-3">#local.prop.name#</h4>
 
-	<cfloop query="local.qProperties">
-		<cfset local.prop = local.qProperties.metadata />
-		<cfset local.propDocumentation = server.keyExists( "boxlang" ) ? local.prop.documentation : local.prop />
-		<cfset local.propAnnotations = server.keyExists( "boxlang" ) ? local.prop.annotations : local.prop />
-		<a name="#local.prop.name#()"><!-- --></a>
-		<h3>#local.prop.name#</h3>
+				<div class="property-signature mb-3">
+					<code class="language-java">property #writeTypeLink(local.prop.type, arguments.package, arguments.qMetaData, local.prop)#
+					#writeMethodLink(arguments.name, arguments.package, local.prop, arguments.qMetaData, false)#<cfif structKeyExists( local.propAnnotations, "default" ) and len( local.propAnnotations.default )> = [#local.propAnnotations.default#]</cfif></code>
+				</div>
 
-		<kbd>
-			property #writeTypeLink(local.prop.type, arguments.package, arguments.qMetaData, local.prop)#
-			#writeMethodLink(arguments.name, arguments.package, local.prop, arguments.qMetaData, false)#
-			<cfif structKeyExists( local.propAnnotations, "default" ) and len( local.propAnnotations.default )>
-			= [#local.propAnnotations.default#]
-			</cfif>
-		</kbd>
+				<cfif StructKeyExists(local.propDocumentation, "hint") AND Len(local.propDocumentation.hint)>
+					<div class="property-description mb-3">
+						<p class="lead">#local.propDocumentation.hint#</p>
+					</div>
+				</cfif>
 
-		<br><br>
-		<cfif StructKeyExists(local.propDocumentation, "hint") AND Len(local.propDocumentation.hint)>
-			<p>#local.propDocumentation.hint#</p>
-		</cfif>
-
-		<dl>
-		<dt><strong>Attributes:</strong></dt>
-		<cfloop collection="#local.prop#" item="local.param">
-			<cfif not listFindNoCase( "name,type,hint,default,annotations,documentation", local.param )>
-			<dd><code>#lcase( local.param )#</code> - #local.prop[ local.param ]#</dd>
-			</cfif>
+				<div class="property-attributes">
+					<h6 class="text-muted mb-2">🏷️ Attributes:</h6>
+					<div class="ms-3">
+					<cfloop collection="#local.prop#" item="local.param">
+						<cfif not listFindNoCase( "name,type,hint,default,annotations,documentation", local.param )>
+							<div class="mb-1">
+								<code class="text-primary">#lcase( local.param )#</code>
+								<span class="text-muted">- #local.prop[ local.param ]#</span>
+							</div>
+						</cfif>
+					</cfloop>
+					</div>
+				</div>
+			</div>
 		</cfloop>
-		</dl>
-
-		<hr>
-	</cfloop>
+		</div>
+	</div>
 </cfif>
 
 
@@ -456,110 +466,136 @@
 <!-- ============ METHOD DETAIL ========== -->
 
 <a name="method_detail"><!-- --></a>
-<table class="table table-bordered">
-	<tr class="info">
-		<th colspan="1" align="left">
-			<strong>Method Detail</strong>
-		</th>
-	</tr>
-</table>
+<div class="card mb-4">
+	<div class="card-header bg-light border-bottom">
+		<h4 class="mb-0">⚙️ Method Detail</h4>
+	</div>
+	<div class="card-body">
 
 <cfloop query="local.qFunctions">
 	<cfset local.func = local.qFunctions.metadata />
 	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
 	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
-	<a name="#local.func.name#()"><!-- --></a>
-	<h3>
-		#local.func.name#
-		<cfif structKeyExists( local.funcAnnotations, "deprecated" )>
-			<span class="badge bg-danger">Deprecated</span>
+	
+	<div class="method-detail-item <cfif local.qFunctions.currentRow lt local.qFunctions.recordCount>mb-4 pb-4 border-bottom</cfif>">
+		<a name="#local.func.name#()"><!-- --></a>
+		<h4 class="text-primary mb-2">
+			#local.func.name#
+			<cfif structKeyExists( local.funcAnnotations, "deprecated" )>
+				<span class="badge bg-danger ms-2">Deprecated</span>
+			</cfif>
+		</h4>
+
+		<div class="method-signature mb-3">
+			<code class="language-java">#local.func.access# #writeTypeLink(local.func.returnType, arguments.package, arguments.qMetaData, local.func)# #writeMethodLink(arguments.name, arguments.package, local.func, arguments.qMetaData, false)#</code>
+		</div>
+
+		<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+			<div class="method-description mb-3">
+				<p class="lead">#local.funcDocumentation.hint#</p>
+			</div>
 		</cfif>
-	</h3>
 
-	<kbd>#local.func.access# #writeTypeLink(local.func.returnType, arguments.package, arguments.qMetaData, local.func)# #writeMethodLink(arguments.name, arguments.package, local.func, arguments.qMetaData, false)#</kbd>
-
-	<br><br>
-
-	<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
-		<p>#local.funcDocumentation.hint#</p>
-	</cfif>
-
-	<cfif StructKeyExists(local.funcAnnotations, "deprecated") AND isSimplevalue(local.funcAnnotations.deprecated)>
-		<dl>
-			<dt><span class="badge bg-danger"><strong>Deprecated:</strong></span></dt>
-			<dd>#local.funcAnnotations.deprecated#</dd>
-		</dl>
-	</cfif>
-
-	<cfif listFindNoCase( "component,class", arguments.metadata.type )>
-		<cfset local.specified = findSpecifiedBy(arguments.metaData, local.func.name) />
-		<cfif Len(local.specified)>
-			<dl>
-				<dt><strong>Specified by:</strong></dt>
-				<dd>
-				<code>
-				<a href="#instance.class.root##replace(getPackage(local.specified), '.', '/', 'all')#/#getObjectName(local.specified)#.html###local.func.name#()">#local.func.name#</a></code>
-				in interface
-				<code>
-					#writeClassLink(getPackage(local.specified), getObjectName(local.specified), arguments.qMetaData, 'short')#
-				</code>
-				</dd>
-			</dl>
+		<cfif StructKeyExists(local.funcAnnotations, "deprecated") AND isSimplevalue(local.funcAnnotations.deprecated)>
+			<div class="alert alert-danger mb-3">
+				<h6 class="alert-heading mb-1">⚠️ Deprecated</h6>
+				<p class="mb-0">#local.funcAnnotations.deprecated#</p>
+			</div>
 		</cfif>
-	</cfif>
 
-	<cfset local.overWrites = findOverwrite(arguments.metaData, local.func.name) />
-	<cfif Len(local.overWrites)>
-		<dl>
-			<dt><strong>Overrides:</strong></dt>
-			<dd>
-			<code>
-			<a href="#instance.class.root##replace(getPackage(local.overWrites), '.', '/', 'all')#/#getObjectName(local.overWrites)#.html###local.func.name#()">#local.func.name#</a></code>
-			in class
-			<code>
-				#writeClassLink(getPackage(local.overWrites), getObjectName(local.overWrites), arguments.qMetaData, 'short')#
-			</code>
-			</dd>
-		</dl>
-	</cfif>
+		<cfif listFindNoCase( "component,class", arguments.metadata.type )>
+			<cfset local.specified = findSpecifiedBy(arguments.metaData, local.func.name) />
+			<cfif Len(local.specified)>
+				<div class="mb-3">
+					<h6 class="text-muted mb-2">🔗 Specified by:</h6>
+					<div class="ms-3">
+						<code><a href="#instance.class.root##replace(getPackage(local.specified), '.', '/', 'all')#/#getObjectName(local.specified)#.html###local.func.name#()">#local.func.name#</a></code>
+						in interface
+						<code>#writeClassLink(getPackage(local.specified), getObjectName(local.specified), arguments.qMetaData, 'short')#</code>
+					</div>
+				</div>
+			</cfif>
+		</cfif>
 
-	<cfif StructKeyExists(local.func, "parameters") AND ArrayLen(local.func.parameters)>
-		<dl>
-		<dt><strong>Parameters:</strong></dt>
-		<cfloop array="#local.func.parameters#" index="local.param">
-			<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
-			<dd><code>#local.param.name#</code><cfif StructKeyExists(local.paramDocumentation, "hint")> - #local.paramDocumentation.hint#</cfif></dd>
-		</cfloop>
-		</dl>
-	</cfif>
+		<cfset local.overWrites = findOverwrite(arguments.metaData, local.func.name) />
+		<cfif Len(local.overWrites)>
+			<div class="mb-3">
+				<h6 class="text-muted mb-2">⬆️ Overrides:</h6>
+				<div class="ms-3">
+					<code><a href="#instance.class.root##replace(getPackage(local.overWrites), '.', '/', 'all')#/#getObjectName(local.overWrites)#.html###local.func.name#()">#local.func.name#</a></code>
+					in class
+					<code>#writeClassLink(getPackage(local.overWrites), getObjectName(local.overWrites), arguments.qMetaData, 'short')#</code>
+				</div>
+			</div>
+		</cfif>
 
-	<cfif StructKeyExists(local.func, "return") AND isSimplevalue(local.func.return)>
-		<dl>
-			<dt><strong>Returns:</strong></dt>
-			<dd>#local.func.return#</dd>
-		</dl>
-	</cfif>
+		<cfif StructKeyExists(local.func, "parameters") AND ArrayLen(local.func.parameters)>
+			<div class="mb-3">
+				<h6 class="text-muted mb-2">📋 Parameters:</h6>
+				<ul class="list-unstyled ms-3">
+				<cfloop array="#local.func.parameters#" index="local.param">
+					<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
+					<li class="mb-2">
+						<code class="text-primary">#local.param.name#</code>
+						<cfif StructKeyExists(local.paramDocumentation, "hint")>
+							<span class="text-muted">- #local.paramDocumentation.hint#</span>
+						</cfif>
+					</li>
+				</cfloop>
+				</ul>
+			</div>
+		</cfif>
 
-	<cfif StructKeyExists(local.funcAnnotations, "throws") AND isSimplevalue(local.funcAnnotations.throws)>
-		<dl>
-			<dt><strong>Throws:</strong></dt>
-			<dd>#local.funcAnnotations.throws#</dd>
-		</dl>
-	</cfif>
+		<cfif StructKeyExists(local.func, "return") AND isSimplevalue(local.func.return)>
+			<div class="mb-3">
+				<h6 class="text-muted mb-2">↩️ Returns:</h6>
+				<div class="ms-3">
+					<p class="mb-0">#local.func.return#</p>
+				</div>
+			</div>
+		</cfif>
 
-	<ul class="list-group">
+		<cfif StructKeyExists(local.funcAnnotations, "throws") AND isSimplevalue(local.funcAnnotations.throws)>
+			<div class="mb-3">
+				<h6 class="text-muted mb-2">💥 Throws:</h6>
+				<div class="ms-3">
+					<code class="text-danger">#local.funcAnnotations.throws#</code>
+				</div>
+			</div>
+		</cfif>
+
+		<cfset local.hasCustomAnnotations = false />
 		<cfloop collection="#local.funcAnnotations#" item="keyName">
 			<cfif not listFindNoCase(
 				"hint,name,nameAsKey,deprecated,access,type,parameters,return,throws,required,returnformat,returntype,output,modifier,owner,default,closure,serializable,description",
 				keyName ) && isSimpleValue( local.funcAnnotations[ keyName ] ) >
-			<li class="list-group-item"><span class="badge bg-secondary label-annotations">#lcase( keyName )#</span> #local.funcAnnotations[ keyName ]#</li>
+				<cfset local.hasCustomAnnotations = true />
+				<cfbreak />
 			</cfif>
 		</cfloop>
-	</ul>
-
-	</dl>
-	<hr>
+		
+		<cfif local.hasCustomAnnotations>
+			<div class="method-annotations">
+				<h6 class="text-muted mb-2">🏷️ Custom Annotations:</h6>
+				<div class="ms-3">
+				<cfloop collection="#local.funcAnnotations#" item="keyName">
+					<cfif not listFindNoCase(
+						"hint,name,nameAsKey,deprecated,access,type,parameters,return,throws,required,returnformat,returntype,output,modifier,owner,default,closure,serializable,description",
+						keyName ) && isSimpleValue( local.funcAnnotations[ keyName ] ) >
+						<div class="mb-1">
+							<span class="badge bg-secondary">#lcase( keyName )#</span>
+							<span class="text-muted">#local.funcAnnotations[ keyName ]#</span>
+						</div>
+					</cfif>
+				</cfloop>
+				</div>
+			</div>
+		</cfif>
+	</div>
 </cfloop>
+
+	</div>
+</div>
 </cfif>
 
 </div><!-- end container-fluid -->
