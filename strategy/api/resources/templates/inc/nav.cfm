@@ -53,8 +53,8 @@
 	      	</ul>
 
 			<ul class="navbar-nav">
-				<li class="nav-item"><cfoutput><a class="nav-link" href="#root#index.html?#attributes.file#.html" target="_top">
-					<i class="bi bi-arrows-fullscreen"></i> Frames
+				<li class="nav-item"><cfoutput><a class="nav-link" href="#root & attributes.file#.html" target="_blank">
+					<i class="bi bi-box-arrow-up-right"></i> No Frames
 					</a></cfoutput>
 				</li>
 			</ul>
