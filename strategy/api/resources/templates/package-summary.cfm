@@ -15,17 +15,19 @@
 				package = "#arguments.package#"
 				file="#replace(arguments.package, '.', '/', 'all')#/package-summary"
 				>
-	<h2>
-	<span class="badge bg-success">#arguments.package#</span>
-	</h2>
+	<div class="container-fluid">
+		<div class="package-badge">
+			<i class="bi bi-folder2-open"></i> #arguments.package#
+		</div>
 
 	<div class="table-responsive">
 	<cfif arguments.qInterfaces.recordCount>
-		<table class="table table-striped table-hover table-bordered">
-			<thead class="table-info">
+		<div class="card mb-4">
+		<table class="table table-hover mb-0">
+			<thead class="table-light">
 				<tr>
-					<th colspan="2" class="fs-4">
-					<strong>Interface Summary</strong></th>
+					<th colspan="2" class="fs-5 py-3">
+					<i class="bi bi-info-circle text-primary"></i> <strong>Interface Summary</strong></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -42,14 +44,16 @@
 			</cfloop>
 			</tbody>
 		</table>
+		</div>
 	</cfif>
 
 	<cfif arguments.qClasses.recordCount>
-		<table class="table table-striped table-hover table-bordered">
-			<thead class="table-info">
+		<div class="card mb-4">
+		<table class="table table-hover mb-0">
+			<thead class="table-light">
 				<tr>
-					<th colspan="2" class="fs-4">
-					<strong>Class Summary</strong></th>
+					<th colspan="2" class="fs-5 py-3">
+					<i class="bi bi-file-earmark-code text-primary"></i> <strong>Class Summary</strong></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -66,8 +70,10 @@
 			</cfloop>
 			</tbody>
 		</table>
+		</div>
 	</cfif>
 	</div>
+</div>
 
 </body>
 </html>

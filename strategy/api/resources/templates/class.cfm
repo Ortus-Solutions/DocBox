@@ -32,27 +32,31 @@
 			>
 
 <!-- ======== start of class data ======== -->
+<div class="container-fluid">
 <a name="class"><!-- --></a>
 
-<!-- Package -->
-<div class="float-end">
-	<a href="package-summary.html" title="Package: #arguments.package#">
-		<span class="badge bg-success">#arguments.package#</span>
+<!-- Package Badge -->
+<div class="mb-3">
+	<a href="package-summary.html" class="package-badge text-decoration-none">
+		<i class="bi bi-folder2-open"></i> #arguments.package#
 	</a>
 </div>
 
-<!--- Class + Modifiers --->
-<h2>
-	<cfif arguments.metadata.type eq "interface">
-	Interface
-	<cfelse>
-		<cfif isAbstractClass( arguments.name, arguments.package )>
-		Abstract
+<!--- Class Header --->
+<div class="mb-4">
+	<h1 class="display-5">
+		<cfif arguments.metadata.type eq "interface">
+		<i class="bi bi-info-circle text-info"></i> Interface
+		<cfelse>
+			<cfif isAbstractClass( arguments.name, arguments.package )>
+			<i class="bi bi-file-earmark-code text-warning"></i> Abstract Class
+			<cfelse>
+			<i class="bi bi-file-earmark-code text-primary"></i> Class
+			</cfif>
 		</cfif>
-		Class
-	</cfif>
-	#arguments.name#
-</h2>
+		#arguments.name#
+	</h1>
+</div>
 
 <!--- INHERITANCE COMPOSITION --->
 <cfset local.i = 0 />
@@ -130,28 +134,22 @@
 </cfif>
 
 <!-- Class Attributes -->
-<div class="card mb-3 border-info">
-	<div class="card-header bg-info text-white">
-		<strong>Class Attributes:</strong></div>
-		<div class="card-body">
-			<cfset local.attributesCount = 0>
-			<cfloop collection="#annotations#" item="local.classMeta">
-			<cfif isSimpleValue( annotations[ local.classMeta ] ) AND
-					!listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
-				<cfset local.attributesCount++>
-				<li class="badge bg-danger label-annotations">
-					#lcase( local.classMeta )#
-						<cfif len( annotations[ local.classMeta ] )>
-						: #annotations[ local.classMeta ]#
-						</cfif>
-				</li>
-				&nbsp;
-			</cfif>
-			</cfloop>
-			<cfif local.attributesCount eq 0>
-				<span class="badge bg-warning text-dark"><em>None</em></span>
-			</cfif>
-		</div>
+<div class="class-attributes mb-4">
+	<h5 class="mb-3"><i class="bi bi-tags"></i> <strong>Class Attributes</strong></h5>
+	<div>
+		<cfset local.attributesCount = 0>
+		<cfloop collection="#annotations#" item="local.classMeta">
+		<cfif isSimpleValue( annotations[ local.classMeta ] ) AND
+				!listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
+			<cfset local.attributesCount++>
+			<span class="badge bg-light text-dark border">
+				<strong>#lcase( local.classMeta )#</strong><cfif len( annotations[ local.classMeta ] )>: #annotations[ local.classMeta ]#</cfif>
+			</span>
+		</cfif>
+		</cfloop>
+		<cfif local.attributesCount eq 0>
+			<span class="badge bg-light text-muted border"><em>None</em></span>
+		</cfif>
 	</div>
 </div>
 
@@ -167,83 +165,78 @@
 <!-- ========== METHOD SUMMARY =========== -->
 
 <a name="property_summary"><!-- --></a>
-<table class="table table-bordered table-hover">
-	<tr class="info">
-		<th align="left" colspan="5">
-			<strong>Property Summary</strong>
-		</th>
-	</tr>
-	<tr class="info">
-		<th align="left">
-			<strong>type</strong>
-		</th>
-		<th align="left">
-			<strong>property</strong>
-		</th>
-		<th align="left">
-			<strong>default</strong>
-		</th>
-		<th align="left">
-			<strong>serializable</strong>
-		</th>
-		<th align="left">
-			<strong>required</strong>
-		</th>
-	</tr>
+<div class="card mb-4">
+	<table class="table table-hover mb-0">
+		<thead class="table-light">
+		<tr>
+			<th colspan="5" class="fs-5 py-3">
+				<i class="bi bi-box text-primary"></i> <strong>Property Summary</strong>
+			</th>
+		</tr>
+		<tr class="table-secondary">
+			<th><strong>Type</strong></th>
+			<th><strong>Property</strong></th>
+			<th><strong>Default</strong></th>
+			<th><strong>Serializable</strong></th>
+			<th><strong>Required</strong></th>
+		</tr>
+		</thead>
+		<tbody>
 
-	<cfloop query="local.qproperties">
-	<cfset local.propMeta = local.qproperties.metadata />
-	<cfset local.propDocumentation = server.keyExists( "boxlang" ) ? local.propMeta.documentation : local.propMeta />
-	<cfset local.propAnnotations = server.keyExists( "boxlang" ) ? local.propMeta.annotations : local.propMeta />
-	<cfset local.localproperties[ local.propMeta.name ] = 1 />
-	<tr>
-		<!--- Property Type --->
-		<td align="right" valign="top" width="1%">
-			<code>#writetypelink( local.propMeta.type, arguments.package, arguments.qmetadata, local.propMeta )#</code>
-		</td>
-		<!--- Property Name and Description --->
-		<td>
-			#writeMethodLink( arguments.name, arguments.package, local.propMeta, arguments.qMetaData )#
-			<br>
-			<cfif local.propDocumentation.keyExists( "hint" ) AND len( local.propDocumentation.hint )>
-				<!-- only grab the first sentence of the hint -->
-				#repeatString( '&nbsp;', 5)# #listGetAt( local.propDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
-			</cfif>
-			<br><br>
-			<!--- Property Annotations --->
-			<ul>
-			<cfloop collection="#local.propAnnotations#" item="local.propAnnotationKey">
-				<cfif not listFindNoCase( "hint,name,nameAsKey,default,type,serializable,required", local.propAnnotationKey ) >
-				<li class="badge bg-secondary label-annotations">#lcase( local.propAnnotationKey )# = #local.propAnnotations[ local.propAnnotationKey ]#</li>
+		<cfloop query="local.qproperties">
+		<cfset local.propMeta = local.qproperties.metadata />
+		<cfset local.propDocumentation = server.keyExists( "boxlang" ) ? local.propMeta.documentation : local.propMeta />
+		<cfset local.propAnnotations = server.keyExists( "boxlang" ) ? local.propMeta.annotations : local.propMeta />
+		<cfset local.localproperties[ local.propMeta.name ] = 1 />
+		<tr>
+			<!--- Property Type --->
+			<td align="right" valign="top" width="1%">
+				<code>#writetypelink( local.propMeta.type, arguments.package, arguments.qmetadata, local.propMeta )#</code>
+			</td>
+			<!--- Property Name and Description --->
+			<td>
+				#writeMethodLink( arguments.name, arguments.package, local.propMeta, arguments.qMetaData )#
+				<br>
+				<cfif local.propDocumentation.keyExists( "hint" ) AND len( local.propDocumentation.hint )>
+					<!-- only grab the first sentence of the hint -->
+					#repeatString( '&nbsp;', 5)# #listGetAt( local.propDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
 				</cfif>
-			</cfloop>
-			</ul>
-		</td>
+				<br><br>
+				<!--- Property Annotations --->
+				<ul>
+				<cfloop collection="#local.propAnnotations#" item="local.propAnnotationKey">
+					<cfif not listFindNoCase( "hint,name,nameAsKey,default,type,serializable,required", local.propAnnotationKey ) >
+					<li class="badge bg-secondary label-annotations">#lcase( local.propAnnotationKey )# = #local.propAnnotations[ local.propAnnotationKey ]#</li>
+					</cfif>
+				</cfloop>
+				</ul>
+			</td>
 
-		<!--- Property Default Value --->
-		<td align="right" valign="top" width="1%">
-			<cfif len( local.propAnnotations.default )>
-				<code>#local.propAnnotations.default#</code>
-			</cfif>
-		</td>
+			<!--- Property Default Value --->
+			<td align="right" valign="top" width="1%">
+				<cfif len( local.propAnnotations.default )>
+					<code>#local.propAnnotations.default#</code>
+				</cfif>
+			</td>
 
-		<!--- Property Serializable --->
-		<td align="right" valign="top" width="1%">
-			<code>
-				#local.propAnnotations.serializable ?: true#
-			</code>
-		</td>
+			<!--- Property Serializable --->
+			<td align="right" valign="top" width="1%">
+				<code>
+					#local.propAnnotations.serializable ?: true#
+				</code>
+			</td>
 
-		<!--- Property Required --->
-		<td align="right" valign="top" width="1%">
-			<code>
-				#local.propAnnotations.required ?: false#
-			</code>
-		</td>
-	</tr>
-	</cfloop>
-	</tr>
-</table>
+			<!--- Property Required --->
+			<td align="right" valign="top" width="1%">
+				<code>
+					#local.propAnnotations.required ?: false#
+				</code>
+			</td>
+		</tr>
+		</cfloop>
+		</tr>
+	</table>
+</div>
 </cfif>
 
 <cfif local.qInit.recordCount>
@@ -254,27 +247,33 @@
 	<!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 	<a name="constructor_summary"><!-- --></a>
-	<table class="table table-bordered table-hover">
-		<tr class="info">
-			<th align="left" colspan="2">
-				<strong>Constructor Summary</strong>
-			</th>
-		</tr>
-		<tr>
-			<cfif local.init.access neq "public">
-				<td align="right" valign="top" width="1%">
-					<code>#local.init.access# </code>
-				</td>
-			</cfif>
-			<td>
-				#writemethodlink(arguments.name, arguments.package, local.init, arguments.qmetadata)#
-				<br>
-				<cfif StructKeyExists(local.initDocumentation, "hint") and len( local.initDocumentation.hint ) >
-				#repeatString( '&nbsp;', 5)# #listGetAt( local.initDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+	<div class="card mb-4">
+		<table class="table table-hover mb-0">
+			<thead class="table-light">
+			<tr>
+				<th colspan="2" class="fs-5 py-3">
+					<i class="bi bi-hammer text-primary"></i> <strong>Constructor Summary</strong>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<cfif local.init.access neq "public">
+					<td align="right" valign="top" width="1%">
+						<code>#local.init.access# </code>
+					</td>
 				</cfif>
-			</td>
-		</tr>
-	</table>
+				<td>
+					#writemethodlink(arguments.name, arguments.package, local.init, arguments.qmetadata)#
+					<br>
+					<cfif StructKeyExists(local.initDocumentation, "hint") and len( local.initDocumentation.hint ) >
+					#repeatString( '&nbsp;', 5)# #listGetAt( local.initDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+					</cfif>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
 </cfif>
 
 <!-- ========== METHOD SUMMARY =========== -->
@@ -283,12 +282,16 @@
 <cfif local.qFunctions.recordCount>
 
 <a name="method_summary"><!-- --></a>
-<table class="table table-bordered table-hover">
-	<tr class="info">
-		<th align="left" colspan="2">
-			<strong>Method Summary</strong>
+<div class="card mb-4">
+<table class="table table-hover mb-0">
+	<thead class="table-light">
+	<tr>
+		<th colspan="2" class="fs-5 py-3">
+			<i class="bi bi-gear text-primary"></i> <strong>Method Summary</strong>
 		</th>
 	</tr>
+	</thead>
+	<tbody>
 
 	<cfloop query="local.qFunctions">
 	<cfset local.func = local.qFunctions.metadata />
@@ -308,7 +311,9 @@
 		</td>
 	</tr>
 	</cfloop>
+	</tbody>
 </table>
+</div>
 
 </cfif>
 
@@ -557,6 +562,7 @@
 </cfloop>
 </cfif>
 
+</div><!-- end container-fluid -->
 
 </body>
 </html>

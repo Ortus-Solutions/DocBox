@@ -16,19 +16,33 @@
 			file="overview-summary"
 			>
 
+<div class="container-fluid">
+	<div class="mb-4">
+		<h1 class="display-6"><i class="bi bi-grid-3x3-gap"></i> API Documentation</h1>
+		<p class="lead text-muted">Browse all packages and classes</p>
+	</div>
+
+<div class="card">
 <div class="table-responsive">
-<table class="table table-hover table-striped">
-	<thead class="table-info">
+<table class="table table-hover mb-0">
+	<thead class="table-light">
 		<tr>
-			<th colspan="1" class="fs-4"><strong>Package Overview</strong></th>
+			<th class="fs-5 py-3"><i class="bi bi-folder2"></i> <strong>Package Overview</strong></th>
 		</tr>
 	</thead>
+	<tbody>
 	<cfloop query="arguments.qPackages">
 	<tr>
-		<td width="20%"><b><a href="#replace( arguments.qPackages.package, ".", "/", "all")#/package-summary.html">#arguments.qPackages.package#</a></b></td>
+		<td class="py-3">
+			<i class="bi bi-folder2-open text-success"></i>
+			<a href="#replace( arguments.qPackages.package, ".", "/", "all")#/package-summary.html" class="fw-semibold">#arguments.qPackages.package#</a>
+		</td>
 	</tr>
 	</cfloop>
+	</tbody>
 </table>
+</div>
+</div>
 </div>
 
 </body>

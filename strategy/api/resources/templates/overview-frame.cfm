@@ -43,11 +43,12 @@
 	<link rel="stylesheet" href="jstree/themes/default/style.min.css" />
 </head>
 
-<body>
-	<h3><strong>#arguments.projecttitle#</strong></h3>
-
-	<!--- Search box --->
-	<input type="text" id="classSearch" placeholder="Search..."><br><br>
+<body class="frame-sidebar">
+	<div class="mb-3">
+		<h5 class="text-primary mb-3"><i class="bi bi-book"></i> #arguments.projecttitle#</h5>
+		<!--- Search box --->
+		<input type="text" id="classSearch" placeholder="🔍 Search classes..." class="form-control form-control-sm">
+	</div>
 	<!--- Container div for tree --->
 	<div id="classTree">
 		<ul>
@@ -62,6 +63,9 @@
 			// Initialize tree
 			$('##classTree')
 				.jstree({
+					"core" : {
+						"expand_selected_onload" : true
+					},
 					// Shortcut types to control icons
 				    "types" : {
 				      "package" : {
@@ -108,6 +112,15 @@
 				    },
 				    "plugins" : [ "types", "search", "sort" ]
 				  })
+				.on("ready.jstree", function (e, data) {
+					// Expand first 2 levels on load
+					var depth = 2;
+					data.instance.get_container().find('li').each(function() {
+						if (data.instance.get_path(this).length < depth) {
+							data.instance.open_node(this);
+						}
+					});
+				})
 				.on("changed.jstree", function (e, data) {
 					var obj = data.instance.get_node(data.selected[0]).li_attr;
 					if( obj.linkhref ) {
