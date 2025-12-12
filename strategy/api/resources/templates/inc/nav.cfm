@@ -7,56 +7,54 @@
 <a name="navbar_top"></a>
 <a href="#skip-navbar_top" title="skip navigation links"></a>	
 
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" role="navigation">
 	<div class="container-fluid">
     
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#class-navigation">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="#"><strong><cfoutput>#attributes.projecttitle#</cfoutput></strong></a>
-		</div>
+		<a class="navbar-brand" href="#"><strong><cfoutput>#attributes.projecttitle#</cfoutput></strong></a>
+		
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#class-navigation" aria-controls="class-navigation" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
 
 	    <div class="collapse navbar-collapse" id="class-navigation">
-	    	<ul class="nav navbar-nav">
+	    	<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<cfif attributes.page eq "overview">
-					<li class="active"><a href="#"><i class="glyphicon glyphicon-plane"></i> overview</a></li>
+					<li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><i class="bi bi-airplane"></i> Overview</a></li>
 				<cfelse>
 					<cfoutput>
-					<li><a href="#root#overview-summary.html"><i class="glyphicon glyphicon-plane"></i> overview</a></li>
+					<li class="nav-item"><a class="nav-link" href="#root#overview-summary.html"><i class="bi bi-airplane"></i> Overview</a></li>
 					</cfoutput>
 				</cfif>
 
 				<cfif attributes.page eq "package">
-					<li class="active"><a href="#"><i class="glyphicon glyphicon-folder-open"></i> &nbsp;package</a></li>
+					<li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><i class="bi bi-folder2-open"></i> Package</a></li>
 				<cfelseif attributes.page eq "class">
-					<li><a href="package-summary.html"><i class="glyphicon glyphicon-folder-open"></i> &nbsp;package</a></li>
+					<li class="nav-item"><a class="nav-link" href="package-summary.html"><i class="bi bi-folder2-open"></i> Package</a></li>
 				</cfif>
 
 			  	<cfif attributes.page eq "class">
-					<li class="dropdown active">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-file"></i> class <b class="caret"></b></a>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="classDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-file-earmark-text"></i> Class
+						</a>
 
-						<ul class="dropdown-menu">
-							<li><a href="#class">Class Definition</a></li>
-							<li><a href="#constructor_summary">Constructor Summary</a></li>
-							<li><a href="#constructor_detail">Constructor Detail</a></li>
-							<li><a href="#inherited_methods">Inherited Methods</a></li>
-							<li><a href="#method_summary">Method Summary</a></li>
-							<li><a href="#method_detail">Method Detail</a></li>
-							<li><a href="#property_summary">Property Summary</a></li>
-							<li><a href="#property_detail">Property Detail</a></li>
-							
+						<ul class="dropdown-menu" aria-labelledby="classDropdown">
+							<li><a class="dropdown-item" href="#class">Class Definition</a></li>
+							<li><a class="dropdown-item" href="#constructor_summary">Constructor Summary</a></li>
+							<li><a class="dropdown-item" href="#constructor_detail">Constructor Detail</a></li>
+							<li><a class="dropdown-item" href="#inherited_methods">Inherited Methods</a></li>
+							<li><a class="dropdown-item" href="#method_summary">Method Summary</a></li>
+							<li><a class="dropdown-item" href="#method_detail">Method Detail</a></li>
+							<li><a class="dropdown-item" href="#property_summary">Property Summary</a></li>
+							<li><a class="dropdown-item" href="#property_detail">Property Detail</a></li>
 						</ul>
 					</li>
 				</cfif>
 	      	</ul>
 
-			<ul class="nav navbar-nav navbar-right">
-				<li><cfoutput><a href="#root#index.html?#attributes.file#.html" target="_top">
-					<i class="glyphicon glyphicon-fullscreen"></i> Frames
+			<ul class="navbar-nav">
+				<li class="nav-item"><cfoutput><a class="nav-link" href="#root#index.html?#attributes.file#.html" target="_top">
+					<i class="bi bi-arrows-fullscreen"></i> Frames
 					</a></cfoutput>
 				</li>
 			</ul>

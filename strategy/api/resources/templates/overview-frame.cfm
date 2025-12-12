@@ -3,22 +3,34 @@
 	local.classTree = {};
 	// Loop over classes
 	for( local.row in qMetaData ) {
-		//var class = local.row.name;
-		local.bracketPath = '';
-		// Build bracket notation
-		for( local.item in listToArray( local.row.package, '.' ) ) {
-			local.bracketPath &= '[ "#local.item#" ]';
+		// Build nested package structure
+		local.packageParts = listToArray( local.row.package, '.' );
+		local.currentNode = local.classTree;
+
+		// Navigate/create nested package structure
+		for( local.packagePart in local.packageParts ) {
+			if( !structKeyExists( local.currentNode, local.packagePart ) ) {
+				local.currentNode[ local.packagePart ] = {};
+			}
+			local.currentNode = local.currentNode[ local.packagePart ];
 		}
-		// Set "deep" struct to create nested data
+
+		// Set package link
 		local.link = replace( local.row.package, ".", "/", "all") & '/' & local.row.name & '.html';
 		local.packagelink = replace( local.row.package, ".", "/", "all") & '/package-summary.html';
 		local.searchList = listAppend( local.row.package, local.row.name, '.' );
+		local.currentNode[ "$link" ] = local.packagelink;
 
-		evaluate( 'local.classTree#local.bracketPath#[ "$link" ] = local.packageLink' );
-		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"] = structNew()' );
-		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"].link = local.link' );
-		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"].searchList = local.searchList' );
-		evaluate( 'local.classTree#local.bracketPath#[ local.row.name ][ "$class"].type = local.row.type' );
+		// Create class entry
+		if( !structKeyExists( local.currentNode, local.row.name ) ) {
+			local.currentNode[ local.row.name ] = {};
+		}
+
+		local.currentNode[ local.row.name ][ "$class" ] = {
+			"link" : local.link,
+			"searchList" : local.searchList,
+			"type" : local.row.type
+		};
 	}
 </cfscript>
 <cfoutput>
@@ -53,13 +65,13 @@
 					// Shortcut types to control icons
 				    "types" : {
 				      "package" : {
-				        "icon" : "glyphicon glyphicon-folder-open"
+				        "icon" : "bi bi-folder2-open"
 				      },
 				      "component" : {
-				        "icon" : "glyphicon glyphicon-file"
+				        "icon" : "bi bi-file-earmark-code"
 				      },
 				      "interface" : {
-				        "icon" : "glyphicon glyphicon-info-sign"
+				        "icon" : "bi bi-info-circle"
 				      }
 				    },
 				    // Smart search callback to do lookups on full class name and aliases

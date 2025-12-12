@@ -10,6 +10,7 @@
 	<!-- syntax highlighter -->
 	<link type="text/css" rel="stylesheet" href="#instance.class.root#highlighter/styles/shCoreDefault.css">
 	<script src="#instance.class.root#highlighter/scripts/shCore.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushBoxLang.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushColdFusion.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushXml.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushSql.js"></script>
@@ -32,8 +33,10 @@
 <a name="class"><!-- --></a>
 
 <!-- Package -->
-<div class="pull-right">
-	<a href="package-summary.html" title="Package: #arguments.package#"><span class="label label-success">#arguments.package#</span></a>
+<div class="float-end">
+	<a href="package-summary.html" title="Package: #arguments.package#">
+		<span class="badge bg-success">#arguments.package#</span>
+	</a>
 </div>
 
 <h2>
@@ -74,9 +77,9 @@ Class
 <cfif arguments.metadata.type eq "component">
 	<cfset interfaces = getImplements(arguments.metadata)>
 	<cfif NOT arrayIsEmpty(interfaces)>
-		<div class="panel panel-default">
-			<div class="panel-heading"><strong>All Implemented Interfaces:</strong></div>
-  			<div class="panel-body">
+		<div class="card mb-3">
+			<div class="card-header"><strong>All Implemented Interfaces:</strong></div>
+  			<div class="card-body">
 			<cfset local.len = arrayLen(interfaces)>
 			<cfloop from="1" to="#local.len#" index="local.counter">
 				<cfset interface = interfaces[local.counter]>
@@ -88,9 +91,9 @@ Class
 	</cfif>
 <cfelse>
 	<cfif arguments.qImplementing.recordCount>
-	<div class="panel panel-default">
-		<div class="panel-heading"><strong>All Known Implementing Classes:</strong></div>
-  		<div class="panel-body">
+	<div class="card mb-3">
+		<div class="card-header"><strong>All Known Implementing Classes:</strong></div>
+  		<div class="card-body">
 		<cfloop query="arguments.qimplementing">
 			<cfif arguments.qimplementing.currentrow neq 1>,</cfif>
 			#writeclasslink(arguments.qimplementing.package, arguments.qimplementing.name, arguments.qmetadata, "short")#
@@ -101,9 +104,9 @@ Class
 </cfif>
 
 <cfif arguments.qSubclass.recordCount>
-<div class="panel panel-default">
-	<div class="panel-heading"><strong><cfif arguments.metadata.type eq "component">Direct Known Subclasses<cfelse>All Known Subinterfaces</cfif>:</strong></div>
-  	<div class="panel-body">
+<div class="card mb-3">
+	<div class="card-header"><strong><cfif arguments.metadata.type eq "component">Direct Known Subclasses<cfelse>All Known Subinterfaces</cfif>:</strong></div>
+  	<div class="card-body">
 	<cfloop query="arguments.qsubclass">
 		<cfif arguments.qsubclass.currentrow neq 1>,</cfif>
 		<a href="#instance.class.root##replace(arguments.qsubclass.package, '.', '/', 'all')#/#arguments.qsubclass.name#.html" title="class in #arguments.package#">#arguments.qsubclass.name#</a>
@@ -112,46 +115,6 @@ Class
 </div>
 </cfif>
 
-<!---
-<dl>
-<dt>
-
-<cfscript>
-	local.buffer.setLength(0);
-	//local.buffer.append("public ");
-	if(isAbstractClass(name, arguments.package))
-	{
-		local.buffer.append("abstract ");
-	}
-
-	if(arguments.metadata.type eq "interface")
-	{
-		local.buffer.append("interface");
-	}
-	else
-	{
-		local.buffer.append("class");
-	}
-
-	local.buffer.append(" <strong>#arguments.name#</strong>");
-	local.buffer.append(local.ls);
-	if(StructKeyExists(arguments.metadata, "extends"))
-	{
-		local.extendsmeta = arguments.metadata.extends;
-		if(arguments.metadata.type eq "interface")
-		{
-			local.extendsmeta = arguments.metadata.extends[structKeyList(local.extendsmeta)];
-		}
-		local.buffer.append("<dt>extends #writeClassLink(getPackage(local.extendsmeta.name), getObjectName(local.extendsmeta.name), arguments.qMetaData, 'short')#</dt>");
-	}
-</cfscript>
-
-<kbd>#local.buffer.tostring()#</kbd>
-
-</dt>
-</dl>
---->
-
 <cfif StructKeyExists(arguments.metadata, "hint")>
 <div id="class-hint">
 	<p>#arguments.metadata.hint#</p>
@@ -159,16 +122,16 @@ Class
 </cfif>
 
 <!-- Clas Attributes -->
-<div class="panel panel-info">
-	<div class="panel-heading"><strong>Class Attributes:</strong></div>
-		<div class="panel-body">
+<div class="card mb-3 border-info">
+	<div class="card-header bg-info text-white"><strong>Class Attributes:</strong></div>
+		<div class="card-body">
 		<cfset local.cfcAttributesCount = 0>
 		<cfloop collection="#arguments.metadata#" item="local.cfcmeta">
-			<cfif isSimpleValue( arguments.metadata[ local.cfcmeta ] ) AND
-				  !listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.cfcmeta ) >
-			<cfset local.cfcAttributesCount++>
-			<li class="label label-danger label-annotations">
-				#lcase( local.cfcmeta )#
+		<cfif isSimpleValue( arguments.metadata[ local.cfcmeta ] ) AND
+			  !listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.cfcmeta ) >
+		<cfset local.cfcAttributesCount++>
+		<li class="badge bg-danger label-annotations">
+			#lcase( local.cfcmeta )#
 				<cfif len( arguments.metadata[ local.cfcmeta ] )>
 				: #arguments.metadata[ local.cfcmeta ]#
 				</cfif>
@@ -177,7 +140,7 @@ Class
 			</cfif>
 		</cfloop>
 		<cfif local.cfcAttributesCount eq 0>
-			<span class="label label-warning"><em>None</em></span>
+			<span class="badge bg-warning text-dark"><em>None</em></span>
 		</cfif>
 	</div>
 </div>
@@ -235,15 +198,13 @@ Class
 			#repeatString( '&nbsp;', 5)# #listGetAt( local.prop.hint, 1, chr(13)&chr(10)&'.' )#.
 			</cfif>
 			<br><br>
-			<ul>
-			<cfloop collection="#local.prop#" item="local.propmeta">
-				<cfif not listFindNoCase( "hint,name,default,type,serializable,required", local.propmeta ) >
-				<li class="label label-default label-annotations">#lcase( local.propmeta )# = #local.prop[ local.propmeta ]#</li>
-				</cfif>
-			</cfloop>
-			</ul>
-
-		</td>
+		<ul>
+		<cfloop collection="#local.prop#" item="local.propmeta">
+			<cfif not listFindNoCase( "hint,name,default,type,serializable,required,annotations,documentation", local.propmeta ) >
+			<li class="badge bg-secondary label-annotations">#lcase( local.propmeta )# = #local.prop[ local.propmeta ]#</li>
+			</cfif>
+		</cfloop>
+		</ul>		</td>
 		<td align="right" valign="top" width="1%">
 			<cfif len( local.prop.default )>
 				<code>#local.prop.default#</code>
@@ -329,7 +290,7 @@ Class
 
 <a name="inherited_methods"><!-- --></a>
 <cfset local.localmeta = arguments.metadata />
-<cfloop condition="#StructKeyExists(local.localmeta, 'extends')#">
+<cfloop condition="#local.localMeta.keyExists( "extends" ) && local.localMeta.extends.count()#">
 	<cfscript>
 		if(local.localmeta.type eq "interface")
 		{
@@ -366,11 +327,11 @@ Class
 					</cfif>
 				</cfloop>
 
-				<cfif local.buffer.length()>
-					#local.buffer.toString()#
-				<cfelse>
-					<span class="label label-warning"><em>None</em></span>
-				</cfif>
+			<cfif local.buffer.length()>
+				#local.buffer.toString()#
+			<cfelse>
+				<span class="badge bg-warning text-dark"><em>None</em></span>
+			</cfif>
 			</td>
 		</tr>
 	</table>
@@ -442,7 +403,7 @@ Class
 		<dl>
 		<dt><strong>Attributes:</strong></dt>
 		<cfloop collection="#local.prop#" item="local.param">
-			<cfif not listFindNoCase( "name,type,hint,default", local.param )>
+			<cfif not listFindNoCase( "name,type,hint,default,annotations,documentation", local.param )>
 			<dd><code>#lcase( local.param )#</code> - #local.prop[ local.param ]#</dd>
 			</cfif>
 		</cfloop>
@@ -476,7 +437,7 @@ Class
 	<h3>
 		#local.func.name#
 		<cfif structKeyExists( local.func, "deprecated" )>
-			<span class="label label-danger">Deprecated</span>
+			<span class="badge bg-danger">Deprecated</span>
 		</cfif>
 	</h3>
 
@@ -490,7 +451,7 @@ Class
 
 	<cfif StructKeyExists(local.func, "deprecated") AND isSimplevalue(local.func.deprecated)>
 		<dl>
-			<dt><span class="label label-danger"><strong>Deprecated:</strong></span></dt>
+			<dt><span class="badge bg-danger"><strong>Deprecated:</strong></span></dt>
 			<dd>#local.func.deprecated#</dd>
 		</dl>
 	</cfif>
@@ -554,7 +515,7 @@ Class
 	<ul class="list-group">
 		<cfloop collection="#local.func#" item="keyName">
 			<cfif not listFindNoCase( "hint,name,deprecated,access,type,parameters,return,throws,required,returnformat,returntype,output,modifier,owner,default,closure,serializable,description", keyName ) && isSimpleValue( local.func[ keyName ] ) >
-			<li class="list-group-item"><span class="label label-default label-annotations">#lcase( keyName )#</span> #local.func[ keyName ]#</li>
+			<li class="list-group-item"><span class="badge bg-secondary label-annotations">#lcase( keyName )#</span> #local.func[ keyName ]#</li>
 			</cfif>
 		</cfloop>
 	</ul>
@@ -606,9 +567,9 @@ Class
 
 						builder.append(" " & param.name);
 
-						if(StructKeyExists(param, "default"))
+						if( !isNull( param.default ) )
 						{
-							builder.append("='" & param.default & "'");
+							builder.append("='" & param.default.toString() & "'");
 						}
 
 						if(NOT param.required)
@@ -732,12 +693,12 @@ Class
 			return package & "." & name;
 		}
 
-		function getInheritence(metadata)
+		function getInheritence( metadata )
 		{
 			var localmeta = arguments.metadata;
 			var inheritence = [arguments.metadata.name];
 
-			while(StructKeyExists(localmeta, "extends"))
+			while( localMeta.keyExists( "extends" ) and localMeta.extends.count() )
 			{
 				//manage interfaces
 				if(localmeta.type eq "interface")
@@ -749,7 +710,7 @@ Class
 					localmeta = localmeta.extends;
 				}
 
-				ArrayPrepend(inheritence, localmeta.name);
+				ArrayPrepend( inheritence, localmeta.name );
 			}
 
 			return inheritence;
@@ -762,7 +723,7 @@ Class
 			var key = 0;
 			var imeta = 0;
 
-			while(StructKeyExists(localmeta, "extends"))
+			while( localMeta.keyExists( "extends" ) and localMeta.extends.count() )
 			{
 				if(StructKeyExists(localmeta, "implements"))
 				{
@@ -786,7 +747,7 @@ Class
 		{
 			var qFunctions = 0;
 
-			while(StructKeyExists(arguments.metadata, "extends"))
+			while( arguments.metadata.keyExists( "extends" ) and arguments.metadata.extends.count() )
 			{
 				if(arguments.metadata.type eq "interface")
 				{
@@ -830,8 +791,8 @@ Class
 						return imeta.name;
 					}
 
-					//now look up super-interfaces
-					while(structKeyExists(imeta, "extends"))
+					// now look up super-interfaces
+					while( iMeta.keyExists( "extends" ) && iMeta.extends.count() )
 					{
 						imeta = imeta.extends[structKeyList(imeta.extends)];
 

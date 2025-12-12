@@ -8,11 +8,11 @@
 	<cfmodule template="inc/common.cfm" rootPath="#assetPath#">
 </head>
 <body>
-	
+
 	<p>
-		<a href="package-summary.html" target="classFrame"><span class="label label-success">#arguments.package#</span></a>
+		<a href="package-summary.html" target="classFrame"><span class="badge bg-success">#arguments.package#</span></a>
 	</p>
-	
+
 	<cfif arguments.qInterfaces.recordCount>
 	<p><strong>interfaces</strong></p>
 	<ul class="list-unstyled">
@@ -23,7 +23,7 @@
 		</cfloop>
 	</ul>
 	</cfif>
-	
+
 	<cfif arguments.qclasses.recordcount>
 	<p><strong>classes</strong></p>
 	<ul class="list-unstyled">

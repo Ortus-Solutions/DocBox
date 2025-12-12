@@ -16,9 +16,9 @@
 				file="#replace(arguments.package, '.', '/', 'all')#/package-summary"
 				>
 	<h2>
-	<span class="label label-success">#arguments.package#</span>
+	<span class="badge bg-success">#arguments.package#</span>
 	</h2>
-	
+
 	<div class="table-responsive">
 	<cfif arguments.qInterfaces.recordCount>
 		<table class="table table-striped table-hover table-bordered">
@@ -28,7 +28,7 @@
 					<b>interface summary</b></font></th>
 				</tr>
 			</thead>
-	
+
 			<cfloop query="arguments.qinterfaces">
 				<tr>
 					<td width="15%"><b><a href="#name#.html" title="class in #package#">#name#</a></b></td>
@@ -40,10 +40,10 @@
 					</td>
 				</tr>
 			</cfloop>
-	
+
 		</table>
 	</cfif>
-	
+
 	<cfif arguments.qClasses.recordCount>
 		<table class="table table-striped table-hover table-bordered">
 			<thead>
@@ -52,7 +52,7 @@
 					<b>class summary</b></font></th>
 				</tr>
 			</thead>
-	
+
 			<cfloop query="arguments.qclasses">
 				<tr>
 					<td width="15%"><b><a href="#name#.html" title="class in #package#">#name#</a></b></td>
@@ -64,7 +64,7 @@
 					</td>
 				</tr>
 			</cfloop>
-	
+
 		</table>
 	</cfif>
 	</div>
