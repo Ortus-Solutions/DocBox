@@ -173,7 +173,7 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 			var safeMeta   = structCopy( thisRow.metadata );
 
 			// Is this a class
-			if ( safeMeta.type eq "component" ) {
+			if (  listFindNoCase( "component,class", safeMeta.type ) ) {
 				var qSubClass = getMetaSubquery(
 					arguments.qMetaData,
 					"UPPER( extends ) = UPPER( '#thisRow.package#.#thisRow.name#' )",

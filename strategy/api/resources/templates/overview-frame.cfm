@@ -70,6 +70,9 @@
 				      "component" : {
 				        "icon" : "bi bi-file-earmark-code"
 				      },
+					  "class" : {
+				        "icon" : "bi bi-file-earmark-code"
+				      },
 				      "interface" : {
 				        "icon" : "bi bi-info-circle"
 				      }

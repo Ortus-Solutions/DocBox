@@ -78,7 +78,7 @@
 <pre style="background:white">#local.buffer.toString()#</pre>
 
 <!--- All implemented interfaces --->
-<cfif arguments.metadata.type eq "component">
+<cfif  listFindNoCase( "component,class", arguments.metadata.type )>
 	<cfset interfaces = getImplements(arguments.metadata)>
 	<cfif NOT arrayIsEmpty(interfaces)>
 		<div class="card mb-3">
@@ -110,7 +110,9 @@
 <!--- All subclasses / subinterfaces --->
 <cfif arguments.qSubclass.recordCount>
 <div class="card mb-3">
-	<div class="card-header"><strong><cfif arguments.metadata.type eq "component">Direct Known Subclasses<cfelse>All Known Subinterfaces</cfif>:</strong></div>
+	<div class="card-header"><strong>
+		<cfif  listFindNoCase( "component,class", arguments.metadata.type )>Direct Known Subclasses<cfelse>All Known Subinterfaces</cfif>:</strong>
+	</div>
   	<div class="card-body">
 	<cfloop query="arguments.qsubclass">
 		<cfif arguments.qsubclass.currentrow neq 1>,</cfif>
