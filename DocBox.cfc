@@ -210,40 +210,39 @@ component accessors="true" {
 				if ( len( currentPath ) ) {
 					packagePath = listAppend( thisInput.mapping, currentPath, "." );
 				}
-				// setup cfc name
-				var cfcName = listFirst( getFileFromPath( thisFile ), "." );
+				// setup class name
+				var className = listFirst( getFileFromPath( thisFile ), "." );
 
-				// Core Excludes, don't document the Application.cfc
-				if ( cfcName == "Application" ) {
+				// Core Excludes, don't document the Application.(bx|cfc)
+				if ( className == "Application" ) {
 					continue;
 				}
 
 				try {
-					// Get component metadatata
-					var meta = "";
+					// Get metadatata
+					var meta = {};
 					if ( len( packagePath ) ) {
-						meta = getComponentMetadata( packagePath & "." & cfcName );
+						meta = server.keyExists( "boxlang" ) ? getClassmetadata( packagePath & "." & className ) : getComponentMetadata( packagePath & "." & className );
 					} else {
-						meta = getComponentMetadata( cfcName );
+						meta = server.keyExists( "boxlang" ) ? getClassmetadata( className ) : getComponentMetadata( className );
 					}
 
-					// let's do some cleanup, in case CF sucks.
 					if ( len( packagePath ) AND NOT meta.name contains packagePath ) {
-						meta.name = packagePath & "." & cfcName;
+						meta.name = packagePath & "." & className;
 					}
 
 					// Add row
 					queryAddRow( metadata );
+
 					// Add contents
 					querySetCell( metadata, "package", packagePath );
-					querySetCell( metadata, "name", cfcName );
+					querySetCell( metadata, "name", className );
 					querySetCell( metadata, "metadata", meta );
 					querySetCell( metadata, "type", meta.type );
-					querySetCell(
-						metadata,
-						"currentMapping",
-						thisInput.mapping
-					);
+					querySetCell( metadata, "currentMapping", thisInput.mapping );
+					querySetCell( metadata, "extends", "" );
+					querySetCell( metadata, "fullextends", "" );
+					querySetCell( metadata, "implements", "" );
 
 					// Get implements
 					var implements = getImplements( meta );
@@ -253,6 +252,7 @@ component accessors="true" {
 					// Get inheritance
 					var fullextends = getInheritance( meta );
 					fullextends     = listQualify( arrayToList( fullextends ), ":" );
+
 					querySetCell( metadata, "fullextends", fullextends );
 
 					// so we cane easily query direct desendents
@@ -271,32 +271,24 @@ component accessors="true" {
 							);
 						}
 					} else {
-						querySetCell( metadata, "extends", "-" );
+						querySetCell( metadata, "extends", "" );
 					}
 				} catch ( Any e ) {
 					if ( arguments.throwOnError ) {
-						throw(
-							type         = "InvalidComponentException",
-							message      = e.message,
-							detail       = e.detail,
-							extendedInfo = serializeJSON( e )
-						);
+						rethrow;
 					} else {
 						trace(
 							type     = "warning",
 							category = "docbox",
 							inline   = "true",
-							text     = "Warning! The following script has errors: " & packagePath & "." & cfcName & ": #e.message & e.detail & e.stacktrace#"
+							text     = "Warning! The following script has errors: " & packagePath & "." & className & ": #e.message & e.detail & e.stacktrace#"
 						);
 					}
-					if ( structKeyExists( server, "lucee" ) ) {
-						systemOutput(
-							"Warning! The following script has errors: " & packagePath & "." & cfcName,
-							true
-						);
-						systemOutput( "#e.message & e.detail#", true );
-						systemOutput( e.stackTrace );
-					}
+
+					// Console Debugging
+					writeDump(var="Warning! The following script has errors: " & packagePath & "." & className, output="console" )
+					writeDump(var= "#e.message & e.detail#", output="console" )
+					writeDump(var= e.stackTrace, output="console" )
 				}
 			}
 			// end qFiles iteration
@@ -317,9 +309,10 @@ component accessors="true" {
 		var interfaces = {};
 
 		// check if a cfc
-		if ( arguments.metadata.type neq "component" ) {
+		if ( !listFindNoCase( "component,class", arguments.metadata.type ) ) {
 			return [];
 		}
+
 		// iterate
 		while ( structKeyExists( arguments.metadata, "extends" ) ) {
 			if ( structKeyExists( arguments.metadata, "implements" ) ) {

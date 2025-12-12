@@ -157,14 +157,14 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * @qMetaData The metadata
 	 */
 	HTMLAPIStrategy function writeOverviewSummaryAndFrame( required query qMetadata ){
-		var qPackages = new Query(
-			dbtype = "query",
-			md     = arguments.qMetadata,
-			sql    = "
-			SELECT DISTINCT package
+		var md = arguments.qMetadata;
+		var qPackages = queryExecute(
+			"SELECT DISTINCT package
 			FROM md
-			ORDER BY package"
-		).execute().getResult();
+			ORDER BY package",
+			{},
+			{ dbtype="query" }
+		);
 
 		// overview summary
 		writeTemplate(

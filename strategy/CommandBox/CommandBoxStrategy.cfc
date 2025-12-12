@@ -110,18 +110,19 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 	}
 
 	/**
-	 * writes the overview-summary.html
+	 * Writes the overview-summary.html
+	 *
 	 * @qMetaData The metadata
 	 */
 	function writeOverviewSummaryAndFrame( required query qMetadata ){
-		var qPackages = new Query(
-			dbtype = "query",
-			md     = arguments.qMetadata,
-			sql    = "
-			SELECT DISTINCT [package], [namespace]
+		var md = arguments.qMetadata;
+		var qPackages = queryExecute(
+			"SELECT DISTINCT [package], [namespace]
 			FROM md
-			ORDER BY [package]"
-		).execute().getResult();
+			ORDER BY [package]",
+			{},
+			{ dbtype = "query" }
+		)
 
 		// overview summary
 		writeTemplate(

@@ -54,17 +54,17 @@ component doc_abstract="true" accessors="true" {
 	 * @return string,struct
 	 */
 	struct function buildPackageTree( required query qMetadata ){
-		var qPackages = new Query(
-			dbtype = "query",
-			md     = arguments.qMetadata,
-			sql    = "
-			SELECT DISTINCT
+		var md = arguments.qMetadata;
+		var qPackages = queryExecute(
+			"SELECT DISTINCT
 				package
 			FROM
 				md
 			ORDER BY
-				package"
-		).execute().getResult();
+				package",
+			{},
+			{ dbtype="query" }
+		)
 
 		var tree = {};
 		for ( var thisRow in qPackages ) {
@@ -129,11 +129,12 @@ component doc_abstract="true" accessors="true" {
 	}
 
 	/**
-	 * Is the type a privite value
-	 * @type The cf type
+	 * Is the type a primitive value
+	 *
+	 * @type The type
 	 */
 	private boolean function isPrimitive( required string type ){
-		var primitives = "string,date,struct,array,void,binary,numeric,boolean,query,xml,uuid,any,component,function";
+		var primitives = "string,date,struct,array,void,binary,numeric,boolean,query,xml,uuid,any,component,class,function";
 		return listFindNoCase( primitives, arguments.type );
 	}
 
@@ -141,18 +142,25 @@ component doc_abstract="true" accessors="true" {
 	 * builds a sorted query of function meta
 	 */
 	query function buildFunctionMetaData( required struct metadata ){
+		if( !metadata.count() ){
+			return queryNew( "name, metadata" );
+		}
+
 		var qFunctions = queryNew( "name, metadata" );
 		var cache      = this.getFunctionQueryCache();
 
 		if ( structKeyExists( cache, arguments.metadata.name ) ) {
 			return cache[ arguments.metadata.name ];
 		}
+
 		// if no properties, return empty query
 		if ( NOT structKeyExists( arguments.metadata, "functions" ) ) {
 			return qFunctions;
 		}
+
 		// iterate and create
 		for ( var thisFnc in arguments.metadata.functions ) {
+
 			// dodge cfthread functions
 			if ( NOT javacast( "string", thisFnc.name ).startsWith( "_cffunccfthread_" ) ) {
 				queryAddRow( qFunctions );
@@ -169,7 +177,9 @@ component doc_abstract="true" accessors="true" {
 			query   = qFunctions,
 			orderby = "name asc"
 		);
+
 		cache[ arguments.metadata.name ] = results;
+
 		return results;
 	}
 
@@ -183,10 +193,12 @@ component doc_abstract="true" accessors="true" {
 		if ( structKeyExists( cache, arguments.metadata.name ) ) {
 			return cache[ arguments.metadata.name ];
 		}
+
 		// if no properties, return empty query
 		if ( NOT structKeyExists( arguments.metadata, "properties" ) ) {
 			return qProperties;
 		}
+
 		// iterate and create
 		for ( var thisProp in arguments.metadata.properties ) {
 			queryAddRow( qProperties );
@@ -202,12 +214,15 @@ component doc_abstract="true" accessors="true" {
 			query   = qProperties,
 			orderby = "name asc"
 		);
+
 		cache[ arguments.metadata.name ] = results;
+
 		return results;
 	}
 
 	/**
 	 * Returns the simple object name from a full class name
+	 *
 	 * @class The name of the class
 	 */
 	private string function getObjectName( required class ){
@@ -222,17 +237,18 @@ component doc_abstract="true" accessors="true" {
 
 	/**
 	 * Get a package from an incoming class
+	 *
 	 * @class The name of the class
 	 */
 	private string function getPackage( required class ){
 		var objectname = getObjectName( arguments.class );
 		var lenCount   = len( arguments.class ) - ( len( objectname ) + 1 );
-
 		return ( lenCount gt 0 ? left( arguments.class, lenCount ) : arguments.class );
 	}
 
 	/**
-	 * Whether or not the CFC class exists (does not test for primitives)
+	 * Whether or not the class exists (does not test for primitives)
+	 *
 	 * @qMetaData The metadata query
 	 * @className The name of the class
 	 * @package The package the class comes from
@@ -287,6 +303,7 @@ component doc_abstract="true" accessors="true" {
 
 	/**
 	 * Query of Queries helper
+	 *
 	 * @query The metadata query
 	 * @where The where string
 	 * @orderby The order by string
@@ -296,26 +313,24 @@ component doc_abstract="true" accessors="true" {
 		string where,
 		string orderBy
 	){
-		var q = new Query(
-			dbtype = "query",
-			qry    = arguments.query
-		);
+
+		var qry = arguments.query;
 		var sql = "SELECT * FROM qry";
 
 		if ( !isNull( arguments.where ) ) {
 			sql &= " WHERE #preserveSingleQuotes( arguments.where )#";
-		}
+	}
 
 		if ( !isNull( arguments.orderBy ) ) {
 			sql &= " ORDER BY #arguments.orderBy#";
 		}
-		q.setSQL( sql );
 
-		return q.execute().getResult();
+		return queryExecute( sql, {}, { dbtype="query" } );
 	}
 
 	/**
 	 * Sets default values on function metadata
+	 *
 	 * @func The function metadata
 	 * @metadata The original metadata
 	 */
@@ -331,48 +346,28 @@ component doc_abstract="true" accessors="true" {
 			arguments.func.access = "public";
 		}
 
-		// move the cfproperty hints onto functions for accessors/mutators
-		if ( structKeyExists( arguments.metadata, "properties" ) ) {
-			if ( lCase( arguments.func.name ).startsWith( "get" ) AND NOT structKeyExists( arguments.func, "hint" ) ) {
-				local.name     = replaceNoCase( arguments.func.name, "get", "" );
-				local.property = getPropertyMeta(
-					local.name,
-					arguments.metadata.properties
-				);
-
-				if ( structKeyExists( local.property, "hint" ) ) {
-					arguments.func.hint = "get: " & local.property.hint;
-				}
-			} else if ( lCase( arguments.func.name ).startsWith( "set" ) AND NOT structKeyExists( arguments.func, "hint" ) ) {
-				local.name     = replaceNoCase( arguments.func.name, "set", "" );
-				local.property = getPropertyMeta(
-					local.name,
-					arguments.metadata.properties
-				);
-
-				if ( structKeyExists( local.property, "hint" ) ) {
-					arguments.func.hint = "set: " & local.property.hint;
-				}
-			}
-		}
-
 		// move any argument meta from @foo.bar annotations onto the argument meta
 		if ( structKeyExists( arguments.func, "parameters" ) ) {
-			for ( local.metaKey in arguments.func ) {
+
+			// Get function annotations
+			var annotations = server.keyExists( "boxlang" ) ? arguments.func.annotations : arguments.func;
+			for ( local.metaKey in annotations ) {
+
 				if ( listLen( local.metaKey, "." ) gt 1 ) {
 					local.paramKey       = listGetAt( local.metaKey, 1, "." );
 					local.paramExtraMeta = listGetAt( local.metaKey, 2, "." );
-					local.paramMetaValue = arguments.func[ local.metaKey ];
+					local.paramMetaValue = annotations[ local.metaKey ];
 
-					local.len = arrayLen( arguments.func.parameters );
+					local.len = arrayLen( annotations.parameters );
 					for ( local.counter = 1; local.counter lte local.len; local.counter++ ) {
-						local.param = arguments.func.parameters[ local.counter ];
+						local.param = annotations.parameters[ local.counter ];
 
 						if ( local.param.name eq local.paramKey ) {
 							local.param[ local.paramExtraMeta ] = local.paramMetaValue;
 						}
 					}
 				}
+
 			}
 		}
 		return arguments.func;
@@ -380,6 +375,7 @@ component doc_abstract="true" accessors="true" {
 
 	/**
 	 * Sets default values on property metadata
+	 *
 	 * @property The property metadata
 	 * @metadata The original metadata
 	 */
@@ -475,6 +471,7 @@ component doc_abstract="true" accessors="true" {
 			if ( item == "$link" ) {
 				continue;
 			}
+
 			var itemValue = startingLevel[ item ];
 
 			//  If this is a class, output it
@@ -529,10 +526,16 @@ component doc_abstract="true" accessors="true" {
 		// resolve class name
 		arguments.class = resolveClassName( arguments.class, arguments.package );
 		// get metadata
-		var meta        = getComponentMetadata( arguments.class );
-		// verify we have abstract class
+		var meta        = server.keyExists( "boxlang" ) ? getClassMetadata( arguments.class ) : getComponentMetadata( arguments.class );
+
+		// Old, pre-abstract support way
 		if ( structKeyExists( meta, variables.META_ABSTRACT ) ) {
 			return meta[ variables.META_ABSTRACT ];
+		}
+
+		// Traditional way
+		if( meta.keyExists( "abstract" ) ){
+			return true;
 		}
 
 		return false;

@@ -180,7 +180,7 @@ component extends="BaseTest" {
 							excludes     = "(coldbox|build\-docbox)",
 							throwOnError = true
 						);
-				} ).toThrow( "InvalidComponentException" );
+				} ).toThrow( "InvalidClassException" );
 			} );
 
 			/**
@@ -209,10 +209,9 @@ component extends="BaseTest" {
 							excludes     = "(coldbox|build\-docbox)",
 							throwOnError = false
 						);
-				} ).notToThrow( "InvalidComponentException" );
+				} ).notToThrow( "InvalidClassException" );
 			} );
 		} );
 	}
 
 }
-

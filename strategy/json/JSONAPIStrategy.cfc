@@ -42,17 +42,10 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * @metadata All component metadata, sourced from DocBox.
 	 */
 	component function run( required query metadata ){
-		if ( !directoryExists( getOutputDir() ) ) {
-			throw(
-				message = "Invalid configuration; output directory not found",
-				type    = "InvalidConfigurationException",
-				detail  = "OutputDir #getOutputDir()# does not exist."
-			);
-		}
 		ensureDirectory( getOutputDir() );
 
 		var classes = normalizePackages(
-			arguments.metadata.reduce( function( results, row ){
+			arguments.metadata.reduce( ( results, row ) =>{
 				results.append( row );
 				return results;
 			}, [] )
@@ -61,7 +54,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		/**
 		 * Generate hierarchical JSON package indices with classes
 		 */
-		var packages = classes.reduce( function( results, class ){
+		var packages = classes.reduce( ( results, class ) => {
 			if ( !results.keyExists( class.package ) ) {
 				results[ class.package ] = [];
 			}
@@ -146,19 +139,22 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * @classData Component metadata, courtesy of DocBox
 	 */
 	package array function normalizePackages( required array classData ){
-		return arguments.classData.map( function( row ){
+		return arguments.classData.map( ( row ) => {
 			/**
 			 * Marshall functions to match the designed schema;
 			 */
 			if ( !isNull( arguments.row.metadata.functions ) ) {
-				var metaFunctions = arrayMap( arguments.row.metadata.functions, function( method ){
+				var metaFunctions = arrayMap( arguments.row.metadata.functions, ( method ) =>{
+					var annotations = server.keyExists( "boxlang" ) ? arguments.method.annotations : arguments.method;
+					var documentation = server.keyExists( "boxlang" ) ? arguments.method.documentation : arguments.method;
+
 					return {
 						"returnType"   : arguments.method.returnType ?: "any",
 						"returnFormat" : isNull( arguments.method.returnFormat ) ? "plain" : arguments.method.returnFormat,
 						"parameters"   : arguments.method.parameters,
 						"name"         : arguments.method.name,
-						"hint"         : arguments.method.keyExists( "hint" ) ? arguments.method.hint : "",
-						"description"  : arguments.method.keyExists( "description" ) ? arguments.method.description : "",
+						"hint"         : documentation.keyExists( "hint" ) ? documentation.hint : "",
+						"description"  : documentation.keyExists( "description" ) ? documentation.description : "",
 						"access"       : arguments.method.access ?: "public",
 						"position"     : arguments.method.keyExists( "position" ) ? arguments.method.position : {
 							"start" : 0,
@@ -167,16 +163,18 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 					};
 				} );
 			}
+
+			var documentation = server.keyExists( "boxlang" ) ? arguments.row.metadata.documentation : arguments.row.metadata;
 			return {
 				"name"        : arguments.row.name,
 				"package"     : arguments.row.package,
 				"type"        : arguments.row.type,
-				"extends"     : structKeyExists( arguments.row.metadata, "extends" ) ? arguments.row.extends : "",
+				"extends"     : arguments.row.metadata.keyExists( "metadata" ) && arguments.row.metadata.extends.count() ? arguments.row.metadata.extends : "",
 				"fullextends" : structKeyExists(
 					arguments.row.metadata,
 					"fullextends"
 				) ? arguments.row.fullextends : "",
-				"hint"      : structKeyExists( arguments.row.metadata, "hint" ) ? arguments.row.metadata.hint : "",
+				"hint"      : structKeyExists( documentation, "hint" ) ? documentation.hint : "",
 				"functions" : structKeyExists( arguments.row.metadata, "functions" ) ? metaFunctions : []
 			};
 		} );

@@ -136,7 +136,7 @@
 		var package = getPackage(arguments.meta.name);
 
 		//ignore interfaces for now
-		if(arguments.meta.type eq "component" and structKeyExists(arguments.meta, "extends") AND arguments.meta.extends.name neq "WEB-INF.cftags.component")
+		if( arguments.meta.type eq "component" and arguments.meta.keyExists( "extends" ) and arguments.meta.extends.count() AND arguments.meta.extends.name neq "WEB-INF.cftags.component")
 		{
 			arguments.builder.append('<generalization xmi:id="_#createUUID()#"');
 			if(typeExists(qMetadata, arguments.meta.extends.name, package))

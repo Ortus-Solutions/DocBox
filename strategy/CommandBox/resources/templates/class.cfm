@@ -11,6 +11,7 @@
 	<link type="text/css" rel="stylesheet" href="#instance.class.root#highlighter/styles/shCoreEmacs.css">
 	<script src="#instance.class.root#highlighter/scripts/shCore.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushBash.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushBoxLang.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushColdFusion.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushCss.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushJava.js"></script>
