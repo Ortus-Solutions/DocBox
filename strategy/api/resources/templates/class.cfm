@@ -521,7 +521,7 @@
 		<dt><strong>Parameters:</strong></dt>
 		<cfloop array="#local.func.parameters#" index="local.param">
 			<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
-		<dd><code>#local.param.name#</code><cfif StructKeyExists(local.paramDocumentation, "hint")> - #local.paramDocumentation.hint#</cfif></dd>
+			<dd><code>#local.param.name#</code><cfif StructKeyExists(local.paramDocumentation, "hint")> - #local.paramDocumentation.hint#</cfif></dd>
 		</cfloop>
 		</dl>
 	</cfif>
@@ -540,11 +540,12 @@
 		</dl>
 	</cfif>
 
-
 	<ul class="list-group">
-		<cfloop collection="#local.func#" item="keyName">
-			<cfif not listFindNoCase( "hint,name,deprecated,access,type,parameters,return,throws,required,returnformat,returntype,output,modifier,owner,default,closure,serializable,description", keyName ) && isSimpleValue( local.func[ keyName ] ) >
-			<li class="list-group-item"><span class="badge bg-secondary label-annotations">#lcase( keyName )#</span> #local.func[ keyName ]#</li>
+		<cfloop collection="#local.funcAnnotations#" item="keyName">
+			<cfif not listFindNoCase(
+				"hint,name,nameAsKey,deprecated,access,type,parameters,return,throws,required,returnformat,returntype,output,modifier,owner,default,closure,serializable,description",
+				keyName ) && isSimpleValue( local.funcAnnotations[ keyName ] ) >
+			<li class="list-group-item"><span class="badge bg-secondary label-annotations">#lcase( keyName )#</span> #local.funcAnnotations[ keyName ]#</li>
 			</cfif>
 		</cfloop>
 	</ul>
