@@ -3,7 +3,7 @@
 		currentDir = this.getOutputDir() & "/" & replace( package, ".", "/", "all" );
 		ensureDirectory( currentDir );
 		qPackage 	= getMetaSubquery( arguments.qMetaData, "package = '#package#'", "name asc" );
-		qClasses 	= getMetaSubquery( qPackage, "type='component'", "name asc");
+		qClasses 	= getMetaSubquery( qPackage, "type='component' OR type='class'", "name asc");
 		qInterfaces = getMetaSubquery( qPackage, "type='interface'", "name asc");
 
 		writeTemplate(
