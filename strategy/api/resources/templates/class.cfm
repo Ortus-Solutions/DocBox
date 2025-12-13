@@ -35,12 +35,28 @@
 <div class="container-fluid">
 <a name="class"><!-- --></a>
 
-<!-- Package Badge -->
-<div class="mb-3">
-	<a href="package-summary.html" class="package-badge text-decoration-none">
-		<i class="bi bi-folder2-open"></i> #arguments.package#
-	</a>
-</div>
+<!-- Package Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-3">
+	<ol class="breadcrumb package-breadcrumb">
+		<li class="breadcrumb-item">
+			<a href="#instance.class.root#overview-summary.html">📚 All Packages</a>
+		</li>
+		<cfset local.packageParts = listToArray(arguments.package, ".") />
+		<cfset local.packagePath = "" />
+		<cfloop array="#local.packageParts#" index="local.part">
+			<cfset local.packagePath = listAppend(local.packagePath, local.part, ".") />
+			<cfif local.part eq local.packageParts[arrayLen(local.packageParts)]>
+				<li class="breadcrumb-item active" aria-current="page">
+					📁 #local.part#
+				</li>
+			<cfelse>
+				<li class="breadcrumb-item">
+					<a href="#instance.class.root##replace(local.packagePath, '.', '/', 'all')#/package-summary.html">📁 #local.part#</a>
+				</li>
+			</cfif>
+		</cfloop>
+	</ol>
+</nav>
 
 <!--- Class Header --->
 <div class="mb-4">
@@ -49,7 +65,7 @@
 			<span class="text-info">🔌</span> Interface #arguments.name#
 		<cfelse>
 			<cfif isAbstractClass( arguments.name, arguments.package )>
-				📄 #arguments.name# <span class="badge bg-warning text-dark ms-2">Abstract</span>
+				📄 #arguments.name# <span class="badge bg-warning text-dark fs-6 align-middle">Abstract</span>
 			<cfelse>
 				📦 #arguments.name#
 			</cfif>
@@ -282,36 +298,195 @@
 
 <a name="method_summary"><!-- --></a>
 <div class="card mb-4">
-<table class="table table-hover mb-0">
-	<thead class="table-light">
-	<tr>
-		<th colspan="2" class="fs-5 py-3">
-			<i class="bi bi-gear text-primary"></i> <strong>Method Summary</strong>
-		</th>
-	</tr>
-	</thead>
-	<tbody>
-
-	<cfloop query="local.qFunctions">
-	<cfset local.func = local.qFunctions.metadata />
-	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
-	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
-	<cfset local.localFunctions[ local.func.name ] = 1 />
-	<tr>
-		<td align="right" valign="top" width="1%">
-			<code><cfif local.func.access neq "public">#local.func.access#&nbsp;</cfif>#writetypelink(local.func.returntype, arguments.package, arguments.qmetadata, local.func)#</code>
-		</td>
-		<td>
-			#writemethodlink(arguments.name, arguments.package, local.func, arguments.qmetadata)#
-			<br>
-			<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
-			#repeatString( '&nbsp;', 5)##listGetAt( local.funcDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+	<div class="card-header bg-light border-bottom">
+		<h4 class="mb-0">⚙️ Method Summary</h4>
+	</div>
+	<div class="card-body p-0">
+		<!-- Method Filter Tabs -->
+		<ul class="nav nav-tabs method-tabs" id="methodTabs" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="all-methods-tab" data-bs-toggle="tab" data-bs-target="##all-methods" type="button" role="tab" aria-controls="all-methods" aria-selected="true">
+					All Methods (#local.qFunctions.recordCount#)
+				</button>
+			</li>
+			<cfset local.publicCount = 0 />
+			<cfset local.privateCount = 0 />
+			<cfset local.staticCount = 0 />
+			<cfset local.abstractCount = 0 />
+			<cfloop query="local.qFunctions">
+				<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.qFunctions.metadata.annotations : local.qFunctions.metadata />
+				<cfif local.qFunctions.metadata.access eq "public"><cfset local.publicCount++ /></cfif>
+				<cfif local.qFunctions.metadata.access eq "private"><cfset local.privateCount++ /></cfif>
+				<cfif structKeyExists( local.funcAnnotations, "static" ) AND local.funcAnnotations.static><cfset local.staticCount++ /></cfif>
+				<cfif structKeyExists( local.funcAnnotations, "abstract" ) AND local.funcAnnotations.abstract><cfset local.abstractCount++ /></cfif>
+			</cfloop>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="public-methods-tab" data-bs-toggle="tab" data-bs-target="##public-methods" type="button" role="tab" aria-controls="public-methods" aria-selected="false">
+					🟢 Public (#local.publicCount#)
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="private-methods-tab" data-bs-toggle="tab" data-bs-target="##private-methods" type="button" role="tab" aria-controls="private-methods" aria-selected="false">
+					🔒 Private (#local.privateCount#)
+				</button>
+			</li>
+			<cfif local.staticCount gt 0>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="static-methods-tab" data-bs-toggle="tab" data-bs-target="##static-methods" type="button" role="tab" aria-controls="static-methods" aria-selected="false">
+					⚡ Static (#local.staticCount#)
+				</button>
+			</li>
 			</cfif>
-		</td>
-	</tr>
-	</cfloop>
-	</tbody>
-</table>
+			<cfif local.abstractCount gt 0>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="abstract-methods-tab" data-bs-toggle="tab" data-bs-target="##abstract-methods" type="button" role="tab" aria-controls="abstract-methods" aria-selected="false">
+					📝 Abstract (#local.abstractCount#)
+				</button>
+			</li>
+			</cfif>
+		</ul>
+
+		<!-- Tab Content -->
+		<div class="tab-content" id="methodTabContent">
+			<!-- All Methods Tab -->
+			<div class="tab-pane fade show active" id="all-methods" role="tabpanel" aria-labelledby="all-methods-tab">
+				<table class="table table-hover mb-0">
+					<tbody>
+					<cfloop query="local.qFunctions">
+					<cfset local.func = local.qFunctions.metadata />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfset local.localFunctions[ local.func.name ] = 1 />
+					<tr data-access="#local.func.access#" <cfif structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static>data-static="true"</cfif> <cfif structKeyExists(local.funcAnnotations, "abstract") AND local.funcAnnotations.abstract>data-abstract="true"</cfif>>
+						<td align="right" valign="top" width="1%">
+							<code><cfif local.func.access neq "public">#local.func.access#&nbsp;</cfif>#writetypelink(local.func.returntype, arguments.package, arguments.qmetadata, local.func)#</code>
+						</td>
+						<td>
+							#writemethodlink(arguments.name, arguments.package, local.func, arguments.qmetadata)#
+							<br>
+							<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+							#repeatString( '&nbsp;', 5)##listGetAt( local.funcDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+							</cfif>
+						</td>
+					</tr>
+					</cfloop>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Public Methods Tab -->
+			<div class="tab-pane fade" id="public-methods" role="tabpanel" aria-labelledby="public-methods-tab">
+				<table class="table table-hover mb-0">
+					<tbody>
+					<cfloop query="local.qFunctions">
+					<cfset local.func = local.qFunctions.metadata />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfif local.func.access eq "public">
+					<tr>
+						<td align="right" valign="top" width="1%">
+							<code>#writetypelink(local.func.returntype, arguments.package, arguments.qmetadata, local.func)#</code>
+						</td>
+						<td>
+							#writemethodlink(arguments.name, arguments.package, local.func, arguments.qmetadata)#
+							<br>
+							<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+							#repeatString( '&nbsp;', 5)##listGetAt( local.funcDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+							</cfif>
+						</td>
+					</tr>
+					</cfif>
+					</cfloop>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Private Methods Tab -->
+			<div class="tab-pane fade" id="private-methods" role="tabpanel" aria-labelledby="private-methods-tab">
+				<table class="table table-hover mb-0">
+					<tbody>
+					<cfloop query="local.qFunctions">
+					<cfset local.func = local.qFunctions.metadata />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfif local.func.access eq "private">
+					<tr>
+						<td align="right" valign="top" width="1%">
+							<code>private #writetypelink(local.func.returntype, arguments.package, arguments.qmetadata, local.func)#</code>
+						</td>
+						<td>
+							#writemethodlink(arguments.name, arguments.package, local.func, arguments.qmetadata)#
+							<br>
+							<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+							#repeatString( '&nbsp;', 5)##listGetAt( local.funcDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+							</cfif>
+						</td>
+					</tr>
+					</cfif>
+					</cfloop>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Static Methods Tab -->
+			<cfif local.staticCount gt 0>
+			<div class="tab-pane fade" id="static-methods" role="tabpanel" aria-labelledby="static-methods-tab">
+				<table class="table table-hover mb-0">
+					<tbody>
+					<cfloop query="local.qFunctions">
+					<cfset local.func = local.qFunctions.metadata />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfif structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static>
+					<tr>
+						<td align="right" valign="top" width="1%">
+							<code><cfif local.func.access neq "public">#local.func.access#&nbsp;</cfif>#writetypelink(local.func.returntype, arguments.package, arguments.qmetadata, local.func)#</code>
+						</td>
+						<td>
+							#writemethodlink(arguments.name, arguments.package, local.func, arguments.qmetadata)#
+							<br>
+							<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+							#repeatString( '&nbsp;', 5)##listGetAt( local.funcDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+							</cfif>
+						</td>
+					</tr>
+					</cfif>
+					</cfloop>
+					</tbody>
+				</table>
+			</div>
+			</cfif>
+
+			<!-- Abstract Methods Tab -->
+			<cfif local.abstractCount gt 0>
+			<div class="tab-pane fade" id="abstract-methods" role="tabpanel" aria-labelledby="abstract-methods-tab">
+				<table class="table table-hover mb-0">
+					<tbody>
+					<cfloop query="local.qFunctions">
+					<cfset local.func = local.qFunctions.metadata />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
+					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfif structKeyExists(local.funcAnnotations, "abstract") AND local.funcAnnotations.abstract>
+					<tr>
+						<td align="right" valign="top" width="1%">
+							<code><cfif local.func.access neq "public">#local.func.access#&nbsp;</cfif>#writetypelink(local.func.returntype, arguments.package, arguments.qmetadata, local.func)#</code>
+						</td>
+						<td>
+							#writemethodlink(arguments.name, arguments.package, local.func, arguments.qmetadata)#
+							<br>
+							<cfif StructKeyExists(local.funcDocumentation, "hint") AND Len(local.funcDocumentation.hint)>
+							#repeatString( '&nbsp;', 5)##listGetAt( local.funcDocumentation.hint, 1, chr(13) & chr(10) & '.' )#.
+							</cfif>
+						</td>
+					</tr>
+					</cfif>
+					</cfloop>
+					</tbody>
+				</table>
+			</div>
+			</cfif>
+		</div>
+	</div>
 </div>
 
 </cfif>
@@ -379,7 +554,7 @@
 		<div class="card-body">
 			<a name="#local.init.name#()"><!-- --></a>
 			<h4 class="text-primary mb-3">#local.init.name#</h4>
-			
+
 			<div class="method-signature mb-3">
 				<code class="language-java">#local.init.access# #writeMethodLink(arguments.name, arguments.package, local.init, arguments.qMetaData, false)#</code>
 			</div>
@@ -422,7 +597,7 @@
 			<cfset local.prop = local.qProperties.metadata />
 			<cfset local.propDocumentation = server.keyExists( "boxlang" ) ? local.prop.documentation : local.prop />
 			<cfset local.propAnnotations = server.keyExists( "boxlang" ) ? local.prop.annotations : local.prop />
-			
+
 			<div class="property-detail-item <cfif local.qProperties.currentRow lt local.qProperties.recordCount>mb-4 pb-4 border-bottom</cfif>">
 				<a name="#local.prop.name#()"><!-- --></a>
 				<h4 class="text-primary mb-3">#local.prop.name#</h4>
@@ -476,13 +651,30 @@
 	<cfset local.func = local.qFunctions.metadata />
 	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
 	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
-	
+
 	<div class="method-detail-item <cfif local.qFunctions.currentRow lt local.qFunctions.recordCount>mb-4 pb-4 border-bottom</cfif>">
 		<a name="#local.func.name#()"><!-- --></a>
 		<h4 class="text-primary mb-2">
+			<cfif local.func.access eq "public">
+				<span class="visibility-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Public method - accessible from anywhere">🟢</span>
+			<cfelseif local.func.access eq "private">
+				<span class="visibility-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Private method - only accessible within this class">🔒</span>
+			<cfelseif local.func.access eq "package">
+				<span class="visibility-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Package method - accessible within the same package">📦</span>
+			<cfelseif local.func.access eq "remote">
+				<span class="visibility-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Remote method - accessible via web services">🌐</span>
+			</cfif>
+
 			#local.func.name#
+
+			<cfif structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static>
+				<span class="visibility-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Static method - belongs to the class rather than instances">⚡</span>
+			</cfif>
+			<cfif structKeyExists(local.funcAnnotations, "abstract") AND local.funcAnnotations.abstract>
+				<span class="visibility-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Abstract method - must be implemented by subclasses">📝</span>
+			</cfif>
 			<cfif structKeyExists( local.funcAnnotations, "deprecated" )>
-				<span class="badge bg-danger ms-2">Deprecated</span>
+				<span class="badge bg-danger ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="This method is deprecated and should not be used">Deprecated</span>
 			</cfif>
 		</h4>
 
@@ -573,7 +765,7 @@
 				<cfbreak />
 			</cfif>
 		</cfloop>
-		
+
 		<cfif local.hasCustomAnnotations>
 			<div class="method-annotations">
 				<h6 class="text-muted mb-2">🏷️ Custom Annotations:</h6>

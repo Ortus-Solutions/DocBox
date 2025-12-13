@@ -17,7 +17,7 @@
 	    }
 	</script>
 </head>
-	<frameset cols="20%,80%" title="" onLoad="top.loadFrames()">
+	<frameset cols="25%,75%" title="" onLoad="top.loadFrames()">
 		<frame src="overview-frame.html" name="packageListFrame" title="All Packages">
 		<frame src="overview-summary.html" name="classFrame" title="Package, class and interface descriptions" scrolling="yes">
 	<noframes>

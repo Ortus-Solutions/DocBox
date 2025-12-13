@@ -16,9 +16,28 @@
 				file="#replace(arguments.package, '.', '/', 'all')#/package-summary"
 				>
 	<div class="container-fluid">
-		<div class="package-badge">
-			<i class="bi bi-folder2-open"></i> #arguments.package#
-		</div>
+		<!-- Package Breadcrumb Navigation -->
+		<nav aria-label="breadcrumb" class="mb-3">
+			<ol class="breadcrumb package-breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="#assetPath#overview-summary.html">📚 All Packages</a>
+				</li>
+				<cfset local.packageParts = listToArray(arguments.package, ".") />
+				<cfset local.packagePath = "" />
+				<cfloop array="#local.packageParts#" index="local.part">
+					<cfset local.packagePath = listAppend(local.packagePath, local.part, ".") />
+					<cfif local.part eq local.packageParts[arrayLen(local.packageParts)]>
+						<li class="breadcrumb-item active" aria-current="page">
+							📁 #local.part#
+						</li>
+					<cfelse>
+						<li class="breadcrumb-item">
+							<a href="#assetPath##replace(local.packagePath, '.', '/', 'all')#/package-summary.html">📁 #local.part#</a>
+						</li>
+					</cfif>
+				</cfloop>
+			</ol>
+		</nav>
 
 	<div class="table-responsive">
 	<cfif arguments.qInterfaces.recordCount>

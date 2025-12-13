@@ -17,7 +17,16 @@
 <script>
 $(document).ready(function() {
 	// Global Tool Tip Settings - Bootstrap 5
+	// Initialize tooltips
 	$( '[title]' ).each(function() {
+		new bootstrap.Tooltip(this, {
+			animation: true,
+			delay: { show: 250, hide: 250 }
+		});
+	});
+
+	// Initialize tooltips with data-bs-toggle attribute
+	$( '[data-bs-toggle="tooltip"]' ).each(function() {
 		new bootstrap.Tooltip(this, {
 			animation: true,
 			delay: { show: 250, hide: 250 }
