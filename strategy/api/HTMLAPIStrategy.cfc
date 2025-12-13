@@ -19,28 +19,43 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		type   ="string";
 
 	/**
+	 * The theme to use for documentation generation
+	 */
+	property
+		name   ="theme"
+		default="frames"
+		type   ="string";
+
+	/**
 	 * Where HTML templates are stored
 	 */
-	variables.TEMPLATE_PATH = "/docbox/strategy/api/resources/templates";
+	variables.TEMPLATE_PATH = "/docbox/strategy/api/themes";
 
 	/**
 	 * Static assets used in HTML templates
 	 */
-	variables.ASSETS_PATH = "/docbox/strategy/api/resources/static";
+	variables.ASSETS_PATH = "/docbox/strategy/api/themes";
 
 	/**
 	 * Constructor
 	 * @outputDir The output directory
 	 * @projectTitle The title used in the HTML output
+	 * @theme The theme to use for documentation (default: frames)
 	 */
 	HTMLAPIStrategy function init(
 		required outputDir,
-		string projectTitle = "Untitled"
+		string projectTitle = "Untitled",
+		string theme = "frames"
 	){
 		super.init();
 
 		variables.outputDir    = arguments.outputDir;
 		variables.projectTitle = arguments.projectTitle;
+		variables.theme        = arguments.theme;
+
+		// Update paths based on theme
+		variables.TEMPLATE_PATH = "/docbox/strategy/api/themes/#variables.theme#/resources/templates";
+		variables.ASSETS_PATH   = "/docbox/strategy/api/themes/#variables.theme#/resources/static";
 
 		return this;
 	}

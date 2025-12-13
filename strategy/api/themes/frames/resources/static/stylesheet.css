@@ -1,0 +1,414 @@
+/* ========================================
+   Modern DocBox Styles - Bootstrap 5
+   ======================================== */
+
+:root {
+	--docbox-primary: #5e72e4;
+	--docbox-secondary: #6c757d;
+	--docbox-success: #2dce89;
+	--docbox-info: #11cdef;
+	--docbox-warning: #fb6340;
+	--docbox-danger: #f5365c;
+	--docbox-dark: #212529;
+	--docbox-light: #f8f9fa;
+	--docbox-code-bg: #f6f9fc;
+	--docbox-border: #e9ecef;
+	--docbox-nav-height: 70px;
+	--docbox-card-header-bg: #f7fafc;
+}
+
+body {
+	background-color: #ffffff;
+	margin: 0;
+	padding: 10px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Ubuntu", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-size: 15px;
+	line-height: 1.6;
+	color: #212529;
+}
+
+body.withNavbar {
+	margin-top: var(--docbox-nav-height);
+	padding-top: 20px;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 600;
+	margin-top: 1.5rem;
+	margin-bottom: 1rem;
+	line-height: 1.3;
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.875rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+
+/* Links */
+a {
+	color: var(--docbox-primary);
+	text-decoration: none;
+	transition: color 0.15s ease-in-out;
+}
+
+a:hover {
+	color: #0a58ca;
+	text-decoration: underline;
+}
+
+/* Code and Pre */
+code {
+	background-color: var(--docbox-code-bg);
+	padding: 0.2rem 0.4rem;
+	border-radius: 0.25rem;
+	font-size: 87.5%;
+	color: #d63384;
+	font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+}
+
+pre {
+	background-color: var(--docbox-code-bg);
+	border: 1px solid var(--docbox-border);
+	border-radius: 0.375rem;
+	padding: 1rem;
+	margin: 1rem 0;
+	overflow-x: auto;
+	font-size: 0.875rem;
+	line-height: 1.5;
+}
+
+pre code {
+	background: transparent;
+	padding: 0;
+	color: inherit;
+}
+
+kbd {
+	padding: 0.2rem 0.4rem;
+	font-size: 87.5%;
+	background-color: var(--docbox-dark);
+	border-radius: 0.25rem;
+}
+
+kbd a {
+	color: white;
+}
+
+/* Tables */
+.table {
+	margin-bottom: 1.5rem;
+	table-layout: auto;
+}
+
+.table > thead {
+	vertical-align: bottom;
+}
+
+.table > tbody > tr > td {
+	vertical-align: top;
+	padding: 0.75rem;
+}
+
+.table > tbody > tr > td > code {
+	white-space: nowrap;
+}
+
+/* Property Summary Table - specific column widths */
+.table > thead > tr > th:nth-child(1),
+.table > tbody > tr > td:nth-child(1) {
+	width: 10%;
+	white-space: nowrap;
+	text-align: left;
+}
+
+.table > thead > tr > th:nth-child(2),
+.table > tbody > tr > td:nth-child(2) {
+	width: auto;
+}
+
+.table > thead > tr > th:nth-child(3),
+.table > tbody > tr > td:nth-child(3) {
+	width: 12%;
+	white-space: nowrap;
+	text-align: center;
+}
+
+.table > thead > tr > th:nth-child(4),
+.table > tbody > tr > td:nth-child(4) {
+	width: 12%;
+	white-space: nowrap;
+	text-align: center;
+}
+
+.table > thead > tr > th:nth-child(5),
+.table > tbody > tr > td:nth-child(5) {
+	width: 12%;
+	white-space: nowrap;
+	text-align: center;
+}
+
+.table-hover tbody tr:hover {
+	background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Cards for better content organization */
+.card {
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+	border: 1px solid rgba(0, 0, 0, 0.125);
+	transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Badges */
+.badge {
+	font-weight: 500;
+	padding: 0.35em 0.65em;
+}
+
+/* Navigation Tree Styles */
+.jstree-default .jstree-anchor {
+	padding: 4px 8px;
+	border-radius: 4px;
+	transition: background-color 0.15s ease;
+}
+
+.jstree-default .jstree-hovered {
+	background-color: var(--docbox-light);
+}
+
+.jstree-default .jstree-clicked {
+	background-color: #e7f3ff !important;
+	color: var(--docbox-primary) !important;
+}
+
+/* Search Input */
+input[type="text"] {
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--docbox-border);
+	border-radius: 0.375rem;
+	font-size: 0.9375rem;
+	width: 100%;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="text"]:focus {
+	border-color: #86b7fe;
+	outline: 0;
+	box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Method/Property sections */
+.method-detail, .property-detail {
+	padding: 1.5rem;
+	margin-bottom: 1.5rem;
+	background-color: #ffffff;
+	border-left: 4px solid var(--docbox-primary);
+	border-radius: 0.375rem;
+}
+
+/* Package breadcrumb navigation */
+.package-breadcrumb {
+	background: #ffffff;
+	padding: 0.875rem 1.5rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+	margin-bottom: 0;
+	border: 1px solid #e9ecef;
+}
+
+.package-breadcrumb .breadcrumb-item {
+	font-size: 1rem;
+	display: flex;
+	align-items: center;
+}
+
+.package-breadcrumb .breadcrumb-item + .breadcrumb-item {
+	padding-left: 0.75rem;
+}
+
+.package-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+	content: "›";
+	color: #adb5bd;
+	font-size: 1.5rem;
+	padding-right: 0.75rem;
+	font-weight: 300;
+	line-height: 1;
+}
+
+.package-breadcrumb a {
+	color: #5e72e4;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.25rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+}
+
+.package-breadcrumb a:hover {
+	color: #324cdd;
+	background-color: #f8f9fa;
+}
+
+.package-breadcrumb .active {
+	color: #212529;
+	font-weight: 600;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+}
+
+/* Class attributes section */
+.class-attributes {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	padding: 1rem 1.5rem;
+	border-radius: 0.5rem;
+	margin-bottom: 1.5rem;
+	box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.class-attributes .badge {
+	margin: 0.25rem;
+}
+
+/* Method tabs styling */
+.method-tabs {
+	border-bottom: 2px solid #e9ecef;
+	padding: 0.5rem 1rem 0;
+	background-color: #f8f9fa;
+	margin: 0;
+}
+
+.method-tabs .nav-link {
+	color: #6c757d;
+	border: none;
+	border-bottom: 3px solid transparent;
+	padding: 0.75rem 1.25rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	border-radius: 0;
+}
+
+.method-tabs .nav-link:hover {
+	color: #5e72e4;
+	background-color: rgba(94, 114, 228, 0.05);
+	border-bottom-color: rgba(94, 114, 228, 0.3);
+}
+
+.method-tabs .nav-link.active {
+	color: #5e72e4;
+	background-color: #ffffff;
+	border-bottom-color: #5e72e4;
+	font-weight: 600;
+}
+
+/* Visibility badges */
+.visibility-badge {
+	font-size: 1.1rem;
+	margin-left: 0.5rem;
+	cursor: help;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+/* Detail sections styling */
+.method-detail-item,
+.property-detail-item {
+	scroll-margin-top: 80px; /* For anchor links with fixed nav */
+}
+
+.method-signature,
+.property-signature {
+	background-color: var(--docbox-code-bg);
+	padding: 1rem;
+	border-radius: 0.375rem;
+	border-left: 3px solid #667eea;
+	box-shadow: 0 1px 3px rgba(50, 50, 93, 0.08);
+}
+
+.method-signature code,
+.property-signature code {
+	color: #212529;
+	font-size: 0.95rem;
+	word-wrap: break-word;
+}
+
+.method-description,
+.property-description {
+	color: #495057;
+}
+
+.method-parameters ul,
+.property-attributes ul {
+	padding-left: 0;
+}
+
+.method-parameters li,
+.property-attributes li {
+	padding: 0.25rem 0;
+}
+
+/* Alert styling for deprecated methods */
+.alert-danger {
+	background-color: #f8d7da;
+	border-color: #f5c2c7;
+	color: #842029;
+}
+
+.alert-heading {
+	font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	body.withNavbar {
+		margin-top: calc(var(--docbox-nav-height) + 10px);
+	}
+
+	.table-responsive {
+		margin-bottom: 1rem;
+	}
+}
+
+/* Print styles */
+@media print {
+	body.withNavbar {
+		margin-top: 0;
+	}
+
+	.navbar {
+		display: none;
+	}
+}
+
+/* Utility classes */
+.text-muted {
+	color: #6c757d !important;
+}
+
+.mb-0 { margin-bottom: 0 !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+
+/* Frame-specific styles */
+.frame-sidebar {
+	padding: 15px;
+	background-color: #f8f9fa;
+}
+
+.frame-sidebar h5 {
+	margin-bottom: 1rem;
+}
+
+.frame-sidebar .form-control-sm {
+	font-size: 0.875rem;
+}

@@ -22,7 +22,7 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 
 	// Static variables.
 	variables.TEMPLATE_PATH = "/docbox/strategy/CommandBox/resources/templates";
-	variables.ASSETS_PATH   = "/docbox/strategy/api/resources/static";
+	variables.ASSETS_PATH   = "/docbox/strategy/api/themes/frames/resources/static";
 
 	/**
 	 * Constructor
