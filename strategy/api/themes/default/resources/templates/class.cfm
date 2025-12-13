@@ -25,6 +25,52 @@ local.getArgumentList = function( required func ){
 local.writeTypeLink = function( type, package, qMetaData, struct genericMeta = {} ) {
 	return arguments.type;
 }
+
+/**
+ * Gets the inheritance chain for a class/interface
+ */
+local.getInheritence = function( metadata ) {
+	var localMeta   = arguments.metadata;
+	var inheritence = [ arguments.metadata.name ];
+
+	while ( localMeta.keyExists( "extends" ) && localMeta.extends.count() ) {
+		// Manage interfaces
+		if ( localMeta.type eq "interface" ) {
+			localMeta = localMeta.extends[ structKeyList( localMeta.extends ) ];
+		} else {
+			localMeta = localMeta.extends;
+		}
+
+		arrayPrepend( inheritence, localMeta.name );
+	}
+
+	return inheritence;
+}
+
+/**
+ * Gets all implemented interfaces for a class
+ */
+local.getImplements = function( metadata ) {
+	var localMeta  = arguments.metadata;
+	var interfaces = {};
+	var key        = 0;
+	var imeta      = 0;
+
+	while ( localMeta.keyExists( "extends" ) && localMeta.extends.count() ) {
+		if ( structKeyExists( localMeta, "implements" ) ) {
+			for ( key in localMeta.implements ) {
+				imeta                = localMeta.implements[ key ];
+				interfaces[ imeta.name ] = 1;
+			}
+		}
+		localMeta = localMeta.extends;
+	}
+
+	interfaces = structKeyArray( interfaces );
+	arraySort( interfaces, "textnocase" );
+
+	return interfaces;
+}
 </cfscript>
 <cfoutput>
 <cfset local.annotations = server.keyExists("boxlang") ? arguments.metadata.annotations : arguments.metadata>
@@ -68,6 +114,60 @@ local.writeTypeLink = function( type, package, qMetaData, struct genericMeta = {
 		<p class="class-description">#local.documentation.hint#</p>
 	</cfif>
 </div>
+
+<!-- Inheritance Tree -->
+<cfscript>
+local.thisClass   = arguments.package & "." & arguments.name;
+local.inheritance = local.getInheritence( arguments.metadata );
+</cfscript>
+
+<cfif arrayLen( local.inheritance ) gt 1>
+	<div class="section-card">
+		<h3 class="section-title">
+			<i class="bi bi-diagram-3"></i> Inheritance Hierarchy
+		</h3>
+		<div class="inheritance-tree">
+			<cfloop array="#local.inheritance#" index="local.i" item="local.className">
+				<cfif local.i gt 1>
+					<div class="inheritance-level" style="padding-left: #( local.i - 1 ) * 1.5#rem;">
+						<span class="inheritance-arrow">↳</span>
+						<cfif local.className neq local.thisClass>
+							<code>#local.writeTypeLink( local.className, arguments.package, arguments.qMetaData )#</code>
+						<cfelse>
+							<strong><code class="text-primary">#local.className#</code></strong>
+						</cfif>
+					</div>
+				<cfelse>
+					<div class="inheritance-level">
+						<code>#local.className#</code>
+					</div>
+				</cfif>
+			</cfloop>
+		</div>
+	</div>
+</cfif>
+
+<!-- Implemented Interfaces -->
+<cfif listFindNoCase( "component,class", arguments.metadata.type )>
+	<cfscript>
+	local.interfaces = local.getImplements( arguments.metadata );
+	</cfscript>
+	
+	<cfif !arrayIsEmpty( local.interfaces )>
+		<div class="section-card">
+			<h3 class="section-title">
+				<i class="bi bi-puzzle"></i> Implemented Interfaces
+			</h3>
+			<div class="implemented-interfaces">
+				<cfloop array="#local.interfaces#" index="local.interface">
+					<span class="badge badge-info me-2 mb-2">
+						🔌 #local.writeTypeLink( local.interface, arguments.package, arguments.qMetaData )#
+					</span>
+				</cfloop>
+			</div>
+		</div>
+	</cfif>
+</cfif>
 
 <cfscript>
 local.qFunctions = buildFunctionMetaData(arguments.metadata);

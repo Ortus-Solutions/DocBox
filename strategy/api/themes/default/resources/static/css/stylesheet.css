@@ -657,6 +657,44 @@ a:hover {
    Method Tabs & Search
    ======================================== */
 
+/* Inheritance Tree */
+.inheritance-tree {
+	font-family: 'Courier New', monospace;
+	background-color: var(--bg-secondary);
+	padding: 1.25rem;
+	border-radius: 8px;
+	border-left: 3px solid var(--primary-color);
+}
+
+.inheritance-level {
+	padding: 0.25rem 0;
+	color: var(--text-primary);
+}
+
+.inheritance-arrow {
+	color: var(--primary-color);
+	margin-right: 0.5rem;
+	font-weight: bold;
+}
+
+.inheritance-tree code {
+	background-color: transparent;
+	padding: 0;
+	color: var(--text-secondary);
+}
+
+.inheritance-tree strong code {
+	color: var(--primary-color);
+	font-weight: 600;
+}
+
+/* Implemented Interfaces */
+.implemented-interfaces {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
 .method-search input {
 	background-color: var(--bg-secondary);
 	border: 1px solid var(--border-color);
