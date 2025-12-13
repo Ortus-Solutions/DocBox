@@ -9,7 +9,7 @@
     "web":{
         "directoryBrowsing":true,
         "http":{
-            "port":"49616"
+            "port":"60299"
         }
     },
     "cfconfig":{

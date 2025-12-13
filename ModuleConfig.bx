@@ -120,14 +120,156 @@ class {
 	 * --------------------------------------------------------------------------
 	 * Main CLI Command Entry Point
 	 * --------------------------------------------------------------------------
-	 * boxlang module:docbox <subcommand> [options]
+	 * Creates documentation for BoxLang and CFML Classes JavaDoc style via DocBox
+	 *
+	 * You can pass the strategy options by prefixing them with 'strategy-'. So if a strategy takes
+	 * in a property of 'outputDir' you will pass it as 'strategy-outputdir='
+	 *
+	 * Single source/mapping example:
+	 * boxlang module:docbox source=/path/to/coldbox mapping=coldbox excludes=tests strategy-outputDir=/output/path strategy-projectTitle="My Docs"
+	 *
+	 * Multiple source/mapping example:
+	 * boxlang module:docbox mappings:v1.models=/path/to/modules_app/v1/models mappings:v2.models=/path/to/modules_app/v2/models strategy-outputDir=/output/path strategy-projectTitle="My Docs"
+	 *
+	 * Multiple source mappings may be specified as JSON:
+	 * boxlang module:docbox source="[{'dir':'../src/v1/models', 'mapping':'v1.models'}, {'dir':'../src/v2/models', 'mapping':'v2.models'}]" strategy-outputDir=docbox strategy-projectTitle="My API"
+	 *
+	 * @args The CLI arguments
 	 */
+	function main( args = [] ){
+		// Get parsed arguments
+		var positionalArgs = cliGetArgs().positionals;
+		var options        = cliGetArgs().options;
 
-	 function main( args = [] ){
-		// Array of positionals
-		var positionalArgs = cliGetArgs().positionals
-		// Options struct
-		var options = cliGetArgs().options
-	 }
+		// Default values
+		var strategy         = options.strategy ?: "docbox.strategy.api.HTMLAPIStrategy";
+		var source           = options.source ?: "";
+		var mapping          = options.mapping ?: "";
+		var excludes         = options.excludes ?: "";
+		var docboxSourceMaps = [];
+
+		// Extract mappings from options (dynamic parameters with mappings: prefix)
+		var mappings = {};
+		for ( var key in options ) {
+			if ( reFindNoCase( "^mappings:", key ) ) {
+				mappings[ listLast( key, ":" ) ] = options[ key ];
+			}
+		}
+
+		// If mappings has been provided, it overrides the traditional source and mapping arguments
+		if ( !structIsEmpty( mappings ) ) {
+			for ( var key in mappings ) {
+				arrayAppend(
+					docboxSourceMaps,
+					{
+						"dir"     : expandPath( mappings[ key ] ),
+						"mapping" : key
+					}
+				);
+			}
+		} else if ( isJSON( source ) ) {
+			// Handle JSON array of source mappings
+			var sourceArray = deserializeJSON( source );
+			for ( var item in sourceArray ) {
+				arrayAppend(
+					docboxSourceMaps,
+					{
+						"dir"     : expandPath( item.dir ),
+						"mapping" : item.mapping
+					}
+				);
+			}
+		} else if ( len( source ) && len( mapping ) ) {
+			// Basic usage: provide a source directory and a mapping as separate arguments
+			arrayAppend(
+				docboxSourceMaps,
+				{
+					"dir"     : expandPath( source ),
+					"mapping" : mapping
+				}
+			);
+		}
+
+		// Validate we have at least one source mapping
+		if ( arrayLen( docboxSourceMaps ) == 0 ) {
+			cliPrintln( "ERROR: No valid source mappings found." );
+			cliPrintln( "" );
+			cliPrintln( "Usage examples:" );
+			cliPrintln( "  boxlang module:docbox source=/path/to/code mapping=myapp strategy-outputDir=/output" );
+			cliPrintln( "  boxlang module:docbox mappings:v1=/path/v1 mappings:v2=/path/v2 strategy-outputDir=/output" );
+			cliPrintln( "" );
+			return;
+		}
+
+		// Inflate strategy properties from options with 'strategy-' prefix
+		var properties = {};
+		for ( var key in options ) {
+			if ( reFindNoCase( "^strategy\-", key ) ) {
+				var propName = listLast( key, "-" );
+				properties[ propName ] = options[ key ];
+				
+				// Resolve outputDir to absolute path
+				if ( propName == "outputDir" ) {
+					properties[ propName ] = expandPath( options[ key ] );
+				}
+			}
+		}
+
+		// Validate outputDir
+		if ( !structKeyExists( properties, "outputDir" ) ) {
+			cliPrintln( "ERROR: strategy-outputDir is required" );
+			return;
+		}
+
+		// Initialize DocBox with strategy and properties
+		var docbox = new "bxModules.docbox.DocBox"(
+			strategy   = strategy,
+			properties = properties
+		);
+
+		// Provide feedback about sources
+		cliPrintln( "DocBox Documentation Generator" );
+		cliPrintln( "=============================" );
+		cliPrintln( "" );
+		
+		for ( var tuple in docboxSourceMaps ) {
+			if ( !directoryExists( tuple.dir ) ) {
+				cliPrintln( "Warning: '#tuple.dir#' does not exist." );
+			} else {
+				cliPrintln( "Source:  #tuple.dir#" );
+				cliPrintln( "Mapping: #tuple.mapping#" );
+			}
+		}
+		
+		cliPrintln( "Output:  #properties.outputDir#" );
+		cliPrintln( "" );
+		cliPrintln( "Starting generation, please wait..." );
+
+		// Create mappings for source directories
+		var appMappings = getApplicationSettings().mappings;
+		for ( var tuple in docboxSourceMaps ) {
+			appMappings[ "/" & replace( tuple.mapping, ".", "/", "all" ) ] = tuple.dir;
+		}
+		application action="update" mappings=appMappings;
+
+		// Generate documentation
+		try {
+			docbox.generate(
+				source   = docboxSourceMaps,
+				excludes = excludes
+			);
+			
+			cliPrintln( "" );
+			cliPrintln( "✓ Generation complete!" );
+			cliPrintln( "Documentation available at: #properties.outputDir#" );
+		} catch ( any e ) {
+			cliPrintln( "ERROR: Generation failed" );
+			cliPrintln( "Message: #e.message#" );
+			cliPrintln( "Detail: #e.detail#" );
+			if ( structKeyExists( e, "tagContext" ) && arrayLen( e.tagContext ) ) {
+				cliPrintln( "Location: #e.tagContext[1].template#:#e.tagContext[1].line#" );
+			}
+		}
+	}
 
 }
