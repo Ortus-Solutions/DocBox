@@ -33,4 +33,6 @@
 <cfoutput>
 <a href="apidocs/index.html">Go to Docs!</a>
 <p>Generated at #now()#</p>
+<p>&nbsp;</p>
+<a href="run.cfm">Refresh!</a>
 </cfoutput>

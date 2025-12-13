@@ -52,15 +52,13 @@
 				</cfif>
 	      	</ul>
 
-			<ul class="navbar-nav">
-				<li class="nav-item"><cfoutput><a class="nav-link" href="#root & attributes.file#.html" target="_blank">
-					<i class="bi bi-box-arrow-up-right"></i> No Frames
-					</a></cfoutput>
-				</li>
-			</ul>
-	    </div>
-
-	</div>
+		<ul class="navbar-nav">
+			<li class="nav-item"><cfoutput><a class="nav-link" href="#root & attributes.file#.html" target="_blank" title="Open in new window without frames">
+				<i class="bi bi-box-arrow-up-right"></i>
+				</a></cfoutput>
+			</li>
+		</ul>
+	    </div>	</div>
 </nav>
 
 <a name="skip-navbar_top"></a>
