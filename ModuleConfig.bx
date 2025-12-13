@@ -45,7 +45,12 @@ class {
 	 * The BoxLang mapping for your module.  All BoxLang modules are registered with an internal
 	 * mapping prefix of : bxModules.{this.mapping}, /bxmodules/{this.mapping}. Ex: bxModules.test, /bxmodules/test
 	 */
-	this.mapping = "docbox";
+	this.mapping = {
+		// Name of the mapping
+		name: "docbox",
+		// Do not use the default prefix of bxModules, we use a global /docbox mapping
+		usePrefix: false
+	};
 
 	/**
 	 * Who built the module
@@ -122,17 +127,14 @@ class {
 	 * --------------------------------------------------------------------------
 	 * Creates documentation for BoxLang and CFML Classes JavaDoc style via DocBox
 	 *
-	 * You can pass the strategy options by prefixing them with 'strategy-'. So if a strategy takes
-	 * in a property of 'outputDir' you will pass it as 'strategy-outputdir='
-	 *
 	 * Single source/mapping example:
-	 * boxlang module:docbox source=/path/to/coldbox mapping=coldbox excludes=tests strategy-outputDir=/output/path strategy-projectTitle="My Docs"
+	 * boxlang module:docbox --source=/path/to/coldbox --mapping=coldbox --excludes=tests --output-dir=/output/path --project-title="My Docs"
 	 *
 	 * Multiple source/mapping example:
-	 * boxlang module:docbox mappings:v1.models=/path/to/modules_app/v1/models mappings:v2.models=/path/to/modules_app/v2/models strategy-outputDir=/output/path strategy-projectTitle="My Docs"
+	 * boxlang module:docbox --mappings:v1.models=/path/to/modules_app/v1/models --mappings:v2.models=/path/to/modules_app/v2/models --output-dir=/output/path --project-title="My Docs"
 	 *
 	 * Multiple source mappings may be specified as JSON:
-	 * boxlang module:docbox source="[{'dir':'../src/v1/models', 'mapping':'v1.models'}, {'dir':'../src/v2/models', 'mapping':'v2.models'}]" strategy-outputDir=docbox strategy-projectTitle="My API"
+	 * boxlang module:docbox --source="[{'dir':'../src/v1/models', 'mapping':'v1.models'}, {'dir':'../src/v2/models', 'mapping':'v2.models'}]" --output-dir=docbox --project-title="My API"
 	 *
 	 * @args The CLI arguments
 	 */
@@ -179,48 +181,53 @@ class {
 		println( "🎯 USAGE:" );
 		println( "   boxlang module:docbox [options]" );
 		println( "" );
-		println( "⚙️  OPTIONS:" );
-		println( "   --help, -h              Show this help information" );
-		println( "   --version, -v           Show version information" );
-		println( "   source=<path>           Source directory to document" );
-		println( "   mapping=<name>          Base mapping for the source folder" );
-		println( "   excludes=<regex>        Regex pattern to exclude files/folders" );
-		println( "   mappings:<name>=<path>  Define multiple source mappings" );
-		println( "   strategy=<class>        Documentation strategy class" );
-		println( "                           (default: docbox.strategy.api.HTMLAPIStrategy)" );
-		println( "   strategy-*              Any strategy-specific option (see examples)" );
+		println( "⚙️  REQUIRED OPTIONS:" );
+		println( "   --output-dir=<path>           📁 Output directory for generated docs" );
+		println( "   -o=<path>                     📁 Short form of --output-dir" );
 		println( "" );
-		println( "📋 STRATEGY OPTIONS:" );
-		println( "   strategy-outputDir=<path>      📁 Output directory (required)" );
-		println( "   strategy-projectTitle=<title>  📖 Project title for docs" );
-		println( "   strategy-theme=<name>          🎨 Theme name (default/frames)" );
+		println( "📂 SOURCE OPTIONS:" );
+		println( "   --source=<path>               Source directory to document" );
+		println( "   --mapping=<name>              Base mapping for the source folder" );
+		println( "   --mappings:<name>=<path>      Define multiple source mappings" );
+		println( "" );
+		println( "⚙️  ADDITIONAL OPTIONS:" );
+		println( "   --help, -h                    Show this help information" );
+		println( "   --version, -v                 Show version information" );
+		println( "   --excludes=<regex>            Regex pattern to exclude files/folders" );
+		println( "   --project-title=<title>       📖 Project title for documentation" );
+		println( "   --theme=<name>                🎨 Theme name (default/frames)" );
+		println( "   --strategy=<class>            Documentation strategy class" );
+		println( "                                 (default: docbox.strategy.api.HTMLAPIStrategy)" );
 		println( "" );
 		println( "💡 EXAMPLES:" );
 		println( "" );
 		println( "   📌 Basic usage:" );
-		println( "      boxlang module:docbox source=/src/models mapping=models \" );
-		println( "                             strategy-outputDir=/docs" );
+		println( "      boxlang module:docbox --source=/src/models --mapping=models \" );
+		println( "                             --output-dir=/docs" );
 		println( "" );
 		println( "   📌 With project title and excludes:" );
-		println( "      boxlang module:docbox source=/src mapping=myapp \" );
-		println( "                             excludes=""(tests|build)"" \" );
-		println( "                             strategy-outputDir=/docs \" );
-		println( "                             strategy-projectTitle=""My API""" );
+		println( "      boxlang module:docbox --source=/src --mapping=myapp \" );
+		println( "                             --excludes=""(tests|build)"" \" );
+		println( "                             --output-dir=/docs \" );
+		println( "                             --project-title=""My API""" );
+		println( "" );
+		println( "   📌 Short form output directory:" );
+		println( "      boxlang module:docbox --source=/src --mapping=app -o=/docs" );
 		println( "" );
 		println( "   📌 Multiple source mappings:" );
-		println( "      boxlang module:docbox mappings:v1=/src/v1/models \" );
-		println( "                             mappings:v2=/src/v2/models \" );
-		println( "                             strategy-outputDir=/docs \" );
-		println( "                             strategy-projectTitle=""API Docs""" );
+		println( "      boxlang module:docbox --mappings:v1=/src/v1/models \" );
+		println( "                             --mappings:v2=/src/v2/models \" );
+		println( "                             --output-dir=/docs \" );
+		println( "                             --project-title=""API Docs""" );
 		println( "" );
 		println( "   📌 Using frames theme:" );
-		println( "      boxlang module:docbox source=/src mapping=app \" );
-		println( "                             strategy-outputDir=/docs \" );
-		println( "                             strategy-theme=frames" );
+		println( "      boxlang module:docbox --source=/src --mapping=app \" );
+		println( "                             --output-dir=/docs \" );
+		println( "                             --theme=frames" );
 		println( "" );
 		println( "   📌 JSON array format:" );
-		println( "      boxlang module:docbox source=""[{'dir':'/src/models', 'mapping':'models'}]"" \" );
-		println( "                             strategy-outputDir=/docs" );
+		println( "      boxlang module:docbox --source=""[{'dir':'/src/models', 'mapping':'models'}]"" \" );
+		println( "                             --output-dir=/docs" );
 		println( "" );
 		println( "🔗 MORE INFO:" );
 		println( "   Documentation: #this.webURL#" );
@@ -238,10 +245,13 @@ class {
 	 */
 	function generateDocs( required array positionalArgs, required struct options ){
 		// Default values
-		var strategy         = options.strategy ?: "docbox.strategy.api.HTMLAPIStrategy";
+		var strategy         = options.strategy ?: "HTML";
 		var source           = options.source ?: "";
 		var mapping          = options.mapping ?: "";
 		var excludes         = options.excludes ?: "";
+		var outputDir        = options[ "output-dir" ] ?: ( options.o ?: "" );
+		var projectTitle     = options[ "project-title" ] ?: "";
+		var theme            = options.theme ?: "";
 		var docboxSourceMaps = [];
 
 		// Extract mappings from options (dynamic parameters with mappings: prefix)
@@ -288,61 +298,67 @@ class {
 
 		// Validate we have at least one source mapping
 		if ( arrayLen( docboxSourceMaps ) == 0 ) {
-			println( "ERROR: No valid source mappings found." );
+			println( "❌ ERROR: No valid source mappings found." );
 			println( "" );
 			println( "Usage examples:" );
-			println( "  boxlang module:docbox source=/path/to/code mapping=myapp strategy-outputDir=/output" );
-			println( "  boxlang module:docbox mappings:v1=/path/v1 mappings:v2=/path/v2 strategy-outputDir=/output" );
+			println( "  boxlang module:docbox --source=/path/to/code --mapping=myapp --output-dir=/output" );
+			println( "  boxlang module:docbox --mappings:v1=/path/v1 --mappings:v2=/path/v2 --output-dir=/output" );
 			println( "" );
+			println( "Run 'boxlang module:docbox --help' for more information." );
 			return;
 		}
 
-		// Inflate strategy properties from options with 'strategy-' prefix
-		var properties = {};
-		for ( var key in options ) {
-			if ( reFindNoCase( "^strategy\-", key ) ) {
-				var propName = listLast( key, "-" );
-				properties[ propName ] = options[ key ];
-
-				// Resolve outputDir to absolute path
-				if ( propName == "outputDir" ) {
-					properties[ propName ] = expandPath( options[ key ] );
-				}
-			}
+		// Validate required outputDir
+		if ( !len( outputDir ) ) {
+			println( "❌ ERROR: --output-dir is required" );
+			println( "" );
+			println( "Example: boxlang module:docbox --source=/path --mapping=app --output-dir=/docs" );
+			println( "" );
+			println( "Run 'boxlang module:docbox --help' for more information." );
+			return;
 		}
 
-		// Validate outputDir
-		if ( !structKeyExists( properties, "outputDir" ) ) {
-			println( "ERROR: strategy-outputDir is required" );
-			return;
+		// Build strategy properties
+		var properties = {
+			"outputDir" : expandPath( outputDir )
+		};
+
+		// Add optional properties if provided
+		if ( len( projectTitle ) ) {
+			properties[ "projectTitle" ] = projectTitle;
+		}
+		if ( len( theme ) ) {
+			properties[ "theme" ] = theme;
 		}
 
 		// Initialize DocBox with strategy and properties
-		var docbox = new "bxModules.docbox.DocBox"(
+		var docbox = new docbox.DocBox(
 			strategy   = strategy,
 			properties = properties
 		);
 
 		// Provide feedback about sources
-		println( "DocBox Documentation Generator" );
-		println( "=============================" );
+		println( "" );
+		println( " ═══════════════════════════════════════════════════════════════════" );
+		println( "   📚 DocBox Documentation Generator" );
+		println( "═══════════════════════════════════════════════════════════════════" );
 		println( "" );
 
 		for ( var tuple in docboxSourceMaps ) {
 			if ( !directoryExists( tuple.dir ) ) {
-				println( "Warning: '#tuple.dir#' does not exist." );
+				println( "⚠️  Warning: '#tuple.dir#' does not exist." );
 			} else {
-				println( "Source:  #tuple.dir#" );
-				println( "Mapping: #tuple.mapping#" );
+				println( "📂 Source:  #tuple.dir#" );
+				println( "🔗 Mapping: #tuple.mapping#" );
 			}
 		}
 
-		println( "Output:  #properties.outputDir#" );
+		println( "📁 Output:  #properties.outputDir#" );
 		println( "" );
-		println( "Starting generation, please wait..." );
+		println( "⏳ Starting generation, please wait..." );
 
 		// Create mappings for source directories
-		var appMappings = getApplicationSettings().mappings;
+		var appMappings = GetApplicationMetadata().mappings;
 		for ( var tuple in docboxSourceMaps ) {
 			appMappings[ "/" & replace( tuple.mapping, ".", "/", "all" ) ] = tuple.dir;
 		}
@@ -352,16 +368,16 @@ class {
 
 		// Generate documentation
 		try {
-			// docbox.generate(
-			// 	source   = docboxSourceMaps,
-			// 	excludes = excludes
-			// );
+			docbox.generate(
+				source   = docboxSourceMaps,
+				excludes = excludes
+			);
 
 			println( "" );
-			println( "✓ Generation complete!" );
+			println( "🥊 Generation complete!" );
 			println( "Documentation available at: #properties.outputDir#" );
 		} catch ( any e ) {
-			println( "ERROR: Generation failed" );
+			println( "❌ ERROR: Generation failed" );
 			println( "Message: #e.message#" );
 			println( "Detail: #e.detail#" );
 			if ( structKeyExists( e, "tagContext" ) && arrayLen( e.tagContext ) ) {

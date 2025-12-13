@@ -265,7 +265,7 @@ component accessors="true" {
 					querySetCell( metadata, "fullextends", fullextends );
 
 					// so we cane easily query direct desendents
-					if ( structKeyExists( meta, "extends" ) ) {
+					if ( structKeyExists( meta, "extends" ) && meta.extends.count() ) {
 						if ( meta.type eq "interface" ) {
 							querySetCell(
 								metadata,
@@ -364,7 +364,7 @@ component accessors="true" {
 		// ignore top level
 		var inheritence = [];
 
-		while ( structKeyExists( arguments.metadata, "extends" ) ) {
+		while ( structKeyExists( arguments.metadata, "extends" ) && arguments.metadata.extends.count() ) {
 			// manage interfaces
 			if ( arguments.metadata.type == "interface" ) {
 				arguments.metadata = arguments.metadata.extends[ structKeyList( arguments.metadata.extends ) ];
