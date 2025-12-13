@@ -88,6 +88,15 @@ p {
 	color: var(--text-secondary) !important;
 }
 
+.text-primary {
+	color: #d63384;
+}
+
+[data-theme="dark"] code,
+html[data-theme="dark"] code {
+	color: #ff94cb !important;
+}
+
 [x-cloak] {
 	display: none !important;
 }
