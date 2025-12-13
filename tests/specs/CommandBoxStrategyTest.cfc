@@ -48,29 +48,11 @@ component extends="BaseTest" {
 				expect( fileExists( overviewFile ) ).toBeTrue(
 					"should generate overview-frame.html file to list all commands"
 				);
-
 				var overviewHTML = fileRead( overviewFile );
 				expect( overviewHTML ).toInclude(
 					"Generate",
 					"should document commands/generate.cfc in list of classes."
 				);
-			} );
-
-			xit( "throws exception when outputDir does not exist", function(){
-				expect( function(){
-					var testDocBox = new docbox.DocBox(
-						strategy   = "docbox.strategy.CommandBox.CommandBoxStrategy",
-						properties = {
-							projectTitle : "DocBox Tests",
-							outputDir    : expandPath( "/tests/tmp/bla" )
-						}
-					);
-					testDocBox.generate(
-						source   = expandPath( "/tests/resources/commandbox-docbox/commands" ),
-						mapping  = "commands",
-						excludes = "(coldbox|build\-docbox)"
-					);
-				} ).toThrow( "InvalidConfigurationException" );
 			} );
 
 			it( "produces HTML output in the correct directory", function(){

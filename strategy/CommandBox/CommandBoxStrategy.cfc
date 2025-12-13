@@ -20,10 +20,6 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 		default="Untitled"
 		type   ="string";
 
-	// Static variables.
-	variables.TEMPLATE_PATH = "/docbox/strategy/CommandBox/resources/templates";
-	variables.ASSETS_PATH   = "/docbox/strategy/api/themes/frames/resources/static";
-
 	/**
 	 * Constructor
 	 * @outputDir The output directory
@@ -34,6 +30,11 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 		string projectTitle = "Untitled"
 	){
 		super.init( argumentCollection = arguments );
+
+		// Override the parent's theme-based paths with CommandBox-specific paths
+		variables.TEMPLATE_PATH = "/docbox/strategy/CommandBox/resources/templates";
+		variables.ASSETS_PATH   = "/docbox/strategy/api/themes/frames/resources/static";
+
 		return this;
 	}
 
