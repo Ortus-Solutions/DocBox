@@ -320,8 +320,9 @@
 			<cfset local.abstractCount = 0 />
 			<cfloop query="local.qFunctions">
 				<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.qFunctions.metadata.annotations : local.qFunctions.metadata />
-				<cfif local.qFunctions.metadata.access eq "public"><cfset local.publicCount++ /></cfif>
-				<cfif local.qFunctions.metadata.access eq "private"><cfset local.privateCount++ /></cfif>
+				<cfset local.qFunctionsMetadata = local.qFunctions.metadata />
+				<cfif local.qFunctionsMetadata.access eq "public"><cfset local.publicCount++ /></cfif>
+				<cfif local.qFunctionsMetadata.access eq "private"><cfset local.privateCount++ /></cfif>
 				<cfif structKeyExists( local.funcAnnotations, "static" ) AND local.funcAnnotations.static><cfset local.staticCount++ /></cfif>
 				<cfif structKeyExists( local.funcAnnotations, "abstract" ) AND local.funcAnnotations.abstract><cfset local.abstractCount++ /></cfif>
 			</cfloop>
@@ -498,7 +499,7 @@
 
 <a name="inherited_methods"><!-- --></a>
 <cfset local.localmeta = arguments.metadata />
-<cfloop condition="#local.localMeta.keyExists( "extends" ) && local.localMeta.extends.count()#">
+<cfloop condition="local.localMeta.keyExists( 'extends' ) and local.localMeta.extends.count()">
 	<cfscript>
 		if(local.localmeta.type eq "interface")
 		{
