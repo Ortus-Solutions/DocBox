@@ -262,12 +262,23 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 						<cfset local.propAnnotations = server.keyExists("boxlang") ? local.propMeta.annotations : local.propMeta />
 						<tr>
 							<td><code>#local.propMeta.type#</code></td>
-							<td>
-								<strong>#local.propMeta.name#</strong>
-								<cfif local.propDoc.keyExists("hint") AND len(local.propDoc.hint)>
-									<div class="text-muted small">#local.propDoc.hint#</div>
-								</cfif>
-							</td>
+						<td>
+							<strong>#local.propMeta.name#</strong>
+							<cfif local.propDoc.keyExists("hint") AND len(local.propDoc.hint)>
+								<div class="text-muted small">#local.propDoc.hint#</div>
+							</cfif>
+							<!--- Property Annotations --->
+							<div class="mt-1">
+								<cfloop collection="#local.propAnnotations#" item="local.propAnnotKey">
+									<cfif isSimpleValue( local.propAnnotations[ local.propAnnotKey ] ) AND
+										!listFindNoCase( "hint,type,name,default,required,serializable", local.propAnnotKey ) >
+										<span class="badge bg-light text-dark border me-1" style="font-size: 0.7rem;">
+											<strong>#lcase( local.propAnnotKey )#</strong><cfif len( local.propAnnotations[ local.propAnnotKey ] )>: #local.propAnnotations[ local.propAnnotKey ]#</cfif>
+										</span>
+									</cfif>
+								</cfloop>
+							</div>
+						</td>
 							<td>
 								<cfif len(local.propAnnotations.default ?: "")>
 									<code>#local.propAnnotations.default#</code>
@@ -366,6 +377,20 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 				<p class="mt-2">#local.funcDoc.hint#</p>
 			</cfif>
 
+			<!--- Method Annotations --->
+			<cfset local.methodAnnotCount = 0>
+			<div class="mt-2">
+				<cfloop collection="#local.funcAnnotations#" item="local.annotKey">
+					<cfif isSimpleValue( local.funcAnnotations[ local.annotKey ] ) AND
+						!listFindNoCase( "hint,access,returntype,name,output,static,abstract,parameters,return,returnformat,description,roles,verifyClient,secureJSON,secureJSONPrefix", local.annotKey ) >
+						<cfset local.methodAnnotCount++>
+						<span class="badge bg-light text-dark border me-1 mb-1">
+							<strong>#lcase( local.annotKey )#</strong><cfif len( local.funcAnnotations[ local.annotKey ] )>: #local.funcAnnotations[ local.annotKey ]#</cfif>
+						</span>
+					</cfif>
+				</cfloop>
+			</div>
+
 			<cfif structKeyExists(local.func, "parameters") AND arrayLen(local.func.parameters)>
 				<h6 class="mt-3">Parameters:</h6>
 				<ul>
@@ -394,6 +419,7 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 			"name": local.func.name,
 			"access": local.func.access,
 			"isStatic": structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static,
+			"isAbstract": structKeyExists(local.funcAnnotations, "abstract") AND local.funcAnnotations.abstract,
 			"html": trim(local.methodHTML)
 		}) />
 	</cfloop>
@@ -415,31 +441,33 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 		get counts() {
 			return {
 				all: this.allMethods.length,
-				public: this.allMethods.filter(m => m.access === 'public').length,
-				remote: this.allMethods.filter(m => m.access === 'remote').length,
-				private: this.allMethods.filter(m => m.access === 'private').length,
-				static: this.allMethods.filter(m => m.isStatic).length
+				public: this.allMethods.filter( m => m.access === 'public' ).length,
+				remote: this.allMethods.filter( m => m.access === 'remote' ).length,
+				private: this.allMethods.filter( m => m.access === 'private' ).length,
+				static: this.allMethods.filter( m => m.isStatic ).length,
+				abstract: this.allMethods.filter( m => m.isAbstract ).length
 			};
 		},
-
 		get filteredMethods() {
 			let methods = this.allMethods;
 
-			if (this.activeTab === 'public') {
-				methods = methods.filter(m => m.access === 'public');
-			} else if (this.activeTab === 'remote') {
-				methods = methods.filter(m => m.access === 'remote');
-			} else if (this.activeTab === 'private') {
-				methods = methods.filter(m => m.access === 'private');
-			} else if (this.activeTab === 'static') {
-				methods = methods.filter(m => m.isStatic);
+			if ( this.activeTab === 'public' ) {
+				methods = methods.filter( m => m.access === 'public' );
+			} else if ( this.activeTab === 'remote' ) {
+				methods = methods.filter( m => m.access === 'remote' );
+			} else if ( this.activeTab === 'private' ) {
+				methods = methods.filter( m => m.access === 'private' );
+			} else if ( this.activeTab === 'static' ) {
+				methods = methods.filter( m => m.isStatic );
+			} else if ( this.activeTab === 'abstract' ) {
+				methods = methods.filter( m => m.isAbstract );
 			}
 
-			if (this.searchQuery.trim()) {
+			if ( this.searchQuery.trim() ) {
 				const query = this.searchQuery.toLowerCase();
-				methods = methods.filter(m =>
-					m.name.toLowerCase().includes(query) ||
-					m.html.toLowerCase().includes(query)
+				methods = methods.filter( m =>
+					m.name.toLowerCase().includes( query ) ||
+					m.html.toLowerCase().includes( query )
 				);
 			}
 
@@ -484,7 +512,7 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 					🟢 Public (<span x-text="counts.public"></span>)
 				</button>
 			</li>
-			<li class="nav-item" role="presentation">
+			<li class="nav-item" role="presentation" x-show="counts.remote > 0">
 				<button
 					class="nav-link"
 					:class="{ 'active': activeTab === 'remote' }"
@@ -494,7 +522,7 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 					🌐 Remote (<span x-text="counts.remote"></span>)
 				</button>
 			</li>
-			<li class="nav-item" role="presentation">
+			<li class="nav-item" role="presentation" x-show="counts.private > 0">
 				<button
 					class="nav-link"
 					:class="{ 'active': activeTab === 'private' }"
@@ -504,7 +532,7 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 					🔒 Private (<span x-text="counts.private"></span>)
 				</button>
 			</li>
-			<li class="nav-item" role="presentation">
+			<li class="nav-item" role="presentation" x-show="counts.static > 0">
 				<button
 					class="nav-link"
 					:class="{ 'active': activeTab === 'static' }"
@@ -512,6 +540,16 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 					type="button"
 				>
 					⚡ Static (<span x-text="counts.static"></span>)
+				</button>
+			</li>
+			<li class="nav-item" role="presentation" x-show="counts.abstract > 0">
+				<button
+					class="nav-link"
+					:class="{ 'active': activeTab === 'abstract' }"
+					@click="activeTab = 'abstract'"
+					type="button"
+				>
+					📝 Abstract (<span x-text="counts.abstract"></span>)
 				</button>
 			</li>
 		</ul>

@@ -370,6 +370,9 @@ component accessors="true" {
 	function testFunction( param1, param2 ){
 	}
 
+	remote function remoteTest( required string input ) annotation1 annotation2="value"{
+	}
+
 	static void function staticVoidFunction(){
 
 	}
