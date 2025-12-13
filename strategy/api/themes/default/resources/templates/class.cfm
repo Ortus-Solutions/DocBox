@@ -108,13 +108,9 @@ local.getImplements = function( metadata ) {
 			<cfset local.packagePath = "" />
 			<cfloop array="#local.packageParts#" index="local.part">
 				<cfset local.packagePath = listAppend(local.packagePath, local.part, ".") />
-				<cfif local.part eq local.packageParts[arrayLen(local.packageParts)]>
-					<li class="breadcrumb-item active">📁 #local.part#</li>
-				<cfelse>
-					<li class="breadcrumb-item">
-						<a href="##" @click.prevent="currentPackage = '#local.packagePath#'; currentView = 'package'">📁 #local.part#</a>
-					</li>
-				</cfif>
+				<li class="breadcrumb-item">
+					<a href="##" @click.prevent="currentPackage = '#local.packagePath#'; currentView = 'package'">📁 #local.part#</a>
+				</li>
 			</cfloop>
 		</ol>
 	</nav>
