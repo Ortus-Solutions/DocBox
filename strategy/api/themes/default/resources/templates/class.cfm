@@ -27,6 +27,27 @@ local.writeTypeLink = function( type, package, qMetaData, struct genericMeta = {
 }
 
 /**
+ * Checks if a class exists in the metadata and returns a link if it does
+ */
+local.getClassLink = function( required className, required qMetaData ) {
+	// Check if the class exists in the metadata
+	var qClass = queryExecute(
+		"SELECT package, name FROM qMetaData WHERE CONCAT( package, '.', name ) = :fullName",
+		{ fullName : arguments.className },
+		{ dbtype : "query" }
+	);
+
+	if ( qClass.recordCount ) {
+		// Generate the relative path to the class
+		var classPath = replace( qClass.package, ".", "/", "all" ) & "/" & qClass.name & ".html";
+		return '<a href="##" @click.prevent="navigateToClass({ fullname: ''#arguments.className#'', package: ''#qClass.package#'', name: ''#qClass.name#'' })">#arguments.className#</a>';
+	}
+
+	// Class doesn't exist in docs, return plain text
+	return arguments.className;
+}
+
+/**
  * Gets the inheritance chain for a class/interface
  */
 local.getInheritence = function( metadata ) {
@@ -132,14 +153,14 @@ local.inheritance = local.getInheritence( arguments.metadata );
 					<div class="inheritance-level" style="padding-left: #( local.i - 1 ) * 1.5#rem;">
 						<span class="inheritance-arrow">↳</span>
 						<cfif local.className neq local.thisClass>
-							<code>#local.writeTypeLink( local.className, arguments.package, arguments.qMetaData )#</code>
+							<code>#local.getClassLink( local.className, arguments.qMetaData )#</code>
 						<cfelse>
 							<strong><code class="text-primary">#local.className#</code></strong>
 						</cfif>
 					</div>
 				<cfelse>
 					<div class="inheritance-level">
-						<code>#local.className#</code>
+						<code>#local.getClassLink( local.className, arguments.qMetaData )#</code>
 					</div>
 				</cfif>
 			</cfloop>
@@ -152,7 +173,7 @@ local.inheritance = local.getInheritence( arguments.metadata );
 	<cfscript>
 	local.interfaces = local.getImplements( arguments.metadata );
 	</cfscript>
-	
+
 	<cfif !arrayIsEmpty( local.interfaces )>
 		<div class="section-card">
 			<h3 class="section-title">
@@ -161,7 +182,7 @@ local.inheritance = local.getInheritence( arguments.metadata );
 			<div class="implemented-interfaces">
 				<cfloop array="#local.interfaces#" index="local.interface">
 					<span class="badge badge-info me-2 mb-2">
-						🔌 #local.writeTypeLink( local.interface, arguments.package, arguments.qMetaData )#
+						🔌 #local.getClassLink( local.interface, arguments.qMetaData )#
 					</span>
 				</cfloop>
 			</div>
