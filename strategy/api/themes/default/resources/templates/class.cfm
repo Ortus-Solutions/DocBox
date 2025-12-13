@@ -1,3 +1,31 @@
+<cfscript>
+/**
+ * Gets formatted argument list for method signature
+ */
+local.getArgumentList = function( required func ){
+	var result = "";
+	var params = arguments.func.parameters ?: [];
+
+	for ( var param in params ) {
+		if ( len( result ) ) {
+			result &= ", ";
+		}
+		result &= ( param.type ?: "any" ) & " " & param.name;
+		if ( structKeyExists( param, "required" ) && param.required ) {
+			result &= " required";
+		}
+	}
+
+	return result;
+}
+
+/**
+ * Writes a type link
+ */
+local.writeTypeLink = function( type, package, qMetaData, struct genericMeta = {} ) {
+	return arguments.type;
+}
+</cfscript>
 <cfoutput>
 <cfset local.annotations = server.keyExists("boxlang") ? arguments.metadata.annotations : arguments.metadata>
 <cfset local.documentation = server.keyExists("boxlang") ? arguments.metadata.documentation : arguments.metadata>
@@ -338,37 +366,3 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 	</div>
 </cfif>
 </cfoutput>
-
-<cfscript>
-/**
- * Gets formatted argument list for method signature
- */
-private string function getArgumentList( required func ) {
-	var result = "";
-	var params = arguments.func.parameters ?: [];
-
-	for ( var param in params ) {
-		if ( len( result ) ) {
-			result &= ", ";
-		}
-		result &= ( param.type ?: "any" ) & " " & param.name;
-		if ( structKeyExists( param, "required" ) && param.required ) {
-			result &= " required";
-		}
-	}
-
-	return result;
-}
-
-/**
- * Writes a type link
- */
-private string function writeTypeLink(
-	required type,
-	required package,
-	required qMetaData,
-	struct genericMeta = {}
-) {
-	return arguments.type;
-}
-</cfscript>
