@@ -575,10 +575,11 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 <cfset local.localMeta = arguments.metadata />
 <cfset local.localFunctions = {} />
 <cfloop query="local.qMethods">
-	<cfset local.localFunctions[ local.qMethods.metadata.name ] = 1 />
+	<cfset local.qMetadata = local.qMethods.metadata />
+	<cfset local.localFunctions[ local.qMetadata.name.toString() ] = 1 />
 </cfloop>
 
-<cfloop condition="#local.localMeta.keyExists( 'extends' ) && local.localMeta.extends.count()#">
+<cfloop condition="local.localMeta.keyExists( 'extends' ) and local.localMeta.extends.count()">
 	<cfscript>
 		if ( local.localMeta.type eq "interface" ) {
 			local.localMeta = local.localMeta.extends[ structKeyList( local.localMeta.extends ) ];
