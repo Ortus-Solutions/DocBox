@@ -181,7 +181,7 @@ new docbox.DocBox()
   localStorage.setItem( 'key', data );
   obj.method( param1, param2 );
   const html = `<p>${ value }</p>`;
-  
+
   // Incorrect - missing spacing
   const result = array.filter(item => item.active).slice(0, 10);
   if (!value) return null;
@@ -190,7 +190,7 @@ new docbox.DocBox()
   const html = `<p>${value}</p>`;
   ```
 
-**CFML/BoxLang Style**: 
+**CFML/BoxLang Style**:
 - Follow CFFormat rules defined in `.cfformat.json`
 - Spacing in all markers: function calls `func( arg )`, conditions `if ( test )`, arrays `[ 1, 2 ]`, structs `{ key : value }`
 - Binary operators require padding: `a + b`, `x == y`
