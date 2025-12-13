@@ -61,6 +61,9 @@ component{
         // Build the source
 		buildSource( argumentCollection = arguments );
 
+		// Build the BoxLang version
+		buildBoxLangSource( argumentCollection = arguments );
+
         // Build Docs
         arguments.outputDir = variables.buildDir & "/apidocs";
 		docs( argumentCollection = arguments );
@@ -191,6 +194,137 @@ component{
 			)
 			.run();
     }
+
+	/**
+	 * Build the BoxLang source version
+	 *
+	 * @version The version you are building
+	 * @buldID The build identifier
+	 * @branch The branch you are building
+	 */
+	function buildBoxLangSource(
+		version = "1.0.0",
+		buildID = createUUID(),
+		branch  = "development"
+	){
+		var bxProjectName = "bx-docbox";
+
+		// Build Notice ID
+		print
+			.line()
+			.boldMagentaLine(
+				"Building BoxLang Edition: #bxProjectName# v#arguments.version#+#arguments.buildID# from #cwd# using the #arguments.branch# branch."
+			)
+			.toConsole();
+
+		// Ensure BoxLang export directory
+		var bxExportsDir = variables.artifactsDir & "/#bxProjectName#/#arguments.version#";
+		directoryCreate( bxExportsDir, true, true );
+
+		// BoxLang Project Build Dir
+		var bxProjectBuildDir = variables.buildDir & "/#bxProjectName#";
+		directoryCreate(
+			bxProjectBuildDir,
+			true,
+			true
+		);
+
+		// Copy source
+		print.blueLine( "Copying source to BoxLang build folder..." ).toConsole();
+		copy(
+			variables.cwd,
+			bxProjectBuildDir
+		);
+
+		// Replace box.json with build/bx-docbox.json
+		print.greenLine( "Replacing box.json with build/bx-docbox.json..." ).toConsole();
+		if ( fileExists( "#bxProjectBuildDir#/box.json" ) ) {
+			fileDelete( "#bxProjectBuildDir#/box.json" );
+		}
+		fileCopy(
+			"#variables.cwd#/build/bx-docbox.json",
+			"#bxProjectBuildDir#/box.json"
+		);
+
+		// Create build ID
+		fileWrite(
+			"#bxProjectBuildDir#/#bxProjectName#-#version#+#buildID#.md",
+			"Built with ❤️ love ❤️ on #dateTimeFormat( now(), "full" )#"
+		);
+
+		// Updating Placeholders
+		print.greenLine( "Updating version identifier to #arguments.version#" ).toConsole();
+		command( "tokenReplace" )
+			.params(
+				path        = "/#bxProjectBuildDir#/**",
+				token       = "@build.version@",
+				replacement = arguments.version
+			)
+			.run();
+
+		print.greenLine( "Updating build identifier to #arguments.buildID#" ).toConsole();
+		command( "tokenReplace" )
+			.params(
+				path        = "/#bxProjectBuildDir#/**",
+				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
+				replacement = ( arguments.branch == "master" ? arguments.buildID : "" )
+			)
+			.run();
+
+		// zip up source
+		var destination = "#bxExportsDir#/#bxProjectName#-#version#.zip";
+		print.greenLine( "Zipping BoxLang code to #destination#" ).toConsole();
+		cfzip(
+			action    = "zip",
+			file      = "#destination#",
+			source    = "#bxProjectBuildDir#",
+			overwrite = true,
+			recurse   = true
+		);
+
+		// Copy box.json for convenience
+		fileCopy(
+			"#bxProjectBuildDir#/box.json",
+			bxExportsDir
+		);
+
+		// Copy BE to root
+		fileCopy(
+			"#bxProjectBuildDir#/box.json",
+			variables.artifactsDir & "/#bxProjectName#"
+		);
+		fileCopy(
+			destination,
+			variables.artifactsDir & "/#bxProjectName#/#bxProjectName#-be.zip"
+		);
+
+		// Build checksums for BoxLang version
+		print.greenLine( "Building checksums for BoxLang edition" ).toConsole();
+		command( "checksum" )
+			.params(
+				path      = "#bxExportsDir#/*.zip",
+				algorithm = "SHA-512",
+				extension = "sha512",
+				write     = true
+			)
+			.run();
+		command( "checksum" )
+			.params(
+				path      = "#bxExportsDir#/*.zip",
+				algorithm = "md5",
+				extension = "md5",
+				write     = true
+			)
+			.run();
+		command( "checksum" )
+			.params(
+				path      = variables.artifactsDir & "/#bxProjectName#/#bxProjectName#-be.zip",
+				algorithm = "md5",
+				extension = "md5",
+				write     = true
+			)
+			.run();
+	}
 
     /**
      * Produce the API Docs

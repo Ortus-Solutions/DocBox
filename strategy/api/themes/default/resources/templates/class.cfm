@@ -30,17 +30,22 @@ local.writeTypeLink = function( type, package, qMetaData, struct genericMeta = {
  * Checks if a class exists in the metadata and returns a link if it does
  */
 local.getClassLink = function( required className, required qMetaData ) {
-	// Check if the class exists in the metadata
-	var qClass = queryExecute(
-		"SELECT package, name FROM qMetaData WHERE CONCAT( package, '.', name ) = :fullName",
-		{ fullName : arguments.className },
-		{ dbtype : "query" }
-	);
 
-	if ( qClass.recordCount ) {
-		// Generate the relative path to the class
-		var classPath = replace( qClass.package, ".", "/", "all" ) & "/" & qClass.name & ".html";
-		return '<a href="##" @click.prevent="navigateToClass({ fullname: ''#arguments.className#'', package: ''#qClass.package#'', name: ''#qClass.name#'' })">#arguments.className#</a>';
+	try{
+			// Check if the class exists in the metadata
+		var qClass = queryExecute(
+			"SELECT package, name FROM qMetaData WHERE CONCAT( package, '.', name ) = :fullName",
+			{ fullName : arguments.className },
+			{ dbtype : "query" }
+		);
+
+		if ( qClass.recordCount ) {
+			// Generate the relative path to the class
+			var classPath = replace( qClass.package, ".", "/", "all" ) & "/" & qClass.name & ".html";
+			return '<a href="##" @click.prevent="navigateToClass({ fullname: ''#arguments.className#'', package: ''#qClass.package#'', name: ''#qClass.name#'' })">#arguments.className#</a>';
+		}
+	} catch ( any e ) {
+		// Means the class is not in the package, return plain text
 	}
 
 	// Class doesn't exist in docs, return plain text

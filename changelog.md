@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New bx-docbox artifact for BoxLang projects
 - New engine support: Adobe 2025
 - BoxLang support and BoxLang prime
 - Ability to do generation from BoxLang projects and source code
