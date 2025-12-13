@@ -190,6 +190,28 @@ local.inheritance = local.getInheritence( arguments.metadata );
 	</cfif>
 </cfif>
 
+<!-- Class Annotations -->
+<div class="section-card">
+	<h3 class="section-title">
+		<i class="bi bi-tags"></i> Class Annotations
+	</h3>
+	<div>
+		<cfset local.attributesCount = 0>
+		<cfloop collection="#local.annotations#" item="local.classMeta">
+			<cfif isSimpleValue( local.annotations[ local.classMeta ] ) AND
+				!listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
+				<cfset local.attributesCount++>
+				<span class="badge bg-light text-dark border me-2 mb-2">
+					<strong>#lcase( local.classMeta )#</strong><cfif len( local.annotations[ local.classMeta ] )>: #local.annotations[ local.classMeta ]#</cfif>
+				</span>
+			</cfif>
+		</cfloop>
+		<cfif local.attributesCount eq 0>
+			<span class="badge bg-light text-muted border"><em>None</em></span>
+		</cfif>
+	</div>
+</div>
+
 <cfscript>
 local.qFunctions = buildFunctionMetaData(arguments.metadata);
 local.qProperties = buildPropertyMetadata(arguments.metadata);
