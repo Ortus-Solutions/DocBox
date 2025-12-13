@@ -108,21 +108,26 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 			<div class="method-name">#local.init.name#()</div>
 
 			<div class="method-signature">
-				#local.init.access# #writeTypeLink(local.init.returnType, arguments.package, arguments.qMetaData, local.init)# #local.init.name#(#getArgumentList(local.init)#)
+				#local.init.access# #writeTypeLink(
+					local.init.returnType,
+					arguments.package,
+					arguments.qMetaData,
+					local.init
+				)# #local.init.name#( #getArgumentList( local.init )# )
 			</div>
 
-			<cfif local.initDoc.keyExists("hint") AND len(local.initDoc.hint)>
+			<cfif local.initDoc.keyExists( "hint" ) AND len( local.initDoc.hint )>
 				<p>#local.initDoc.hint#</p>
 			</cfif>
 
-			<cfif structKeyExists(local.init, "parameters") AND arrayLen(local.init.parameters)>
+			<cfif structKeyExists( local.init, "parameters" ) AND arrayLen(local.init.parameters)>
 				<h6>Parameters:</h6>
 				<ul>
 					<cfloop array="#local.init.parameters#" index="local.param">
-						<cfset local.paramDoc = server.keyExists("boxlang") ? local.param.documentation : local.param />
+						<cfset local.paramDoc = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
 						<li>
 							<code>#local.param.name#</code>
-							<cfif local.paramDoc.keyExists("hint")>
+							<cfif local.paramDoc.keyExists( "hint" )>
 								- #local.paramDoc.hint#
 							</cfif>
 						</li>
@@ -334,32 +339,36 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 </cfif>
 </cfoutput>
 
-<cfsilent>
-<cffunction name="getArgumentList" hint="Gets formatted argument list for method signature" access="private" returntype="string">
-	<cfargument name="func" required="true">
+<cfscript>
+/**
+ * Gets formatted argument list for method signature
+ */
+private string function getArgumentList( required func ) {
+	var result = "";
+	var params = arguments.func.parameters ?: [];
 
-	<cfset var result = "">
-	<cfset var params = arguments.func.parameters ?: []>
+	for ( var param in params ) {
+		if ( len( result ) ) {
+			result &= ", ";
+		}
+		result &= ( param.type ?: "any" ) & " " & param.name;
+		if ( structKeyExists( param, "required" ) && param.required ) {
+			result &= " required";
+		}
+	}
 
-	<cfloop array="#params#" index="local.param">
-		<cfif len(result)>
-			<cfset result &= ", ">
-		</cfif>
-		<cfset result &= (local.param.type ?: "any") & " " & local.param.name>
-		<cfif structKeyExists(local.param, "required") AND local.param.required>
-			<cfset result &= " required">
-		</cfif>
-	</cfloop>
+	return result;
+}
 
-	<cfreturn result>
-</cffunction>
-
-<cffunction name="writeTypeLink" hint="Writes a type link" access="private" returntype="string">
-	<cfargument name="type" required="true">
-	<cfargument name="package" required="true">
-	<cfargument name="qMetaData" required="true">
-	<cfargument name="genericMeta" type="struct" default="#structNew()#">
-
-	<cfreturn arguments.type>
-</cffunction>
-</cfsilent>
+/**
+ * Writes a type link
+ */
+private string function writeTypeLink(
+	required type,
+	required package,
+	required qMetaData,
+	struct genericMeta = {}
+) {
+	return arguments.type;
+}
+</cfscript>

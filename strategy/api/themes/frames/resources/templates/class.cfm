@@ -1195,17 +1195,17 @@
 
 		//stupid cleanup
 
-		StructDelete(variables, "findOverwrite");
-		StructDelete(variables, "writeTypeLink");
-		StructDelete(variables, "writeMethodLink");
-		StructDelete(variables, "getArgumentList");
-		StructDelete(variables, "writeClassLink");
-		StructDelete(variables, "getInheritence");
-		StructDelete(variables, "writeObjectLink");
-		StructDelete(variables, "getImplements");
-		StructDelete(variables, "findSpecifiedBy");
+		StructDelete( variables, "findOverwrite" );
+		StructDelete( variables, "writeTypeLink" );
+		StructDelete( variables, "writeMethodLink" );
+		StructDelete( variables, "getArgumentList" );
+		StructDelete( variables, "writeClassLink" );
+		StructDelete( variables, "getInheritence" );
+		StructDelete( variables, "writeObjectLink" );
+		StructDelete( variables, "getImplements" );
+		StructDelete( variables, "findSpecifiedBy" );
 
 		//store for resident data
-		StructDelete(variables.instance, "class");
+		StructDelete( variables.instance, "class" );
 	</cfscript>
 </cfsilent>

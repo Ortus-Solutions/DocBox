@@ -6,36 +6,36 @@
  */
 
 // Get all packages
-var md = arguments.qMetaData;
-var qPackages = queryExecute(
+local.md = arguments.qMetaData;
+local.qPackages = queryExecute(
 	"SELECT DISTINCT package FROM md ORDER BY package",
 	{},
 	{ dbtype="query" }
 );
 
 // Loop through each package and build class pages
-for ( var packageRow in qPackages ) {
-	var currentPackage = packageRow.package;
-	var currentDir = variables.outputDir & "/" & replace( currentPackage, ".", "/", "all" );
+for (  local.packageRow in qPackages ) {
+	local.currentPackage = packageRow.package;
+	local.currentDir = variables.outputDir & "/" & replace( local.currentPackage, ".", "/", "all" );
 
 	// Create directory if it doesn't exist
-	if ( !directoryExists( currentDir ) ) {
-		directoryCreate( currentDir );
+	if ( !directoryExists( local.currentDir ) ) {
+		directoryCreate( local.currentDir );
 	}
 
 	// Get all classes/interfaces in this package
-	var qPackage = queryExecute(
+	local.qPackage = queryExecute(
 		"SELECT * FROM md WHERE package = :package ORDER BY name",
-		{ package: currentPackage },
+		{ package: local.currentPackage },
 		{ dbtype="query" }
 	);
 
 	// Build individual class pages
-	buildClassPages( qPackage, arguments.qMetaData );
+	buildClassPages( local.qPackage, arguments.qMetaData );
 }
 
 // Generate navigation JSON data
-var navArgs = {
+local.navArgs = {
 	outputDir: variables.outputDir,
 	qMetaData: arguments.qMetaData
 };
