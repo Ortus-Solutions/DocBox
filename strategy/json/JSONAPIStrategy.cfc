@@ -45,7 +45,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		ensureDirectory( getOutputDir() );
 
 		var classes = normalizePackages(
-			arguments.metadata.reduce( ( results, row ) =>{
+			arguments.metadata.reduce( ( results, row ) => {
 				results.append( row );
 				return results;
 			}, [] )
@@ -144,8 +144,8 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 			 * Marshall functions to match the designed schema;
 			 */
 			if ( !isNull( arguments.row.metadata.functions ) ) {
-				var metaFunctions = arrayMap( arguments.row.metadata.functions, ( method ) =>{
-					var annotations = server.keyExists( "boxlang" ) ? arguments.method.annotations : arguments.method;
+				var metaFunctions = arrayMap( arguments.row.metadata.functions, ( method ) => {
+					var annotations   = server.keyExists( "boxlang" ) ? arguments.method.annotations : arguments.method;
 					var documentation = server.keyExists( "boxlang" ) ? arguments.method.documentation : arguments.method;
 
 					return {

@@ -116,13 +116,13 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 	 * @qMetaData The metadata
 	 */
 	function writeOverviewSummaryAndFrame( required query qMetadata ){
-		var md = arguments.qMetadata;
+		var md        = arguments.qMetadata;
 		var qPackages = queryExecute(
 			"SELECT DISTINCT [package], [namespace]
 			FROM md
 			ORDER BY [package]",
 			{},
-			{ dbtype = "query" }
+			{ dbtype : "query" }
 		)
 
 		// overview summary
@@ -174,7 +174,7 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 			var safeMeta   = structCopy( thisRow.metadata );
 
 			// Is this a class
-			if (  listFindNoCase( "component,class", safeMeta.type ) ) {
+			if ( listFindNoCase( "component,class", safeMeta.type ) ) {
 				var qSubClass = getMetaSubquery(
 					arguments.qMetaData,
 					"UPPER( extends ) = UPPER( '#thisRow.package#.#thisRow.name#' )",

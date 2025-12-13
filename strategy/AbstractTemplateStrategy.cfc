@@ -54,7 +54,7 @@ component doc_abstract="true" accessors="true" {
 	 * @return string,struct
 	 */
 	struct function buildPackageTree( required query qMetadata ){
-		var md = arguments.qMetadata;
+		var md        = arguments.qMetadata;
 		var qPackages = queryExecute(
 			"SELECT DISTINCT
 				package
@@ -63,7 +63,7 @@ component doc_abstract="true" accessors="true" {
 			ORDER BY
 				package",
 			{},
-			{ dbtype="query" }
+			{ dbtype : "query" }
 		)
 
 		var tree = {};
@@ -142,7 +142,7 @@ component doc_abstract="true" accessors="true" {
 	 * builds a sorted query of function meta
 	 */
 	query function buildFunctionMetaData( required struct metadata ){
-		if( !metadata.count() ){
+		if ( !metadata.count() ) {
 			return queryNew( "name, metadata" );
 		}
 
@@ -160,7 +160,6 @@ component doc_abstract="true" accessors="true" {
 
 		// iterate and create
 		for ( var thisFnc in arguments.metadata.functions ) {
-
 			// dodge cfthread functions
 			if ( NOT javacast( "string", thisFnc.name ).startsWith( "_cffunccfthread_" ) ) {
 				queryAddRow( qFunctions );
@@ -313,19 +312,18 @@ component doc_abstract="true" accessors="true" {
 		string where,
 		string orderBy
 	){
-
 		var qry = arguments.query;
 		var sql = "SELECT * FROM qry";
 
 		if ( !isNull( arguments.where ) ) {
 			sql &= " WHERE #preserveSingleQuotes( arguments.where )#";
-	}
+		}
 
 		if ( !isNull( arguments.orderBy ) ) {
 			sql &= " ORDER BY #arguments.orderBy#";
 		}
 
-		return queryExecute( sql, {}, { dbtype="query" } );
+		return queryExecute( sql, {}, { dbtype : "query" } );
 	}
 
 	/**
@@ -348,11 +346,9 @@ component doc_abstract="true" accessors="true" {
 
 		// move any argument meta from @foo.bar annotations onto the argument meta
 		if ( structKeyExists( arguments.func, "parameters" ) ) {
-
 			// Get function annotations
 			var annotations = server.keyExists( "boxlang" ) ? arguments.func.annotations : arguments.func;
 			for ( local.metaKey in annotations ) {
-
 				if ( listLen( local.metaKey, "." ) gt 1 ) {
 					local.paramKey       = listGetAt( local.metaKey, 1, "." );
 					local.paramExtraMeta = listGetAt( local.metaKey, 2, "." );
@@ -367,7 +363,6 @@ component doc_abstract="true" accessors="true" {
 						}
 					}
 				}
-
 			}
 		}
 		return arguments.func;
@@ -526,7 +521,9 @@ component doc_abstract="true" accessors="true" {
 		// resolve class name
 		arguments.class = resolveClassName( arguments.class, arguments.package );
 		// get metadata
-		var meta        = server.keyExists( "boxlang" ) ? getClassMetadata( arguments.class ) : getComponentMetadata( arguments.class );
+		var meta        = server.keyExists( "boxlang" ) ? getClassMetadata( arguments.class ) : getComponentMetadata(
+			arguments.class
+		);
 		var annotations = server.keyExists( "boxlang" ) ? meta.annotations : meta;
 
 		// Old, pre-abstract support way
@@ -535,7 +532,7 @@ component doc_abstract="true" accessors="true" {
 		}
 
 		// Part of the class spec
-		if( meta.keyExists( "abstract" ) ){
+		if ( meta.keyExists( "abstract" ) ) {
 			return true;
 		}
 

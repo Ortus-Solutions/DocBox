@@ -223,9 +223,13 @@ component accessors="true" {
 					// Get metadatata
 					var meta = {};
 					if ( len( packagePath ) ) {
-						meta = server.keyExists( "boxlang" ) ? getClassmetadata( packagePath & "." & className ) : getComponentMetadata( packagePath & "." & className );
+						meta = server.keyExists( "boxlang" ) ? getClassmetadata( packagePath & "." & className ) : getComponentMetadata(
+							packagePath & "." & className
+						);
 					} else {
-						meta = server.keyExists( "boxlang" ) ? getClassmetadata( className ) : getComponentMetadata( className );
+						meta = server.keyExists( "boxlang" ) ? getClassmetadata( className ) : getComponentMetadata(
+							className
+						);
 					}
 
 					if ( len( packagePath ) AND NOT meta.name contains packagePath ) {
@@ -240,7 +244,11 @@ component accessors="true" {
 					querySetCell( metadata, "name", className );
 					querySetCell( metadata, "metadata", meta );
 					querySetCell( metadata, "type", meta.type );
-					querySetCell( metadata, "currentMapping", thisInput.mapping );
+					querySetCell(
+						metadata,
+						"currentMapping",
+						thisInput.mapping
+					);
 					querySetCell( metadata, "extends", "" );
 					querySetCell( metadata, "fullextends", "" );
 					querySetCell( metadata, "implements", "" );
@@ -287,9 +295,18 @@ component accessors="true" {
 					}
 
 					// Console Debugging
-					writeDump(var="Warning! The following script has errors: " & packagePath & "." & className, output="console" )
-					writeDump(var= "#e.message & e.detail#", output="console" )
-					writeDump(var= e.stackTrace, output="console" )
+					writeDump(
+						var    = "Warning! The following script has errors: " & packagePath & "." & className,
+						output = "console"
+					)
+					writeDump(
+						var    = "#e.message & e.detail#",
+						output = "console"
+					)
+					writeDump(
+						var    = e.stackTrace,
+						output = "console"
+					)
 				}
 			}
 			// end qFiles iteration
@@ -310,7 +327,12 @@ component accessors="true" {
 		var interfaces = {};
 
 		// check if a cfc
-		if ( !listFindNoCase( "component,class", arguments.metadata.type ) ) {
+		if (
+			!listFindNoCase(
+				"component,class",
+				arguments.metadata.type
+			)
+		) {
 			return [];
 		}
 
@@ -374,7 +396,6 @@ component accessors="true" {
 	}
 
 	static void function staticVoidFunction(){
-
 	}
 
 	static boolean function calculate( required numeric num1, num2 = 0 ){

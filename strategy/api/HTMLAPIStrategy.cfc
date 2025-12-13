@@ -45,7 +45,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	HTMLAPIStrategy function init(
 		required outputDir,
 		string projectTitle = "Untitled",
-		string theme = "default"
+		string theme        = "default"
 	){
 		super.init();
 
@@ -172,13 +172,13 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * @qMetaData The metadata
 	 */
 	HTMLAPIStrategy function writeOverviewSummaryAndFrame( required query qMetadata ){
-		var md = arguments.qMetadata;
+		var md        = arguments.qMetadata;
 		var qPackages = queryExecute(
 			"SELECT DISTINCT package
 			FROM md
 			ORDER BY package",
 			{},
-			{ dbtype="query" }
+			{ dbtype : "query" }
 		);
 
 		// overview summary

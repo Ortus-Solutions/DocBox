@@ -1,7 +1,7 @@
 /**
  * My BDD Test
  */
-component extends="BaseTest"{
+component extends="BaseTest" {
 
 	// executes after all suites+specs in the run() method
 	function afterAll(){
