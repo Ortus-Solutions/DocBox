@@ -412,3 +412,35 @@ input[type="text"]:focus {
 .frame-sidebar .form-control-sm {
 	font-size: 0.875rem;
 }
+
+/* ========================================
+   Method Search Styles
+   ======================================== */
+
+#methodSearch {
+	border: 1px solid var(--docbox-border);
+	border-radius: 6px;
+	transition: all 0.2s ease;
+}
+
+#methodSearch:focus {
+	border-color: var(--docbox-primary);
+	box-shadow: 0 0 0 0.2rem rgba(94, 114, 228, 0.15);
+}
+
+#methodSearch::placeholder {
+	color: #adb5bd;
+}
+
+.method-detail-item {
+	border-radius: 8px;
+	padding: 1rem;
+	margin-bottom: 1rem;
+	transition: all 0.3s ease;
+}
+
+.method-detail-item:target,
+.method-detail-item.search-highlight {
+	background-color: #fff3cd !important;
+	border: 2px solid #ffc107 !important;
+}

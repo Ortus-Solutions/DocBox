@@ -299,7 +299,12 @@
 <a name="method_summary"><!-- --></a>
 <div class="card mb-4">
 	<div class="card-header bg-light border-bottom">
-		<h4 class="mb-0">⚙️ Method Summary</h4>
+		<div class="d-flex justify-content-between align-items-center">
+			<h4 class="mb-0">⚙️ Method Summary</h4>
+			<div class="ms-auto" style="width: 300px;">
+				<input type="text" class="form-control form-control-sm" id="methodSearch" placeholder="🔍 Search methods..." />
+			</div>
+		</div>
 	</div>
 	<div class="card-body p-0">
 		<!-- Method Filter Tabs -->
@@ -652,9 +657,9 @@
 	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
 	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
 
-	<div class="method-detail-item <cfif local.qFunctions.currentRow lt local.qFunctions.recordCount>mb-4 pb-4 border-bottom</cfif>">
+	<div id="method-detail-#local.func.name#" class="method-detail-item <cfif local.qFunctions.currentRow lt local.qFunctions.recordCount>mb-4 pb-4 border-bottom</cfif>">
 		<a name="#local.func.name#()"><!-- --></a>
-		<h4 class="text-primary mb-2">
+		<h5 class="text-primary mb-2">
 			<cfif local.func.access eq "public">
 				<span class="visibility-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Public method - accessible from anywhere">🟢</span>
 			<cfelseif local.func.access eq "private">
@@ -791,6 +796,117 @@
 </cfif>
 
 </div><!-- end container-fluid -->
+
+<script>
+// Method Search Functionality
+(function() {
+	const searchInput = document.getElementById('methodSearch');
+	if (!searchInput) return;
+
+	// Build searchable method index
+	const methodIndex = [];
+	document.querySelectorAll('[id^="method-detail-"]').forEach(methodDiv => {
+		const methodId = methodDiv.id;
+		const methodName = methodDiv.querySelector('h5')?.textContent.trim() || '';
+		const methodSignature = methodDiv.querySelector('.method-signature')?.textContent.trim() || '';
+
+		methodIndex.push({
+			id: methodId,
+			name: methodName,
+			signature: methodSignature.toLowerCase(),
+			element: methodDiv
+		});
+	});
+
+	let searchResults = [];
+	let currentResultIndex = -1;
+
+	function performSearch(query) {
+		if (!query) {
+			clearHighlights();
+			searchResults = [];
+			currentResultIndex = -1;
+			return;
+		}
+
+		const lowerQuery = query.toLowerCase();
+		searchResults = methodIndex.filter(method =>
+			method.name.toLowerCase().includes(lowerQuery) ||
+			method.signature.includes(lowerQuery)
+		);
+
+		clearHighlights();
+
+		if (searchResults.length > 0) {
+			currentResultIndex = 0;
+			highlightResults();
+			navigateToResult(0);
+		}
+	}
+
+	function highlightResults() {
+		searchResults.forEach((result, index) => {
+			result.element.style.backgroundColor = index === currentResultIndex ? '##fff3cd' : '##f8f9fa';
+			result.element.style.border = '2px solid ' + (index === currentResultIndex ? '##ffc107' : '##e9ecef');
+			result.element.style.transition = 'all 0.3s ease';
+		});
+	}
+
+	function clearHighlights() {
+		methodIndex.forEach(method => {
+			method.element.style.backgroundColor = '';
+			method.element.style.border = '';
+		});
+	}
+
+	function navigateToResult(index) {
+		if (index < 0 || index >= searchResults.length) return;
+
+		const result = searchResults[index];
+		result.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+		// Update search input to show count
+		const countText = searchResults.length > 1 ? ` (${index + 1}/${searchResults.length})` : '';
+		searchInput.setAttribute('data-count', countText);
+	}
+
+	// Search on input
+	let searchTimeout;
+	searchInput.addEventListener('input', (e) => {
+		clearTimeout(searchTimeout);
+		searchTimeout = setTimeout(() => {
+			performSearch(e.target.value);
+		}, 300);
+	});
+
+	// Navigate with Enter (next) and Shift+Enter (previous)
+	searchInput.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			if (searchResults.length === 0) return;
+
+			if (e.shiftKey) {
+				// Previous result
+				currentResultIndex = (currentResultIndex - 1 + searchResults.length) % searchResults.length;
+			} else {
+				// Next result
+				currentResultIndex = (currentResultIndex + 1) % searchResults.length;
+			}
+
+			highlightResults();
+			navigateToResult(currentResultIndex);
+		}
+	});
+
+	// Clear search on Escape
+	searchInput.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape') {
+			searchInput.value = '';
+			performSearch('');
+		}
+	});
+})();
+</script>
 
 </body>
 </html>
