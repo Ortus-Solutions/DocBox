@@ -1,17 +1,17 @@
 {
-    "name":"DocBox",
+    "name":"DocBox BoxLang Module",
     "version":"4.3.0",
     "author":"Ortus Solutions, Corp",
-    "location":"https://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
-    "homepage":"https://forgebox.io/view/docbox",
+    "location":"https://downloads.ortussolutions.com/ortussolutions/bx-docbox/@build.version@/bx-docbox-@build.version@.zip",
+    "homepage":"https://forgebox.io/view/bx-docbox",
     "documentation":"https://docbox.ortusbooks.com/",
     "repository":{
         "type":"git",
         "url":"https://github.com/Ortus-Solutions/DocBox"
     },
     "bugs":"https://ortussolutions.atlassian.net/projects/DOCBOX",
-    "slug":"docbox",
-    "shortDescription":"API Documentation generator for BoxLang and CFML classes using JavaDoc conventions",
+    "slug":"bx-docbox",
+    "shortDescription":"API Documentation generator for BoxLang classes using JavaDoc conventions",
     "type":"projects",
     "keywords":"apidocs, docs, javadocs",
     "organization":"ortus-solutions",
@@ -41,15 +41,7 @@
         "coldbox-5-router-documentation.png"
     ],
     "scripts":{
-        "build":"task run taskFile=build/Build.cfc :projectName=docbox :version=`package show version`",
-        "build:docs":"task run build/Docs.cfc",
-        "tests":"task run taskFile=build/Build.cfc target=runTests",
-        "release":"recipe build/release.boxr",
-        "format":"cfformat run --overwrite DocBox.cfc,build,strategy,tests",
-        "format:watch":"cfformat watch DocBox.cfc,build,strategy,tests ./.cfformat.json",
-        "format:check":"cfformat check DocBox.cfc,build,strategy,tests"
     },
     "testbox":{
-        "runner":"http://localhost:60299/tests/runner.cfm"
     }
 }

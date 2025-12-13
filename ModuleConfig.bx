@@ -1,0 +1,133 @@
+/**
+ * This is the module descriptor and entry point for your module in the runtime.
+ * The unique name of the module is the name of the directory on the modules folder
+ * or the name property in the box.json file.
+ * <p>
+ * A BoxLang mapping will be created for you with the name of the module as well using the
+ * this.mapping property.
+ *<p>
+ * Every module will have its own classloader that will be used to load the module libs and dependencies.
+ */
+
+class {
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Injections
+	 * --------------------------------------------------------------------------
+	 */
+	property name="moduleRecord";
+	property name="boxRuntime";
+	property name="functionService";
+	property name="componentService";
+	property name="interceptorService";
+	property name="asyncService";
+	property name="schedulerService";
+	property name="datasourceService";
+	property name="cacheService";
+	property name="log";
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Module Properties
+	 * --------------------------------------------------------------------------
+	 * Here is where you define the properties of your module that the module service
+	 * will use to register and activate your module
+	 */
+
+	/**
+	 * Your module version. Try to use semantic versioning
+	 * @mandatory
+	 */
+	this.version = "@build.version@+@build.number@";
+
+	/**
+	 * The BoxLang mapping for your module.  All BoxLang modules are registered with an internal
+	 * mapping prefix of : bxModules.{this.mapping}, /bxmodules/{this.mapping}. Ex: bxModules.test, /bxmodules/test
+	 */
+	this.mapping = "docbox";
+
+	/**
+	 * Who built the module
+	 */
+	this.author = "Luis Majano";
+
+	/**
+	 * The module description
+	 */
+	this.description = "API Documentation generator for BoxLang classes using JavaDoc conventions";
+
+	/**
+	 * The module web URL
+	 */
+	this.webURL = "https://www.ortussolutions.com";
+
+	/**
+	 * This boolean flag tells the module service to skip the module registration/activation process.
+	 */
+	this.enabled = true;
+
+    /**
+	 * The module dependencies that this module needs to be activated before this module is activated.
+	 * A list of module slugs: Example: [ "bxai", "bxoshi" ]
+	 */
+	this.dependencies = [];
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Module Methods
+	 * --------------------------------------------------------------------------
+	 */
+
+	/**
+	 * Called by the ModuleService on module registration
+	 */
+	function configure(){
+		/**
+		 * Every module has a settings configuration object
+		 */
+		settings = {
+		};
+
+		/**
+		 * The module interceptors to register into the runtime
+		 */
+		interceptors = [
+			// { class="interceptors.Listener", properties={} }
+		];
+
+		/**
+		 * A list of custom interception points to register into the runtime
+		 */
+		customInterceptionPoints = [];
+	}
+
+	/**
+	 * Called by the ModuleService on module activation
+	 */
+	function onLoad(){
+
+	}
+
+	/**
+	 * Called by the ModuleService on module deactivation
+	 */
+	function onUnload(){
+
+	}
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Main CLI Command Entry Point
+	 * --------------------------------------------------------------------------
+	 * boxlang module:docbox <subcommand> [options]
+	 */
+
+	 function main( args = [] ){
+		// Array of positionals
+		var positionalArgs = cliGetArgs().positionals
+		// Options struct
+		var options = cliGetArgs().options
+	 }
+
+}

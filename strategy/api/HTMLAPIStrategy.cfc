@@ -45,7 +45,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	HTMLAPIStrategy function init(
 		required outputDir,
 		string projectTitle = "Untitled",
-		string theme = "frames"
+		string theme = "default"
 	){
 		super.init();
 
