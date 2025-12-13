@@ -11,13 +11,11 @@
 ╚═════╝  ╚═════╝  ╚═════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝
 ```
 
-# Welcome to DocBox!
+# Welcome to DocBox
 
-DocBox is a JavaDoc-style documentation generator for your CFML codebase based on Mark Mandel's ColdDoc project.
+DocBox is a JavaDoc-style documentation generator for your BoxLang and CFML codebases.
 
 [Docs][1] | [Github][2] | [Ortus Community][3]
-
-![Coldbox 5 Router class documentation, generated via DocBox](https://github.com/Ortus-Solutions/DocBox/blob/development/coldbox-5-router-documentation.png)
 
 ## FEATURES
 
@@ -29,8 +27,7 @@ DocBox is a JavaDoc-style documentation generator for your CFML codebase based o
 
 ## SYSTEM REQUIREMENTS
 
-* Lucee 5+
-* ColdFusion 2016+
+* BoxLang 1+ or a CFML Engines (Lucee 5, Adobe 2023+)
 
 ## Usage
 

@@ -40,8 +40,8 @@
         "docs/",
         "coldbox-5-router-documentation.png"
     ],
-    "scripts":{
-    },
-    "testbox":{
+    "boxlang":{
+        "minimumVersion":"1.8.0",
+        "moduleName":"docbox"
     }
 }

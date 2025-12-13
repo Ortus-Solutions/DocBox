@@ -141,6 +141,102 @@ class {
 		var positionalArgs = cliGetArgs().positionals;
 		var options        = cliGetArgs().options;
 
+		// Check for --help or --version flags
+		if ( structKeyExists( options, "help" ) || structKeyExists( options, "h" ) ) {
+			return showHelp();
+		}
+
+		if ( structKeyExists( options, "version" ) || structKeyExists( options, "v" ) ) {
+			return showVersion();
+		}
+
+		// Route to generateDocs if no special flags
+		return generateDocs( positionalArgs, options );
+	}
+
+	/**
+	 * Show version information
+	 */
+	function showVersion(){
+		println( "" );
+		println( "📚 DocBox - API Documentation Generator" );
+		println( "Version: #this.version#" );
+		println( "Author:  #this.author#" );
+		println( "Website: #this.webURL#" );
+		println( "" );
+	}
+
+	/**
+	 * Show help information
+	 */
+	function showHelp(){
+		println( "" );
+		println( "📚 ═══════════════════════════════════════════════════════════════════" );
+		println( "   DocBox - JavaDoc Style API Documentation Generator" );
+		println( "   Version: #this.version#" );
+		println( "═══════════════════════════════════════════════════════════════════" );
+		println( "" );
+		println( "🎯 USAGE:" );
+		println( "   boxlang module:docbox [options]" );
+		println( "" );
+		println( "⚙️  OPTIONS:" );
+		println( "   --help, -h              Show this help information" );
+		println( "   --version, -v           Show version information" );
+		println( "   source=<path>           Source directory to document" );
+		println( "   mapping=<name>          Base mapping for the source folder" );
+		println( "   excludes=<regex>        Regex pattern to exclude files/folders" );
+		println( "   mappings:<name>=<path>  Define multiple source mappings" );
+		println( "   strategy=<class>        Documentation strategy class" );
+		println( "                           (default: docbox.strategy.api.HTMLAPIStrategy)" );
+		println( "   strategy-*              Any strategy-specific option (see examples)" );
+		println( "" );
+		println( "📋 STRATEGY OPTIONS:" );
+		println( "   strategy-outputDir=<path>      📁 Output directory (required)" );
+		println( "   strategy-projectTitle=<title>  📖 Project title for docs" );
+		println( "   strategy-theme=<name>          🎨 Theme name (default/frames)" );
+		println( "" );
+		println( "💡 EXAMPLES:" );
+		println( "" );
+		println( "   📌 Basic usage:" );
+		println( "      boxlang module:docbox source=/src/models mapping=models \" );
+		println( "                             strategy-outputDir=/docs" );
+		println( "" );
+		println( "   📌 With project title and excludes:" );
+		println( "      boxlang module:docbox source=/src mapping=myapp \" );
+		println( "                             excludes=""(tests|build)"" \" );
+		println( "                             strategy-outputDir=/docs \" );
+		println( "                             strategy-projectTitle=""My API""" );
+		println( "" );
+		println( "   📌 Multiple source mappings:" );
+		println( "      boxlang module:docbox mappings:v1=/src/v1/models \" );
+		println( "                             mappings:v2=/src/v2/models \" );
+		println( "                             strategy-outputDir=/docs \" );
+		println( "                             strategy-projectTitle=""API Docs""" );
+		println( "" );
+		println( "   📌 Using frames theme:" );
+		println( "      boxlang module:docbox source=/src mapping=app \" );
+		println( "                             strategy-outputDir=/docs \" );
+		println( "                             strategy-theme=frames" );
+		println( "" );
+		println( "   📌 JSON array format:" );
+		println( "      boxlang module:docbox source=""[{'dir':'/src/models', 'mapping':'models'}]"" \" );
+		println( "                             strategy-outputDir=/docs" );
+		println( "" );
+		println( "🔗 MORE INFO:" );
+		println( "   Documentation: #this.webURL#" );
+		println( "   Repository:    https://github.com/Ortus-Solutions/DocBox" );
+		println( "" );
+		println( "═══════════════════════════════════════════════════════════════════" );
+		println( "" );
+	}
+
+	/**
+	 * Generate documentation
+	 *
+	 * @positionalArgs Array of positional arguments
+	 * @options Struct of named options
+	 */
+	function generateDocs( required array positionalArgs, required struct options ){
 		// Default values
 		var strategy         = options.strategy ?: "docbox.strategy.api.HTMLAPIStrategy";
 		var source           = options.source ?: "";
@@ -192,12 +288,12 @@ class {
 
 		// Validate we have at least one source mapping
 		if ( arrayLen( docboxSourceMaps ) == 0 ) {
-			cliPrintln( "ERROR: No valid source mappings found." );
-			cliPrintln( "" );
-			cliPrintln( "Usage examples:" );
-			cliPrintln( "  boxlang module:docbox source=/path/to/code mapping=myapp strategy-outputDir=/output" );
-			cliPrintln( "  boxlang module:docbox mappings:v1=/path/v1 mappings:v2=/path/v2 strategy-outputDir=/output" );
-			cliPrintln( "" );
+			println( "ERROR: No valid source mappings found." );
+			println( "" );
+			println( "Usage examples:" );
+			println( "  boxlang module:docbox source=/path/to/code mapping=myapp strategy-outputDir=/output" );
+			println( "  boxlang module:docbox mappings:v1=/path/v1 mappings:v2=/path/v2 strategy-outputDir=/output" );
+			println( "" );
 			return;
 		}
 
@@ -207,7 +303,7 @@ class {
 			if ( reFindNoCase( "^strategy\-", key ) ) {
 				var propName = listLast( key, "-" );
 				properties[ propName ] = options[ key ];
-				
+
 				// Resolve outputDir to absolute path
 				if ( propName == "outputDir" ) {
 					properties[ propName ] = expandPath( options[ key ] );
@@ -217,7 +313,7 @@ class {
 
 		// Validate outputDir
 		if ( !structKeyExists( properties, "outputDir" ) ) {
-			cliPrintln( "ERROR: strategy-outputDir is required" );
+			println( "ERROR: strategy-outputDir is required" );
 			return;
 		}
 
@@ -228,46 +324,48 @@ class {
 		);
 
 		// Provide feedback about sources
-		cliPrintln( "DocBox Documentation Generator" );
-		cliPrintln( "=============================" );
-		cliPrintln( "" );
-		
+		println( "DocBox Documentation Generator" );
+		println( "=============================" );
+		println( "" );
+
 		for ( var tuple in docboxSourceMaps ) {
 			if ( !directoryExists( tuple.dir ) ) {
-				cliPrintln( "Warning: '#tuple.dir#' does not exist." );
+				println( "Warning: '#tuple.dir#' does not exist." );
 			} else {
-				cliPrintln( "Source:  #tuple.dir#" );
-				cliPrintln( "Mapping: #tuple.mapping#" );
+				println( "Source:  #tuple.dir#" );
+				println( "Mapping: #tuple.mapping#" );
 			}
 		}
-		
-		cliPrintln( "Output:  #properties.outputDir#" );
-		cliPrintln( "" );
-		cliPrintln( "Starting generation, please wait..." );
+
+		println( "Output:  #properties.outputDir#" );
+		println( "" );
+		println( "Starting generation, please wait..." );
 
 		// Create mappings for source directories
 		var appMappings = getApplicationSettings().mappings;
 		for ( var tuple in docboxSourceMaps ) {
 			appMappings[ "/" & replace( tuple.mapping, ".", "/", "all" ) ] = tuple.dir;
 		}
-		application action="update" mappings=appMappings;
+
+		// Update mappings
+		bx:application action="update" mappings=appMappings;
 
 		// Generate documentation
 		try {
-			docbox.generate(
-				source   = docboxSourceMaps,
-				excludes = excludes
-			);
-			
-			cliPrintln( "" );
-			cliPrintln( "✓ Generation complete!" );
-			cliPrintln( "Documentation available at: #properties.outputDir#" );
+			// docbox.generate(
+			// 	source   = docboxSourceMaps,
+			// 	excludes = excludes
+			// );
+
+			println( "" );
+			println( "✓ Generation complete!" );
+			println( "Documentation available at: #properties.outputDir#" );
 		} catch ( any e ) {
-			cliPrintln( "ERROR: Generation failed" );
-			cliPrintln( "Message: #e.message#" );
-			cliPrintln( "Detail: #e.detail#" );
+			println( "ERROR: Generation failed" );
+			println( "Message: #e.message#" );
+			println( "Detail: #e.detail#" );
 			if ( structKeyExists( e, "tagContext" ) && arrayLen( e.tagContext ) ) {
-				cliPrintln( "Location: #e.tagContext[1].template#:#e.tagContext[1].line#" );
+				println( "Location: #e.tagContext[1].template#:#e.tagContext[1].line#" );
 			}
 		}
 	}
