@@ -180,11 +180,11 @@ component{
 		);
 		fileCopy(
 			destination,
-			variables.artifactsDir & "/#variables.projectName#/testbox-be.zip"
+			variables.artifactsDir & "/#variables.projectName#/#variables.projectName#-be.zip"
 		);
 		command( "checksum" )
 			.params(
-				path      = variables.artifactsDir & "/#variables.projectName#/testbox-be.zip",
+				path      = variables.artifactsDir & "/#variables.projectName#/#variables.projectName#-be.zip",
 				algorithm = "md5",
 				extension = "md5",
 				write     = true
@@ -206,7 +206,7 @@ component{
             .params(
 				"source"                = "/docbox",
 				"mapping"               = "docbox",
-				"excludes"  			= "(build|docs|testbox|tests)",
+				"excludes"  			= "(build|docs|testbox|tests|.engine|.artifacts|.tmp)",
 				"strategy-projectTitle" = "#variables.projectName# v#arguments.version#",
 				"strategy-outputDir"    = arguments.outputDir
             )
