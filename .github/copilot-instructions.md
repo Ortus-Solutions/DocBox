@@ -161,3 +161,38 @@ new docbox.DocBox()
 - **Semantic HTML**: Proper heading hierarchy, nav elements, table structure
 - **Tooltips**: Descriptive titles for icons and badges
 - **Keyboard Navigation**: Tab order, Enter/Escape for search, arrow keys supported
+
+## Coding Conventions
+
+**JavaScript Style**:
+- **Spacing Requirements**: All JavaScript code must include spacing in parentheses, brackets, and quotes for improved readability
+- **Function Calls**: Space after function name and inside parentheses: `func( arg1, arg2 )`
+- **Array Literals**: Space inside brackets: `[ item1, item2, item3 ]`
+- **Object Literals**: Space inside braces and around colons: `{ key: value, another: val }`
+- **Conditionals**: Space inside condition parentheses: `if ( condition )`, `while ( test )`
+- **Template Literals**: Space inside interpolation: `${ variable }` not `${variable}`
+- **Method Chaining**: Proper spacing in chains: `.filter( x => x.active ).map( x => x.name )`
+- **Arrow Functions**: Space around arrows: `( x ) => x + 1` or `x => x + 1` for single param
+- **Examples**:
+  ```javascript
+  // Correct spacing
+  const result = array.filter( item => item.active ).slice( 0, 10 );
+  if ( !value ) return null;
+  localStorage.setItem( 'key', data );
+  obj.method( param1, param2 );
+  const html = `<p>${ value }</p>`;
+  
+  // Incorrect - missing spacing
+  const result = array.filter(item => item.active).slice(0, 10);
+  if (!value) return null;
+  localStorage.setItem('key', data);
+  obj.method(param1, param2);
+  const html = `<p>${value}</p>`;
+  ```
+
+**CFML/BoxLang Style**: 
+- Follow CFFormat rules defined in `.cfformat.json`
+- Spacing in all markers: function calls `func( arg )`, conditions `if ( test )`, arrays `[ 1, 2 ]`, structs `{ key : value }`
+- Binary operators require padding: `a + b`, `x == y`
+- 4-space tabs, max 115 columns, double quotes for strings
+- Consecutive assignments, properties, and parameters are aligned

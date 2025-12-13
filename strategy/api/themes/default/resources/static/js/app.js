@@ -127,7 +127,7 @@ function docApp() {
 
 		async loadClassContent( classData ) {
 			const contentDiv = document.getElementById( 'class-content' );
-			if (!contentDiv) return;
+			if ( !contentDiv ) return;
 
 			try {
 				// Try to load the class HTML file
