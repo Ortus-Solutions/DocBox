@@ -48,6 +48,29 @@ local.getClassLink = function( required className, required qMetaData ) {
 }
 
 /**
+ * Get the object name from a fully qualified class name
+ */
+local.getObjectName = function( required class ) {
+	return (
+		len( arguments.class ) ? listGetAt(
+			arguments.class,
+			listLen( arguments.class, "." ),
+			"."
+		) : arguments.class
+	);
+}
+
+/**
+ * Get the package from a fully qualified class name
+ */
+local.getPackage = function( required class ) {
+	var objectname = getObjectName( arguments.class );
+	var lenCount   = len( arguments.class ) - ( len( objectname ) + 1 );
+	return ( lenCount gt 0 ? left( arguments.class, lenCount ) : arguments.class );
+}
+
+
+/**
  * Gets the inheritance chain for a class/interface
  */
 local.getInheritence = function( metadata ) {
@@ -504,4 +527,53 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 		</div>
 	</div>
 </cfif>
+
+<!-- Inherited Methods -->
+<cfset local.localMeta = arguments.metadata />
+<cfset local.localFunctions = {} />
+<cfloop query="local.qMethods">
+	<cfset local.localFunctions[ local.qMethods.metadata.name ] = 1 />
+</cfloop>
+
+<cfloop condition="#local.localMeta.keyExists( 'extends' ) && local.localMeta.extends.count()#">
+	<cfscript>
+		if ( local.localMeta.type eq "interface" ) {
+			local.localMeta = local.localMeta.extends[ structKeyList( local.localMeta.extends ) ];
+		} else {
+			local.localMeta = local.localMeta.extends;
+		}
+	</cfscript>
+
+	<cfset local.qInheritedFunctions = buildFunctionMetaData( local.localMeta ) />
+
+	<cfif local.qInheritedFunctions.recordCount>
+		<div class="section-card">
+			<h5 class="mb-3">
+				<i class="bi bi-diagram-3"></i>
+				<strong>Methods inherited from class <kbd>#local.getClassLink( local.localMeta.name, arguments.qMetaData )#</kbd></strong>
+			</h5>
+
+			<cfset local.inheritedMethodsList = [] />
+			<cfloop query="local.qInheritedFunctions">
+				<cfset local.inheritedFunc = local.qInheritedFunctions.metadata />
+				<cfif NOT structKeyExists( local.localFunctions, local.inheritedFunc.name )>
+					<cfset arrayAppend( local.inheritedMethodsList, local.inheritedFunc.name ) />
+					<cfset local.localFunctions[ local.inheritedFunc.name ] = 1 />
+				</cfif>
+			</cfloop>
+
+			<cfif arrayLen( local.inheritedMethodsList )>
+				<p class="mb-0">
+					<cfloop array="#local.inheritedMethodsList#" index="local.idx" item="local.methodName">
+						<cfif local.idx gt 1>, </cfif>
+						<a href="##" @click.prevent="navigateToClass({ fullname: '#local.localMeta.name#', package: '#getPackage( local.localMeta.name )#', name: '#getObjectName( local.localMeta.name )#' }); $nextTick(() => { const el = document.getElementById('method-#local.methodName#'); if(el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); })">#local.methodName#</a>
+					</cfloop>
+				</p>
+			<cfelse>
+				<span class="badge bg-warning text-dark"><em>None</em></span>
+			</cfif>
+		</div>
+	</cfif>
+</cfloop>
+
 </cfoutput>
