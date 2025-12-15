@@ -30,21 +30,24 @@ function docApp() {
 			window.addEventListener( 'hashchange', () => this.handleUrlHash() );
 		},
 
-		// Load the navigation data JSON
-		async loadNavigationData() {
-			try {
-				const response = await fetch( 'data/navigation.json' );
-				const data = await response.json();
-				this.packages = data.packages || [];
-				this.allClasses = data.allClasses || [];
-			} catch ( error ) {
-				console.error( 'Failed to load navigation data:', error );
+	// Load the navigation data
+	async loadNavigationData() {
+		try {
+			// Data is loaded from navigation.js (works with file:// protocol)
+			if ( window.DOCBOX_NAV_DATA ) {
+				this.packages = window.DOCBOX_NAV_DATA.packages || [];
+				this.allClasses = window.DOCBOX_NAV_DATA.allClasses || [];
+			} else {
+				console.error( 'Navigation data not found. Make sure navigation.js is loaded.' );
 				this.packages = [];
 				this.allClasses = [];
 			}
-		},
-
-		// Theme Toggle
+		} catch ( error ) {
+			console.error( 'Failed to load navigation data:', error );
+			this.packages = [];
+			this.allClasses = [];
+		}
+	},		// Theme Toggle
 		toggleTheme() {
 			this.theme = this.theme === 'dark' ? 'light' : 'dark';
 			document.documentElement.setAttribute( 'data-theme', this.theme );

@@ -87,11 +87,14 @@ if ( !directoryExists( local.dataDir ) ) {
 	directoryCreate( local.dataDir );
 }
 
-// Write JSON file
+// Write JS file (for file:// protocol support - no CORS issues)
 local.jsonContent = serializeJSON( local.navData, "struct" );
+local.jsContent = "// DocBox Navigation Data" & chr(10) &
+	"// This file is loaded as a script to avoid CORS issues with file:// protocol" & chr(10) &
+	"window.DOCBOX_NAV_DATA = " & local.jsonContent & ";";
 fileWrite(
-	local.dataDir & "/navigation.json",
-	local.jsonContent
+	local.dataDir & "/navigation.js",
+	local.jsContent
 );
 </cfscript>
 </cfsilent>
