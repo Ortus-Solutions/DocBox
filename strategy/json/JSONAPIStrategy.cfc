@@ -41,7 +41,8 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 *
 	 * @metadata All component metadata, sourced from DocBox.
 	 */
-	component function run( required query metadata ){
+	IStrategy function run( required query metadata ){
+		// Ensure output directory exists
 		ensureDirectory( getOutputDir() );
 
 		var classes = normalizePackages(

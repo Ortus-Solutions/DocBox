@@ -1,30 +1,148 @@
 /**
+ * <h1>DocBox - JavaDoc Style API Documentation Generator</h1>
  *
- * Core DocBox documentation class that takes care of generating docs for you.
- * You can initialize the object with a strategy and strategy properties or with nothing at all.
- * You can then generate the docs according to 1 or more output strategies via the <code>generate()</code> method.
- * <hr>
- * <small><em>Copyright 2015 Ortus Solutions, Corp <a href="www.ortussolutions.com">www.ortussolutions.com</a></em></small>
+ * <p>DocBox is a powerful API documentation generator for CFML (Adobe ColdFusion, Lucee) and BoxLang applications.
+ * It automatically parses your codebase and generates beautiful, searchable documentation in multiple formats
+ * including HTML, JSON, and UML/XMI.</p>
  *
- * @author Luis Majano <lmajano@ortussolutions.com>
+ * <h2>Quick Start</h2>
+ *
+ * <pre>
+ * // Initialize DocBox with HTML strategy
+ * new docbox.DocBox( strategy: "HTML", properties: {
+ *     outputDir: "/docs",
+ *     projectTitle: "My Awesome API"
+ * } )
+ * .generate(
+ *     source: "/path/to/code",
+ *     mapping: "myapp"
+ * );
+ * </pre>
+ *
+ * <h2>Features</h2>
+ *
+ * <ul>
+ * <li>📚 <strong>Multiple Output Formats</strong>: Generate HTML, JSON, or UML/XMI documentation</li>
+ * <li>🎨 <strong>Theming Support</strong>: Choose between different HTML themes (default, frames)</li>
+ * <li>🔍 <strong>Smart Parsing</strong>: Automatically extracts JavaDoc-style comments and metadata</li>
+ * <li>🌳 <strong>Inheritance Analysis</strong>: Tracks class hierarchies and interface implementations</li>
+ * <li>⚙️ <strong>Flexible Strategy Pattern</strong>: Easily extend with custom output formats</li>
+ * <li>🎯 <strong>Exclusion Patterns</strong>: Filter files/folders using regex patterns</li>
+ * <li>📦 <strong>Package Organization</strong>: Automatically organizes documentation by package structure</li>
+ * <li>🔗 <strong>Cross-Linking</strong>: Intelligent linking between related classes and methods</li>
+ * </ul>
+ *
+ * <h2>Supported Documentation Strategies</h2>
+ *
+ * <ul>
+ * <li><strong>HTML</strong> - Rich, searchable HTML documentation with modern UI</li>
+ * <li><strong>JSON</strong> - Machine-readable API documentation for tooling integration</li>
+ * <li><strong>XMI</strong> - UML/XMI format for generating visual diagrams</li>
+ * <li><strong>CommandBox</strong> - Specialized format for CommandBox CLI commands</li>
+ * </ul>
+ *
+ * <h2>Multi-Strategy Generation</h2>
+ *
+ * <p>You can generate multiple documentation formats in a single pass:</p>
+ *
+ * <pre>
+ * new docbox.DocBox()
+ *     .addStrategy( "HTML", { outputDir: "/docs/html", projectTitle: "My API" } )
+ *     .addStrategy( "JSON", { outputDir: "/docs/json" } )
+ *     .generate( source: "/app", mapping: "myapp" );
+ * </pre>
+ *
+ * <h2>Custom Annotations</h2>
+ *
+ * <p>DocBox recognizes standard JavaDoc tags plus custom annotations:</p>
+ *
+ * <ul>
+ * <li><code>@doc_abstract</code> - Mark components as abstract</li>
+ * <li><code>@doc_generic</code> - Specify generic types (e.g., <code>Array&lt;User&gt;</code>, <code>Struct&lt;String,Any&gt;</code>)</li>
+ * </ul>
+ *
+ * <h2>Version Information</h2>
+ *
+ * <p>Copyright 2015-2025 Ortus Solutions, Corp<br>
+ * <a href="https://www.ortussolutions.com">www.ortussolutions.com</a></p>
+ *
+ * @author Luis Majano &lt;lmajano@ortussolutions.com&gt;
+ * @version 3.0.0
+ *
+ * @see docbox.strategy.IStrategy
+ * @see docbox.strategy.api.HTMLAPIStrategy
+ * @see docbox.strategy.json.JSONAPIStrategy
  */
 component accessors="true" {
 
 	/**
-	 * The strategy to use for document generation. Must extend docbox.strategy.AbstractTemplateStrategy
+	 * Collection of documentation generation strategies
+	 *
+	 * DocBox supports multiple strategies running in parallel, allowing you to generate
+	 * different output formats (HTML, JSON, XMI) in a single execution. Each strategy
+	 * must implement the `IStrategy` interface and extend `AbstractTemplateStrategy`.
+	 *
+	 * Strategies are executed in the order they were added when `generate()` is called.
+	 *
+	 * @see docbox.strategy.IStrategy
+	 * @see docbox.strategy.AbstractTemplateStrategy
 	 */
 	property
 		name       ="strategies"
 		type       ="array"
-		doc_generic="docbox.strategy.AbstractTemplateStrategy";
+		doc_generic="Array<docbox.strategy.AbstractTemplateStrategy>";
 
 	/**
-	 * Constructor
+	 * Initialize a new DocBox documentation generator
 	 *
-	 * @strategy The documentation output strategy to utilize.
-	 * @properties Struct of data properties required for the specific output strategy
+	 * <p>Creates a new DocBox instance with an optional initial strategy. You can add
+	 * additional strategies later using <code>addStrategy()</code> or <code>setStrategy()</code>.</p>
 	 *
-	 * @return The DocBox instance
+	 * <h2>Examples</h2>
+	 *
+	 * <p>Basic initialization with no strategy (defaults to HTML when generate() is called):</p>
+	 * <pre>
+	 * docbox = new docbox.DocBox();
+	 * </pre>
+	 *
+	 * <p>Initialize with HTML strategy using shorthand:</p>
+	 * <pre>
+	 * docbox = new docbox.DocBox(
+	 *     strategy: "HTML",
+	 *     properties: {
+	 *         outputDir: "/docs",
+	 *         projectTitle: "My API Docs",
+	 *         theme: "frames"
+	 *     }
+	 * );
+	 * </pre>
+	 *
+	 * <p>Initialize with full class path:</p>
+	 * <pre>
+	 * docbox = new docbox.DocBox(
+	 *     strategy: "docbox.strategy.json.JSONAPIStrategy",
+	 *     properties: { outputDir: "/api/json" }
+	 * );
+	 * </pre>
+	 *
+	 * @strategy The documentation output strategy to use. Can be:
+	 *           <ul>
+	 *           <li>A shorthand string: "HTML", "JSON", "XMI", "CommandBox"</li>
+	 *           <li>A full class path: "docbox.strategy.api.HTMLAPIStrategy"</li>
+	 *           <li>An instantiated strategy object</li>
+	 *           <li>Empty string "" to defer strategy configuration</li>
+	 *           </ul>
+	 * @properties Configuration struct for the strategy. Common properties include:
+	 *             <ul>
+	 *             <li><code>outputDir</code> (required): Directory where docs will be generated</li>
+	 *             <li><code>projectTitle</code>: Title for the documentation</li>
+	 *             <li><code>theme</code>: Theme name for HTML output ("default" or "frames")</li>
+	 *             </ul>
+	 *
+	 * @return The DocBox instance for method chaining
+	 *
+	 * @see addStrategy
+	 * @see generate
 	 */
 	DocBox function init(
 		any strategy      = "",
@@ -45,27 +163,66 @@ component accessors="true" {
 	}
 
 	/**
-	 * Backwards-compatible setter to add a strategy to the docbox configuration.
+	 * Legacy method to add a documentation strategy
 	 *
+	 * <p>This method provides backwards compatibility with DocBox 2.x. It's functionally
+	 * identical to <code>addStrategy()</code> and simply delegates to it.</p>
+	 *
+	 * <p><strong>Recommendation</strong>: Use <code>addStrategy()</code> for new code as it better communicates
+	 * the ability to add multiple strategies.</p>
+	 *
+	 * @deprecated Use addStrategy() instead
 	 * @see addStrategy
 	 *
-	 * @return The DocBox instance
+	 * @return The DocBox instance for method chaining
 	 */
 	DocBox function setStrategy(){
 		return addStrategy( argumentCollection = arguments );
 	}
 
 	/**
-	 * Add a documentation strategy for output format.
+	 * Add a documentation generation strategy to the output pipeline
 	 *
-	 * @strategy The optional strategy to generate the documentation with. This can be a class path or an instance of the  strategy. If none is passed then
-	 * we create the default strategy of 'docbox.strategy.api.HTMLAPIStrategy'
-	 * @properties The struct of properties to instantiate the strategy with.
+	 * <p>This method allows you to configure one or more strategies for generating documentation
+	 * in different formats. Each strategy runs independently during <code>generate()</code>, allowing
+	 * you to produce HTML, JSON, and XMI documentation simultaneously.</p>
 	 *
-	 * @return The DocBox instance
+	 * <h2>Strategy Shorthands</h2>
+	 *
+	 * <p>DocBox provides convenient shortcuts for built-in strategies:</p>
+	 * <ul>
+	 * <li><code>"HTML"</code> → <code>docbox.strategy.api.HTMLAPIStrategy</code></li>
+	 * <li><code>"JSON"</code> → <code>docbox.strategy.json.JSONAPIStrategy</code></li>
+	 * <li><code>"XMI"</code> or <code>"UML"</code> → <code>docbox.strategy.uml2tools.XMIStrategy</code></li>
+	 * <li><code>"CommandBox"</code> → <code>docbox.strategy.CommandBox.CommandBoxStrategy</code></li>
+	 * </ul>
+	 *
+	 * <h2>Examples</h2>
+	 *
+	 * <p>Chain multiple strategies:</p>
+	 * <pre>
+	 * new docbox.DocBox()
+	 *     .addStrategy( "HTML", { outputDir: "/docs/html" } )
+	 *     .addStrategy( "JSON", { outputDir: "/docs/json" } )
+	 *     .generate( source: "/app", mapping: "myapp" );
+	 * </pre>
+	 *
+	 * @strategy The strategy to use for documentation generation. Accepts:
+	 *           <ul>
+	 *           <li>Shorthand string ("HTML", "JSON", "XMI", "CommandBox")</li>
+	 *           <li>Full class path to a custom strategy</li>
+	 *           <li>Pre-instantiated strategy object implementing IStrategy</li>
+	 *           </ul>
+	 * @properties Configuration struct passed to the strategy constructor. Required properties
+	 *             vary by strategy but typically include <code>outputDir</code> and <code>projectTitle</code>.
+	 *
+	 * @return The DocBox instance for method chaining
+	 *
+	 * @see docbox.strategy.IStrategy
+	 * @see generate
 	 */
 	DocBox function addStrategy(
-		any strategy      = "docbox.strategy.api.HTMLAPIStrategy",
+		any strategy      = "HTML",
 		struct properties = {}
 	){
 		// Set the incomign strategy to store
@@ -96,19 +253,66 @@ component accessors="true" {
 			// Build it out
 			newStrategy = new "#arguments.strategy#"( argumentCollection = arguments.properties );
 		}
-		setStrategies( getStrategies().append( newStrategy ) );
+
+		variables.strategies.append( newStrategy )
+
 		return this;
 	}
 
 	/**
-	 * Generate the docs
+	 * Generate API documentation from your codebase
 	 *
-	 * @source Either, the string directory source, OR an array of structs containing 'dir' and 'mapping' key
-	 * @mapping The base mapping for the folder. Only required if the source is a string
-	 * @excludes	A regex that will be applied to the input source to exclude from the docs
-	 * @throwOnError Throw an error and halt the generation process if DocBox encounters an invalid component.
+	 * <p>This is the primary method that orchestrates the entire documentation generation process.
+	 * It scans your source directories, parses component metadata, analyzes inheritance chains,
+	 * and executes all configured strategies to produce documentation output.</p>
 	 *
-	 * @return The DocBox instance
+	 * <h2>Examples</h2>
+	 *
+	 * <p>Single source directory:</p>
+	 * <pre>
+	 * docbox.generate(
+	 *     source: "/path/to/myapp",
+	 *     mapping: "myapp"
+	 * );
+	 * </pre>
+	 *
+	 * <p>Multiple source directories:</p>
+	 * <pre>
+	 * docbox.generate(
+	 *     source: [
+	 *         { dir: "/path/to/models", mapping: "models" },
+	 *         { dir: "/path/to/services", mapping: "services" }
+	 *     ]
+	 * );
+	 * </pre>
+	 *
+	 * <p>With exclusions:</p>
+	 * <pre>
+	 * docbox.generate(
+	 *     source: "/coldbox",
+	 *     mapping: "coldbox",
+	 *     excludes: "(tests|build|temp)"
+	 * );
+	 * </pre>
+	 *
+	 * @source The source code to document. Accepts:
+	 *         <ul>
+	 *         <li><strong>String</strong>: A single directory path (requires <code>mapping</code> parameter)</li>
+	 *         <li><strong>Array</strong>: Array of structs with <code>dir</code> and <code>mapping</code> keys</li>
+	 *         </ul>
+	 * @mapping The base mapping/package name for the source directory.
+	 *          Required when <code>source</code> is a string.
+	 * @excludes Regular expression pattern to exclude files/folders from documentation.
+	 *           Applied to relative file paths. Examples: "tests", "(tests|build)"
+	 * @throwOnError If <code>true</code>, throws an exception when encountering invalid components.
+	 *               If <code>false</code> (default), logs warnings and continues.
+	 *
+	 * @return The DocBox instance for method chaining
+	 *
+	 * @throws InvalidConfigurationException If a source directory doesn't exist
+	 *
+	 * @see addStrategy
+	 * @see buildMetaDataCollection
 	 */
 	DocBox function generate(
 		required source,
@@ -144,9 +348,8 @@ component accessors="true" {
 			arguments.throwOnError
 		);
 
-		getStrategies().each( function( strategy ){
-			strategy.run( metadata );
-		} );
+		// run each strategy
+		variables.strategies.each( ( strategy ) => strategy.run( metadata ) )
 
 		return this;
 	}
@@ -154,10 +357,17 @@ component accessors="true" {
 	/************************************ PRIVATE ******************************************/
 
 	/**
-	 * Clean input path
+	 * Convert a file system path to a package-style dot notation
 	 *
-	 * @path The incoming path to clean
-	 * @inputDir The input dir to clean off
+	 * <p>Transforms file system paths into package names by removing the base directory
+	 * prefix and converting path separators to dots.</p>
+	 *
+	 * @path The full file system path to the component file
+	 * @inputDir The base input directory to remove from the path
+	 *
+	 * @return The package name in dot notation (e.g., "models.user.admin")
+	 *
+	 * @see buildMetaDataCollection
 	 */
 	private function cleanPath( required path, required inputDir ){
 		var currentPath = replace(
@@ -171,11 +381,25 @@ component accessors="true" {
 	}
 
 	/**
-	 * Builds the searchable meta data collection
+	 * Build a comprehensive metadata collection from source directories
 	 *
-	 * @inputSource an array of structs containing inputDir and mapping
-	 * @excludes	A regex that will be applied to the input source to exclude from the docs
-	 * @throwOnError Throw an error and halt the generation process if DocBox encounters an invalid component.
+	 * <p>This private method performs the core work of scanning directories, parsing component
+	 * metadata, and building the data structure that strategies use to generate documentation.</p>
+	 *
+	 * <p>The returned query contains columns: package, name, extends, metadata, type,
+	 * implements, fullextends, currentMapping</p>
+	 *
+	 * @inputSource Array of source directory configurations with <code>dir</code> and <code>mapping</code> keys
+	 * @excludes Regular expression pattern for excluding files
+	 * @throwOnError If <code>true</code>, throws exceptions on component parsing errors
+	 *
+	 * @return Query object containing all component metadata
+	 *
+	 * @throws InvalidConfigurationException If a source directory doesn't exist
+	 *
+	 * @see getInheritance
+	 * @see getImplements
+	 * @see cleanPath
 	 */
 	query function buildMetaDataCollection(
 		required array inputSource,
@@ -317,11 +541,17 @@ component accessors="true" {
 	}
 
 	/**
-	 * Gets an array of the classes that this metadata implements, in order of extension
+	 * Extract all interfaces implemented by a component and its ancestors
 	 *
-	 * @metadata The metadata to look at
+	 * <p>This method walks up the entire inheritance chain collecting all interfaces
+	 * implemented at each level. Essential for generating complete API documentation.</p>
 	 *
-	 * @return array of component interfaces implemented by some component in this package
+	 * @metadata The component metadata structure from <code>getComponentMetadata()</code>
+	 *
+	 * @return Array of interface names sorted alphabetically
+	 *
+	 * @see getInheritance
+	 * @see buildMetaDataCollection
 	 */
 	private array function getImplements( required struct metadata ){
 		var interfaces = {};
@@ -354,11 +584,17 @@ component accessors="true" {
 	}
 
 	/**
-	 * Gets an array of the classes that this metadata extends, in order of extension
+	 * Build the complete inheritance chain for a component
 	 *
-	 * @metadata The metadata to look at
+	 * <p>Traverses the inheritance hierarchy to build a complete list of all ancestor
+	 * classes, from the immediate parent up to the root base class.</p>
 	 *
-	 * @return array of classes inherited by some component in this package
+	 * @metadata The component or interface metadata structure
+	 *
+	 * @return Array of ancestor class names in hierarchical order (root to immediate parent)
+	 *
+	 * @see getImplements
+	 * @see buildMetaDataCollection
 	 */
 	private array function getInheritance( required struct metadata ){
 		// ignore top level
@@ -379,29 +615,80 @@ component accessors="true" {
 	}
 
 	/**
-	 * Undocumented function
+	 * Example of a deprecated method with comprehensive documentation
 	 *
-	 * @deprecated This is no longer in use.
-	 * @param1 param 1
-	 * @param2 param 2
+	 * <p>Demonstrates DocBox's ability to parse and display deprecation warnings,
+	 * multiple parameters, exception documentation, and return type information.</p>
 	 *
-	 * @throws Throws X,Y and Z
+	 * @deprecated This method is no longer in use and will be removed in version 4.0
+	 * @param1 The first parameter demonstrating basic parameter documentation
+	 * @param2 The second parameter showing multiple param docs
 	 *
-	 * @return Nothing
+	 * @throws TypeMismatchException When param1 is not the expected type
+	 * @throws ValidationException When param2 fails validation rules
+	 *
+	 * @return void This method doesn't return a value
 	 */
 	function testFunction( param1, param2 ){
+		// Empty implementation - demonstration only
 	}
 
+	/**
+	 * Example remote method demonstrating custom annotations
+	 *
+	 * <p>Showcases remote access modifier, required parameters, and custom annotations.</p>
+	 *
+	 * @input The input string to process (required parameter)
+	 *
+	 * @return string The processed result
+	 *
+	 * @annotation1
+	 * @annotation2 value
+	 */
 	remote function remoteTest( required string input ) annotation1 annotation2="value"{
+		return arguments.input;
 	}
 
+	/**
+	 * Example static void method
+	 *
+	 * <p>Demonstrates static methods (callable without instance) and void return type.</p>
+	 *
+	 * @return void No return value
+	 */
 	static void function staticVoidFunction(){
+		// Empty implementation - demonstration only
 	}
 
+	/**
+	 * Example static method with typed parameters and return
+	 *
+	 * <h2>Usage</h2>
+	 *
+	 * <pre>
+	 * result = DocBox::calculate( 10, 5 );  // returns true
+	 * result = DocBox::calculate( 5, 10 );  // returns false
+	 * </pre>
+	 *
+	 * @num1 The first number to compare (required)
+	 * @num2 The second number to compare (optional, defaults to 0)
+	 *
+	 * @return boolean Returns <code>true</code> if num1 is greater than num2
+	 */
 	static boolean function calculate( required numeric num1, num2 = 0 ){
-		return num1 GT num2;
+		return arguments.num1 GT arguments.num2;
 	}
 
+	/**
+	 * Example method demonstrating generic type documentation
+	 *
+	 * <p>The <code>@doc_generic</code> annotation specifies more precise type information
+	 * than CFML's basic type system.</p>
+	 *
+	 * @return array An array of numeric values
+	 *
+	 * @doc_generic Array&lt;Numeric&gt;
+	 */
 	static array function getArrayExample(){
 		return [ 1, 2, 3 ];
 	}

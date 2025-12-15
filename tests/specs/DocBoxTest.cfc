@@ -62,10 +62,10 @@ component extends="BaseTest" {
 
 			it( "lets me set my own strategy", function(){
 				expect( function(){
-					var myDemoStrategy = getMockBox().createStub( extends = "docbox.strategy.AbstractTemplateStrategy" );
+					var myDemoStrategy = createStub( extends = "docbox.strategy.AbstractTemplateStrategy" );
 					myDemoStrategy.$(
 						method      = "run",
-						returns     = new docbox.strategy.AbstractTemplateStrategy(),
+						returns     = myDemoStrategy,
 						callLogging = true
 					);
 					variables.docbox

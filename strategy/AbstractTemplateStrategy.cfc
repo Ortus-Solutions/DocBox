@@ -3,7 +3,7 @@
  * <br>
  * <small><em>Copyright 2015 Ortus Solutions, Corp <a href="www.ortussolutions.com">www.ortussolutions.com</a></em></small>
  */
-component doc_abstract="true" accessors="true" {
+abstract component accessors="true" implements="IStrategy"{
 
 	/**
 	 * The function query cache map
@@ -16,13 +16,6 @@ component doc_abstract="true" accessors="true" {
 	property name="propertyQueryCache" type="struct";
 
 	/**
-	 * Custom annotation for noting `abstract` components
-	 *
-	 * @url https://docbox.ortusbooks.com/getting-started/annotating-your-code#custom-docbox-blocks
-	 */
-	variables.META_ABSTRACT = "doc_abstract";
-
-	/**
 	 * Custom annotation for noting generic method return types or argument types.
 	 *
 	 * @url https://docbox.ortusbooks.com/getting-started/annotating-your-code#custom-docbox-blocks
@@ -32,16 +25,16 @@ component doc_abstract="true" accessors="true" {
 	/**
 	 * Constructor
 	 */
-	AbstractTemplateStrategy function init(){
-		setFunctionQueryCache( structNew() );
-		setPropertyQueryCache( structNew() );
+	function init(){
+		variables.functionQueryCache =  {};
+		variables.propertyQueryCache =  {};
 		return this;
 	}
 
 	/**
 	 * Runs the strategy
 	 */
-	AbstractTemplateStrategy function run(){
+	IStrategy function run( required query metadata ){
 		throw(
 			type    = "AbstractMethodException",
 			message = "Method is abstract and must be overwritten",
@@ -53,7 +46,7 @@ component doc_abstract="true" accessors="true" {
 	 * builds a data structure that shows the tree structure of the packages
 	 * @return string,struct
 	 */
-	struct function buildPackageTree( required query qMetadata ){
+	private struct function buildPackageTree( required query qMetadata ){
 		var md        = arguments.qMetadata;
 		var qPackages = queryExecute(
 			"SELECT DISTINCT
@@ -89,7 +82,7 @@ component doc_abstract="true" accessors="true" {
 	 * @endCommand the command to call on each visit
 	 * @args the extra arguments to get passed on to the visitor command (name, and fullname get passed by default)
 	 */
-	private AbstractTemplateStrategy function visitPackageTree(
+	private IStrategy function visitPackageTree(
 		required struct packageTree,
 		required any startCommand,
 		required any endCommand,
@@ -141,7 +134,7 @@ component doc_abstract="true" accessors="true" {
 	/**
 	 * builds a sorted query of function meta
 	 */
-	query function buildFunctionMetaData( required struct metadata ){
+	private query function buildFunctionMetaData( required struct metadata ){
 		if ( !metadata.count() ) {
 			return queryNew( "name, metadata" );
 		}
@@ -185,7 +178,7 @@ component doc_abstract="true" accessors="true" {
 	/**
 	 * builds a sorted query of property meta
 	 */
-	query function buildPropertyMetaData( required struct metadata ){
+	private query function buildPropertyMetaData( required struct metadata ){
 		var qProperties = queryNew( "name, metadata" );
 		var cache       = this.getPropertyQueryCache();
 
@@ -525,11 +518,6 @@ component doc_abstract="true" accessors="true" {
 			arguments.class
 		);
 		var annotations = server.keyExists( "boxlang" ) ? meta.annotations : meta;
-
-		// Old, pre-abstract support way
-		if ( structKeyExists( annotations, variables.META_ABSTRACT ) ) {
-			return annotations[ variables.META_ABSTRACT ];
-		}
 
 		// Part of the class spec
 		if ( meta.keyExists( "abstract" ) ) {

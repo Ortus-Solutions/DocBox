@@ -42,7 +42,7 @@
     ],
     "scripts":{
         "build":"task run taskFile=build/Build.cfc :projectName=docbox :version=`package show version`",
-        "build:docs":"task run build/Docs.cfc",
+        "build:docs":"task run taskFile=build/Build.cfc target='docs' :version=`package show version`",
         "tests":"task run taskFile=build/Build.cfc target=runTests",
         "release":"recipe build/release.boxr",
         "format":"cfformat run --overwrite DocBox.cfc,build,strategy,tests",

@@ -40,25 +40,26 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 
 	/**
 	 * Run this strategy
-	 * @qMetaData The metadata
+	 *
+	 * @metadata The metadata
 	 */
-	function run( required query qMetadata ){
+	IStrategy function run( required query metadata ){
 		// ACF requires an array of values, and hiccups in QoQ's if we don't populate that array.
 		var values = [];
-		queryEach( arguments.qMetadata, ( row ) => values.append( "" ) );
+		queryEach( arguments.metadata, ( row ) => values.append( "" ) );
 		queryAddColumn(
-			arguments.qMetadata,
+			arguments.metadata,
 			"command",
 			values
 		);
 		queryAddColumn(
-			arguments.qMetadata,
+			arguments.metadata,
 			"namespace",
 			values
 		);
 
 		var index = 1;
-		for ( var thisRow in arguments.qMetadata ) {
+		for ( var thisRow in arguments.metadata ) {
 			var thisCommand = listAppend( thisRow.package, thisRow.name, "." );
 			thisCommand     = replaceNoCase(
 				thisCommand,
@@ -74,13 +75,13 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 			);
 
 			querySetCell(
-				arguments.qMetadata,
+				arguments.metadata,
 				"command",
 				thisCommand,
 				index
 			);
 			querySetCell(
-				arguments.qMetadata,
+				arguments.metadata,
 				"namespace",
 				thisNamespace,
 				index
@@ -103,9 +104,9 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 		};
 		writeTemplate( argumentCollection = args )
 			// Write overview summary and frame
-			.writeOverviewSummaryAndFrame( arguments.qMetaData )
+			.writeOverviewSummaryAndFrame( arguments.metadata )
 			// Write packages
-			.writePackagePages( arguments.qMetaData );
+			.writePackagePages( arguments.metadata );
 
 		return this;
 	}

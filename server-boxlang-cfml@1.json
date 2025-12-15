@@ -9,7 +9,7 @@
         }
     },
     "app":{
-        "cfengine":"boxlang@1",
+        "cfengine":"boxlang@be",
         "serverHomeDirectory":".engine/boxlang-cfml-1"
     },
     "JVM":{
