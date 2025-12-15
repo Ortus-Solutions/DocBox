@@ -20,6 +20,7 @@ component {
 			"tests",
 			"server-.*\.json",
 			"tests\/results",
+			"boxlang_modules",
 			"^\..*"
 		];
 
@@ -344,7 +345,7 @@ component {
 			.generate(
 				source  : variables.cwd,
 				mapping : variables.projectName,
-				excludes: "(.engine|.artifacts|.tmp|.github|build|testbox|tests)"
+				excludes: "(.engine|.artifacts|.tmp|.github|build|testbox|tests|boxlang_modules)"
 			)
 
 		print.greenLine( "API Docs produced at #arguments.outputDir#" ).toConsole();

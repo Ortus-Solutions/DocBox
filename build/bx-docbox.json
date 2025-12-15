@@ -1,6 +1,6 @@
 {
     "name":"DocBox BoxLang Module",
-    "version":"4.3.0",
+    "version":"@build.version@+@build.number@",
     "author":"Ortus Solutions, Corp",
     "location":"https://downloads.ortussolutions.com/ortussolutions/bx-docbox/@build.version@/bx-docbox-@build.version@.zip",
     "homepage":"https://forgebox.io/view/bx-docbox",
