@@ -373,7 +373,8 @@ component
 				}
 			}
 		}
-		// for each getter
+
+		return qProperties;
 	}
 
 }
