@@ -124,7 +124,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
           SOURCE_DIR: ".artifacts/${{ env.MODULE_ID }}"
-          DEST_DIR: "ortussolutions/${{ env.MODULE_ID }}"
+          DEST_DIR: "${{ env.MODULE_ID }}"
 
       - name: Publish to ForgeBox
         run: |
