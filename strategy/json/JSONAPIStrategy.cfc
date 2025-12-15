@@ -15,122 +15,122 @@
  * </ul>
  * <h2>Generated Structure</h2>
  * <pre>
- * outputDir/
- * ├── overview-summary.json       - Top-level index with all packages and classes
- * └── {package}/                   - One directory per package
- *     ├── package-summary.json     - Package index with class list
- *     ├── ClassName.json           - Individual class documentation
- *     └── AnotherClass.json
- *
- * Example for "docbox.strategy.api":
- * outputDir/
- * ├── overview-summary.json
- * └── docbox/
- *     └── strategy/
- *         ├── package-summary.json
- *         └── api/
- *             ├── package-summary.json
- *             └── HTMLAPIStrategy.json
+ * outputDir/ <br>
+ * ├── overview-summary.json       - Top-level index with all packages and classes <br>
+ * └── {package}/                   - One directory per package <br>
+ *     ├── package-summary.json     - Package index with class list <br>
+ *     ├── ClassName.json           - Individual class documentation <br>
+ *     └── AnotherClass.json <br>
+ * <br>
+ * Example for "docbox.strategy.api": <br>
+ * outputDir/ <br>
+ * ├── overview-summary.json <br>
+ * └── docbox/ <br>
+ *     └── strategy/ <br>
+ *         ├── package-summary.json <br>
+ *         └── api/ <br>
+ *             ├── package-summary.json <br>
+ *             └── HTMLAPIStrategy.json <br>
  * </pre>
  * <h2>JSON Schema</h2>
  * <h3>Class File Schema (ClassName.json)</h3>
  * <pre>
- * {
- *   "name": "ClassName",
- *   "package": "com.example",
- *   "type": "component|interface",
- *   "extends": "BaseClass" | "",
- *   "fullextends": ":Parent1::Parent2:",
- *   "hint": "Class description",
- *   "functions": [
- *     {
- *       "name": "methodName",
- *       "returnType": "string",
- *       "returnFormat": "plain",
- *       "access": "public|private|package",
- *       "hint": "Method description",
- *       "description": "Detailed description",
- *       "parameters": [
- *         {
- *           "name": "paramName",
- *           "type": "string",
- *           "required": true,
- *           "default": "defaultValue"
- *         }
- *       ],
- *       "position": { "start": 10, "end": 25 }
- *     }
- *   ]
- * }
+ * { <br>
+ *   "name": "ClassName", <br>
+ *   "package": "com.example", <br>
+ *   "type": "component|interface", <br>
+ *   "extends": "BaseClass" | "", <br>
+ *   "fullextends": ":Parent1::Parent2:", <br>
+ *   "hint": "Class description", <br>
+ *   "functions": [ <br>
+ *     { <br>
+ *       "name": "methodName", <br>
+ *       "returnType": "string", <br>
+ *       "returnFormat": "plain", <br>
+ *       "access": "public|private|package", <br>
+ *       "hint": "Method description", <br>
+ *       "description": "Detailed description", <br>
+ *       "parameters": [ <br>
+ *         { <br>
+ *           "name": "paramName", <br>
+ *           "type": "string", <br>
+ *           "required": true, <br>
+ *           "default": "defaultValue" <br>
+ *         } <br>
+ *       ], <br>
+ *       "position": { "start": 10, "end": 25 } <br>
+ *     } <br>
+ *   ] <br>
+ * } <br>
  * </pre>
  * <h3>Package Summary Schema (package-summary.json)</h3>
  * <pre>
- * {
- *   "classes": [
- *     {
- *       "name": "ClassName",
- *       "path": "com/example/ClassName.json"
- *     }
- *   ]
- * }
+ * { <br>
+ *   "classes": [ <br>
+ *     { <br>
+ *       "name": "ClassName", <br>
+ *       "path": "com/example/ClassName.json" <br>
+ *     } <br>
+ *   ] <br>
+ * } <br>
  * </pre>
  * <h3>Overview Summary Schema (overview-summary.json)</h3>
  * <pre>
- * {
- *   "title": "Project Title",
- *   "packages": [
- *     {
- *       "name": "com.example",
- *       "path": "com/example/package-summary.json"
- *     }
- *   ],
- *   "classes": [
- *     {
- *       "name": "ClassName",
- *       "path": "com/example/ClassName.json"
- *     }
- *   ]
- * }
+ * { <br>
+ *   "title": "Project Title", <br>
+ *   "packages": [ <br>
+ *     { <br>
+ *       "name": "com.example", <br>
+ *       "path": "com/example/package-summary.json" <br>
+ *     } <br>
+ *   ], <br>
+ *   "classes": [ <br>
+ *     { <br>
+ *       "name": "ClassName", <br>
+ *       "path": "com/example/ClassName.json" <br>
+ *     } <br>
+ *   ] <br>
+ * } <br>
  * </pre>
  * <h2>Usage Examples</h2>
  * <h3>Basic JSON Generation</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy( "JSON", {
- *         projectTitle : "My API Docs",
- *         outputDir    : "/var/www/docs/json"
- *     } )
- *     .generate( source = "/app", mapping = "app" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "JSON", { <br>
+ *         projectTitle : "My API Docs", <br>
+ *         outputDir    : "/var/www/docs/json" <br>
+ *     } ) <br>
+ *     .generate( source = "/app", mapping = "app" ); <br>
  * </pre>
  * <h3>Combined HTML and JSON Output</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy( "HTML", {
- *         projectTitle : "My API",
- *         outputDir    : "/docs/html"
- *     } )
- *     .addStrategy( "JSON", {
- *         projectTitle : "My API",
- *         outputDir    : "/docs/json"
- *     } )
- *     .generate( source = "/app", mapping = "app" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "HTML", { <br>
+ *         projectTitle : "My API", <br>
+ *         outputDir    : "/docs/html" <br>
+ *     } ) <br>
+ *     .addStrategy( "JSON", { <br>
+ *         projectTitle : "My API", <br>
+ *         outputDir    : "/docs/json" <br>
+ *     } ) <br>
+ *     .generate( source = "/app", mapping = "app" ); <br>
  * </pre>
  * <h3>Using Generated JSON</h3>
  * <pre>
- * // JavaScript example - loading overview
- * fetch( '/docs/json/overview-summary.json' )
- *     .then( r => r.json() )
- *     .then( data => {
- *         console.log( `Found ${ data.packages.length } packages` );
- *         console.log( `Total classes: ${ data.classes.length }` );
- *     } );
- *
- * // Load specific class
- * fetch( '/docs/json/docbox/strategy/api/HTMLAPIStrategy.json' )
- *     .then( r => r.json() )
- *     .then( classData => {
- *         console.log( `Methods: ${ classData.functions.length }` );
- *     } );
+ * // JavaScript example - loading overview <br>
+ * fetch( '/docs/json/overview-summary.json' ) <br>
+ *     .then( r => r.json() ) <br>
+ *     .then( data => { <br>
+ *         console.log( `Found ${ data.packages.length } packages` ); <br>
+ *         console.log( `Total classes: ${ data.classes.length }` ); <br>
+ *     } ); <br>
+ * <br>
+ * // Load specific class <br>
+ * fetch( '/docs/json/docbox/strategy/api/HTMLAPIStrategy.json' ) <br>
+ *     .then( r => r.json() ) <br>
+ *     .then( classData => { <br>
+ *         console.log( `Methods: ${ classData.functions.length }` ); <br>
+ *     } ); <br>
  * </pre>
  * <h2>Use Cases</h2>
  * <ul>
@@ -412,26 +412,26 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * <h3>Return Structure</h3>
 	 * Each array element represents one component with this schema:
 	 * <pre>
-	 * {
-	 *   "name": string,           // Class name
-	 *   "package": string,        // Package name
-	 *   "type": string,           // "component" or "interface"
-	 *   "extends": string,        // Parent class name or empty string
-	 *   "fullextends": string,    // Full inheritance chain
-	 *   "hint": string,           // Class description
-	 *   "functions": [            // Array of methods
-	 *     {
-	 *       "name": string,
-	 *       "returnType": string,
-	 *       "returnFormat": string,
-	 *       "access": string,
-	 *       "hint": string,
-	 *       "description": string,
-	 *       "parameters": array,
-	 *       "position": { "start": number, "end": number }
-	 *     }
-	 *   ]
-	 * }
+	 * { <br>
+	 *   "name": string,           // Class name <br>
+	 *   "package": string,        // Package name <br>
+	 *   "type": string,           // "component" or "interface" <br>
+	 *   "extends": string,        // Parent class name or empty string <br>
+	 *   "fullextends": string,    // Full inheritance chain <br>
+	 *   "hint": string,           // Class description <br>
+	 *   "functions": [            // Array of methods <br>
+	 *     { <br>
+	 *       "name": string, <br>
+	 *       "returnType": string, <br>
+	 *       "returnFormat": string, <br>
+	 *       "access": string, <br>
+	 *       "hint": string, <br>
+	 *       "description": string, <br>
+	 *       "parameters": array, <br>
+	 *       "position": { "start": number, "end": number } <br>
+	 *     } <br>
+	 *   ] <br>
+	 * } <br>
 	 * </pre>
 	 *
 	 * @classData Array of raw component metadata rows from DocBox query (via query.reduce())
@@ -508,21 +508,21 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 * </ul>
 	 * <h3>Example Output</h3>
 	 * <pre>
-	 * // Input:
-	 * serializeToFile(
-	 *     path = "/docs/example.json",
-	 *     data = { name: "Test", values: [ 1, 2, 3 ] }
-	 * );
-	 *
-	 * // Output file content:
-	 * {
-	 *   "name": "Test",
-	 *   "values": [
-	 *     1,
-	 *     2,
-	 *     3
-	 *   ]
-	 * }
+	 * // Input: <br>
+	 * serializeToFile( <br>
+	 *     path = "/docs/example.json", <br>
+	 *     data = { name: "Test", values: [ 1, 2, 3 ] } <br>
+	 * ); <br>
+	 * <br>
+	 * // Output file content: <br>
+	 * { <br>
+	 *   "name": "Test", <br>
+	 *   "values": [ <br>
+	 *     1, <br>
+	 *     2, <br>
+	 *     3 <br>
+	 *   ] <br>
+	 * } <br>
 	 * </pre>
 	 *
 	 * @path Absolute file system path including filename where JSON will be written

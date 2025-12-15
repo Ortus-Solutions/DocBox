@@ -290,15 +290,15 @@ component
 	 * </ul>
 	 * <h3>Example</h3>
 	 * <pre>
-	 * // Component methods:
-	 * public string function getFirstName() { return variables.firstName; }
-	 * public void function setFirstName( string firstName ) { variables.firstName = arguments.firstName; }
-	 *
-	 * // Resulting query row:
-	 * name     = "firstName"
-	 * access   = "public"
-	 * type     = "string"
-	 * generic  = []
+	 * // Component methods: <br>
+	 * public string function getFirstName() { return variables.firstName; } <br>
+	 * public void function setFirstName( string firstName ) { variables.firstName = arguments.firstName; } <br>
+	 * <br>
+	 * // Resulting query row: <br>
+	 * name     = "firstName" <br>
+	 * access   = "public" <br>
+	 * type     = "string" <br>
+	 * generic  = [] <br>
 	 * </pre>
 	 *
 	 * @meta Component metadata structure containing functions array

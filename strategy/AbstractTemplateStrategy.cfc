@@ -23,22 +23,22 @@
  * </ol>
  * <h2>Common Patterns</h2>
  * <pre>
- * // In your concrete strategy constructor:
- * super.init(); // Initialize parent caches
- *
- * // Use helper methods for metadata processing:
- * var qFunctions = buildFunctionMetaData( componentMetadata );
- * var qProperties = buildPropertyMetaData( componentMetadata );
- *
- * // Build package navigation structures:
- * var packageTree = buildPackageTree( qMetadata );
- *
- * // Render templates to files:
- * writeTemplate(
- *     path = outputDir & "/class.html",
- *     template = "/path/to/template.cfm",
- *     metadata = componentMetadata
- * );
+ * // In your concrete strategy constructor: <br>
+ * super.init(); // Initialize parent caches <br>
+ * <br>
+ * // Use helper methods for metadata processing: <br>
+ * var qFunctions = buildFunctionMetaData( componentMetadata ); <br>
+ * var qProperties = buildPropertyMetaData( componentMetadata ); <br>
+ * <br>
+ * // Build package navigation structures: <br>
+ * var packageTree = buildPackageTree( qMetadata ); <br>
+ * <br>
+ * // Render templates to files: <br>
+ * writeTemplate( <br>
+ *     path = outputDir & "/class.html", <br>
+ *     template = "/path/to/template.cfm", <br>
+ *     metadata = componentMetadata <br>
+ * ); <br>
  * </pre>
  * <h2>Performance Considerations</h2>
  * This class implements query caching for function and property metadata to avoid repeated
@@ -96,23 +96,23 @@ abstract component accessors="true" implements="IStrategy" {
 	 * with child packages nested within their parent nodes.
 	 * <h3>Example</h3>
 	 * <pre>
-	 * Input packages:
-	 *   - docbox
-	 *   - docbox.strategy
-	 *   - docbox.strategy.api
-	 *   - coldbox.system
-	 *
-	 * Output structure:
-	 * {
-	 *   "docbox": {
-	 *     "strategy": {
-	 *       "api": {}
-	 *     }
-	 *   },
-	 *   "coldbox": {
-	 *     "system": {}
-	 *   }
-	 * }
+	 * Input packages: <br>
+	 *   - docbox <br>
+	 *   - docbox.strategy <br>
+	 *   - docbox.strategy.api <br>
+	 *   - coldbox.system <br>
+	 * <br>
+	 * Output structure: <br>
+	 * { <br>
+	 *   "docbox": { <br>
+	 *     "strategy": { <br>
+	 *       "api": {} <br>
+	 *     } <br>
+	 *   }, <br>
+	 *   "coldbox": { <br>
+	 *     "system": {} <br>
+	 *   } <br>
+	 * } <br>
 	 * </pre>
 	 * <h3>Usage in Templates</h3>
 	 * The returned structure can be traversed using <code>visitPackageTree()</code> to generate
@@ -166,18 +166,18 @@ abstract component accessors="true" implements="IStrategy" {
 	 * </ul>
 	 * <h3>Example Usage</h3>
 	 * <pre>
-	 * var tree = buildPackageTree( qMetadata );
-	 *
-	 * visitPackageTree(
-	 *     packageTree = tree,
-	 *     startCommand = ( name, fullName ) => {
-	 *         writeOutput( '&lt;li data-package="#fullName#"&gt;#name#&lt;ul&gt;' );
-	 *     },
-	 *     endCommand = ( name, fullName ) => {
-	 *         writeOutput( '&lt;/ul&gt;&lt;/li&gt;' );
-	 *     },
-	 *     args = { depth: 0 }
-	 * );
+	 * var tree = buildPackageTree( qMetadata ); <br>
+	 * <br>
+	 * visitPackageTree( <br>
+	 *     packageTree = tree, <br>
+	 *     startCommand = ( name, fullName ) => { <br>
+	 *         writeOutput( '&lt;li data-package="#fullName#"&gt;#name#&lt;ul&gt;' ); <br>
+	 *     }, <br>
+	 *     endCommand = ( name, fullName ) => { <br>
+	 *         writeOutput( '&lt;/ul&gt;&lt;/li&gt;' ); <br>
+	 *     }, <br>
+	 *     args = { depth: 0 } <br>
+	 * ); <br>
 	 * </pre>
 	 *
 	 * @packageTree The hierarchical package tree structure to traverse (from buildPackageTree)
@@ -591,20 +591,20 @@ abstract component accessors="true" implements="IStrategy" {
 	 * <h3>Template Access to Arguments</h3>
 	 * Templates can access any arguments passed to this method via the <code>arguments</code> scope:
 	 * <pre>
-	 * // Calling code:
-	 * writeTemplate(
-	 *     path = "/output/class.html",
-	 *     template = "/templates/class.cfm",
-	 *     projectTitle = "My API",
-	 *     metadata = componentMeta,
-	 *     qFunctions = functionsQuery
-	 * );
-	 *
-	 * // In template (/templates/class.cfm):
-	 * &lt;h1&gt;#arguments.projectTitle#&lt;/h1&gt;
-	 * &lt;cfloop query="arguments.qFunctions"&gt;
-	 *     &lt;div&gt;#name#&lt;/div&gt;
-	 * &lt;/cfloop&gt;
+	 * // Calling code: <br>
+	 * writeTemplate( <br>
+	 *     path = "/output/class.html", <br>
+	 *     template = "/templates/class.cfm", <br>
+	 *     projectTitle = "My API", <br>
+	 *     metadata = componentMeta, <br>
+	 *     qFunctions = functionsQuery <br>
+	 * ); <br>
+	 * <br>
+	 * // In template (/templates/class.cfm): <br>
+	 * &lt;h1&gt;#arguments.projectTitle#&lt;/h1&gt; <br>
+	 * &lt;cfloop query="arguments.qFunctions"&gt; <br>
+	 *     &lt;div&gt;#name#&lt;/div&gt; <br>
+	 * &lt;/cfloop&gt; <br>
 	 * </pre>
 	 * <h3>File Handling</h3>
 	 * The method automatically creates or overwrites the file at the specified path. Parent directories
@@ -612,9 +612,9 @@ abstract component accessors="true" implements="IStrategy" {
 	 * <h3>Method Chaining</h3>
 	 * Returns the strategy instance to enable fluent method chaining:
 	 * <pre>
-	 * writeTemplate( ... )
-	 *     .writeTemplate( ... )
-	 *     .writeTemplate( ... );
+	 * writeTemplate( ... ) <br>
+	 *     .writeTemplate( ... ) <br>
+	 *     .writeTemplate( ... ); <br>
 	 * </pre>
 	 *
 	 * @path Absolute file system path where the rendered output will be written
@@ -705,10 +705,10 @@ abstract component accessors="true" implements="IStrategy" {
 	 * via <code>resolveClassName()</code>.
 	 * <h3>Example Usage</h3>
 	 * <pre>
-	 * // In template:
-	 * &lt;cfif isAbstractClass( "BaseHandler", "coldbox.system" )&gt;
-	 *     &lt;span class="badge"&gt;Abstract&lt;/span&gt;
-	 * &lt;/cfif&gt;
+	 * // In template: <br>
+	 * &lt;cfif isAbstractClass( "BaseHandler", "coldbox.system" )&gt; <br>
+	 *     &lt;span class="badge"&gt;Abstract&lt;/span&gt; <br>
+	 * &lt;/cfif&gt; <br>
 	 * </pre>
 	 *
 	 * @class The component name (can be simple or fully qualified)
@@ -746,17 +746,17 @@ abstract component accessors="true" implements="IStrategy" {
 	 * The <code>@doc_generic</code> annotation is a DocBox extension that allows documenting generic
 	 * type parameters for methods and arguments:
 	 * <pre>
-	 * /**
-	 *  * Returns a list of users
-	 *  * @doc_generic Array&lt;User&gt;
-	 *  *&#47;
-	 * function getUsers() { }
-	 *
-	 * /**
-	 *  * Processes items
-	 *  * @items.doc_generic Array&lt;Product&gt;
-	 *  *&#47;
-	 * function processItems( required array items ) { }
+	 * /** <br>
+	 *  * Returns a list of users <br>
+	 *  * @doc_generic Array&lt;User&gt; <br>
+	 *  *&#47; <br>
+	 * function getUsers() { } <br>
+	 * <br>
+	 * /** <br>
+	 *  * Processes items <br>
+	 *  * @items.doc_generic Array&lt;Product&gt; <br>
+	 *  *&#47; <br>
+	 * function processItems( required array items ) { } <br>
 	 * </pre>
 	 * <h3>Type Resolution</h3>
 	 * Non-primitive types are resolved to fully qualified names using the current package context:
@@ -768,7 +768,7 @@ abstract component accessors="true" implements="IStrategy" {
 	 * <h3>Multiple Generics</h3>
 	 * The annotation supports comma-delimited lists for multiple generic types:
 	 * <pre>
-	 * @doc_generic Map&lt;String,User&gt;, List&lt;Product&gt;
+	 * @doc_generic Map&lt;String,User&gt;, List&lt;Product&gt; <br>
 	 * </pre>
 	 *
 	 * @meta Function or argument metadata structure that may contain the doc_generic annotation
