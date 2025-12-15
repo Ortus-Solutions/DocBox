@@ -111,24 +111,43 @@ function docApp() {
 			this.currentPackage = packageName;
 		},
 
-		async navigateToClass( classData ) {
-			this.currentView = 'class';
-			this.currentClass = classData;
-			this.currentPackage = classData.package;
+	async navigateToClass( classData ) {
+		this.currentView = 'class';
+		this.currentClass = classData;
+		this.currentPackage = classData.package;
 
-			// Ensure package is expanded
-			if ( !this.expandedPackages.includes( classData.package ) ) {
-				this.expandedPackages.push( classData.package );
+		// Ensure package is expanded
+		if ( !this.expandedPackages.includes( classData.package ) ) {
+			this.expandedPackages.push( classData.package );
+		}
+
+		// Update URL hash
+		window.location.hash = classData.fullname.replace( /\./g, '/' );
+
+		// Check if we're using file:// protocol
+		if ( window.location.protocol === 'file:' ) {
+			// For file:// protocol, show message that frames theme should be used
+			const contentDiv = document.getElementById( 'class-content' );
+			if ( contentDiv ) {
+				contentDiv.innerHTML = `
+					<div class="alert alert-warning mt-4">
+						<h4>⚠️ File Protocol Limitation</h4>
+						<p>The default theme requires a web server to function properly due to browser security restrictions.</p>
+						<p><strong>To view documentation locally without a server:</strong></p>
+						<ol>
+							<li>Use the <strong>frames</strong> theme when generating documentation:<br>
+								<code>theme: "frames"</code></li>
+							<li>Or serve the documentation using a local web server</li>
+						</ol>
+						<p class="mb-0"><strong>Class:</strong> ${ classData.fullname }</p>
+					</div>
+				`;
 			}
-
-			// Update URL hash
-			window.location.hash = classData.fullname.replace( /\./g, '/' );
-
-			// Load class content
+		} else {
+			// For http/https, load class content via fetch (SPA mode)
 			await this.loadClassContent( classData );
-		},
-
-		async loadClassContent( classData ) {
+		}
+	},		async loadClassContent( classData ) {
 			const contentDiv = document.getElementById( 'class-content' );
 			if ( !contentDiv ) return;
 
