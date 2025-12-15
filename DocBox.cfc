@@ -199,13 +199,13 @@ component accessors="true" {
 	 *
 	 * <h2>Examples</h2>
 	 *
- * <p>Chain multiple strategies:</p>
- * <pre>
- * new docbox.DocBox() <br>
- *     .addStrategy( "HTML", { outputDir: "/docs/html" } ) <br>
- *     .addStrategy( "JSON", { outputDir: "/docs/json" } ) <br>
- *     .generate( source: "/app", mapping: "myapp" ); <br>
- * </pre>
+	 * <p>Chain multiple strategies:</p>
+	 * <pre>
+	 * new docbox.DocBox() <br>
+	 *     .addStrategy( "HTML", { outputDir: "/docs/html" } ) <br>
+	 *     .addStrategy( "JSON", { outputDir: "/docs/json" } ) <br>
+	 *     .generate( source: "/app", mapping: "myapp" ); <br>
+	 * </pre>
 	 *
 	 * @strategy The strategy to use for documentation generation. Accepts:
 	 *           <ul>
@@ -577,7 +577,7 @@ component accessors="true" {
 			} else {
 				// Struct format: key is interface name, value is metadata
 				for ( var key in arguments.metadata.implements ) {
-					var imeta = arguments.metadata.implements[ key ];
+					var imeta                = arguments.metadata.implements[ key ];
 					interfaces[ imeta.name ] = 1;
 				}
 			}
@@ -597,7 +597,7 @@ component accessors="true" {
 				} else {
 					// Struct format: key is interface name, value is metadata
 					for ( var key in arguments.metadata.implements ) {
-						var imeta = arguments.metadata.implements[ key ];
+						var imeta                = arguments.metadata.implements[ key ];
 						interfaces[ imeta.name ] = 1;
 					}
 				}
