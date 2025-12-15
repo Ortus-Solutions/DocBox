@@ -332,21 +332,20 @@ component {
 
 		// Run the commandbox generate command
 		new docbox.DocBox(
-			strategy: "html",
+			strategy  : "html",
 			properties: {
 				outputDir    : arguments.outputDir,
 				projectTitle : "#variables.projectName# v#arguments.version#"
 			}
 		).addStrategy(
-			"JSON",
-			{
-				outputDir : arguments.outputDir & "/json"
-			}
-		).generate(
-			source: variables.cwd,
-			mapping: variables.projectName,
-			excludes: "(.engine|.artifacts|.tmp|.github|build|testbox|tests)"
-		)
+				"JSON",
+				{ outputDir : arguments.outputDir & "/json" }
+			)
+			.generate(
+				source  : variables.cwd,
+				mapping : variables.projectName,
+				excludes: "(.engine|.artifacts|.tmp|.github|build|testbox|tests)"
+			)
 
 		print.greenLine( "API Docs produced at #arguments.outputDir#" ).toConsole();
 

@@ -1,7 +1,8 @@
 component
-	hint   ="Strategy for generating the .uml file for Eclipse UML2Tools to generate diagrams from"
+	hint     ="Strategy for generating the .uml file for Eclipse UML2Tools to generate diagrams from"
 	accessors="true"
-	extends="docbox.strategy.AbstractTemplateStrategy"{
+	extends  ="docbox.strategy.AbstractTemplateStrategy"
+{
 
 	/**
 	 * The output file
@@ -81,7 +82,10 @@ component
 	 *
 	 * @return Query of properties
 	 */
-	private query function determineProperties( required struct meta, required string package ) {
+	private query function determineProperties(
+		required struct meta,
+		required string package
+	){
 		var qFunctions  = buildFunctionMetaData( arguments.meta );
 		var qProperties = queryNew( "name, access, type, generic" );
 		// is is used for boolean properties
@@ -90,7 +94,7 @@ component
 			"LOWER(name) LIKE 'get%' OR LOWER(name) LIKE 'is%'"
 		);
 
-		for( var thisRow in qGetters ) {
+		for ( var thisRow in qGetters ) {
 			var propertyName = 0;
 			if ( lCase( thisRow.name ).startsWith( "get" ) ) {
 				propertyName = replaceNoCase( thisRow.name, "get", "" );
@@ -104,7 +108,7 @@ component
 			);
 			var getterMeta = structCopy( thisRow.metadata );
 			// lets just take getter generics, easier to do.
-			var generics = getGenericTypes( thisRow.metadata, arguments.package );
+			var generics   = getGenericTypes( thisRow.metadata, arguments.package );
 
 			if ( qSetters.recordCount ) {
 				var setterMeta = qSetters.metadata;
@@ -144,6 +148,8 @@ component
 					querySetCell( qProperties, "generic", generics );
 				}
 			}
-		} // for each getter
+		}
+		// for each getter
 	}
+
 }

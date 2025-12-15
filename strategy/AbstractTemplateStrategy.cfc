@@ -3,7 +3,7 @@
  * <br>
  * <small><em>Copyright 2015 Ortus Solutions, Corp <a href="www.ortussolutions.com">www.ortussolutions.com</a></em></small>
  */
-abstract component accessors="true" implements="IStrategy"{
+abstract component accessors="true" implements="IStrategy" {
 
 	/**
 	 * The function query cache map
@@ -26,8 +26,8 @@ abstract component accessors="true" implements="IStrategy"{
 	 * Constructor
 	 */
 	function init(){
-		variables.functionQueryCache =  {};
-		variables.propertyQueryCache =  {};
+		variables.functionQueryCache = {};
+		variables.propertyQueryCache = {};
 		return this;
 	}
 

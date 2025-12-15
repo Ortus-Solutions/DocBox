@@ -244,7 +244,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 
 		// Case 1: HTTP URL - create external link
 		if ( left( trimmedValue, 4 ) == "http" ) {
-			return '<a href="#trimmedValue#" target="_blank" class="text-decoration-none">#trimmedValue#</a>';
+			return "<a href=""#trimmedValue#"" target=""_blank"" class=""text-decoration-none"">#trimmedValue#</a>";
 		}
 
 		// Case 2: Try to resolve as package path
@@ -252,17 +252,20 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 			trimmedValue,
 			len( trimmedValue ) - len( listLast( trimmedValue, "." ) ) - 1
 		) : "";
-		var seeName    = listLast( trimmedValue, "." );
-		var qSeeClass  = getMetaSubQuery(
+		var seeName   = listLast( trimmedValue, "." );
+		var qSeeClass = getMetaSubQuery(
 			arguments.qMetaData,
 			"LOWER(package)=LOWER('#seePackage#') AND LOWER(name)=LOWER('#seeName#')"
 		);
 
 		if ( qSeeClass.recordCount ) {
 			// Calculate relative path from current package to target class
-			var relativePath = repeatString( "../", listLen( arguments.currentPackage, "." ) );
-			var classPath    = replace( qSeeClass.package, ".", "/", "all" );
-			return '<a href="#relativePath##classPath#/#qSeeClass.name#.html" class="text-decoration-none">#trimmedValue#</a>';
+			var relativePath = repeatString(
+				"../",
+				listLen( arguments.currentPackage, "." )
+			);
+			var classPath = replace( qSeeClass.package, ".", "/", "all" );
+			return "<a href=""#relativePath##classPath#/#qSeeClass.name#.html"" class=""text-decoration-none"">#trimmedValue#</a>";
 		}
 
 		// Case 3: Not found - return plain text
