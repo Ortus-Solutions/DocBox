@@ -66,7 +66,8 @@ component extends="BaseTest" {
 					myDemoStrategy.$(
 						method      = "run",
 						returns     = myDemoStrategy,
-						callLogging = true
+						callLogging = true,
+						preserveReturnType = false
 					);
 					variables.docbox
 						.setStrategy( myDemoStrategy )

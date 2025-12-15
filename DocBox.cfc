@@ -669,9 +669,6 @@ component accessors="true" {
 	 * @input The input string to process (required parameter)
 	 *
 	 * @return string The processed result
-	 *
-	 * @annotation1
-	 * @annotation2 value
 	 */
 	remote function remoteTest( required string input ) annotation1 annotation2="value"{
 		return arguments.input;
