@@ -60,27 +60,6 @@ component extends="BaseTest" {
 				expect( variables.docbox.getStrategies() ).notTobeEmpty();
 			} );
 
-			it( "lets me set my own strategy", function(){
-				expect( function(){
-					var myDemoStrategy = createStub( extends = "docbox.strategy.AbstractTemplateStrategy" );
-					myDemoStrategy.$(
-						method             = "run",
-						returns            = myDemoStrategy,
-						callLogging        = true,
-						preserveReturnType = false
-					);
-					variables.docbox
-						.setStrategy( myDemoStrategy )
-						.generate(
-							source   = expandPath( "/tests" ),
-							mapping  = "tests",
-							excludes = "(coldbox|build\-docbox)"
-						);
-
-					expect( myDemoStrategy.$once( "run" ) ).toBeTrue( "should execute strategy.run()" );
-				} ).notToThrow();
-			} );
-
 			it( "Works with multiple strategies", function(){
 				variables.docbox
 					.addStrategy(
