@@ -24,12 +24,12 @@
  * <h3>Mapping Transformation</h3>
  * The strategy transforms package/class names into CLI command syntax:
  * <pre>
- * Package: commandbox.commands.server.start
- * Class:   start
- *
- * Becomes:
- * Command:   server start
- * Namespace: server
+ * Package: commandbox.commands.server.start <br>
+ * Class:   start <br>
+ * <br>
+ * Becomes: <br>
+ * Command:   server start <br>
+ * Namespace: server <br>
  * </pre>
  * <h3>Query Column Additions</h3>
  * The strategy adds two columns to the metadata query:
@@ -41,29 +41,29 @@
  * <h2>Usage Examples</h2>
  * <h3>Documenting CommandBox Core</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy(
- *         new docbox.strategy.CommandBox.CommandBoxStrategy(
- *             outputDir    = "/docs/commandbox",
- *             projectTitle = "CommandBox CLI Reference"
- *         )
- *     )
- *     .generate(
- *         source  = "/commandbox/cfml/system/modules_app/",
- *         mapping = "commandbox.commands"
- *     );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( <br>
+ *         new docbox.strategy.CommandBox.CommandBoxStrategy( <br>
+ *             outputDir    = "/docs/commandbox", <br>
+ *             projectTitle = "CommandBox CLI Reference" <br>
+ *         ) <br>
+ *     ) <br>
+ *     .generate( <br>
+ *         source  = "/commandbox/cfml/system/modules_app/", <br>
+ *         mapping = "commandbox.commands" <br>
+ *     ); <br>
  * </pre>
  * <h3>Custom CommandBox Module</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy( "CommandBox", {
- *         projectTitle : "My CommandBox Commands",
- *         outputDir    : "/docs/commands"
- *     } )
- *     .generate(
- *         source  = "/modules/my-commands/commands/",
- *         mapping = "my-commands"
- *     );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "CommandBox", { <br>
+ *         projectTitle : "My CommandBox Commands", <br>
+ *         outputDir    : "/docs/commands" <br>
+ *     } ) <br>
+ *     .generate( <br>
+ *         source  = "/modules/my-commands/commands/", <br>
+ *         mapping = "my-commands" <br>
+ *     ); <br>
  * </pre>
  * <h2>Architecture</h2>
  * <h3>Template Path Override</h3>
@@ -73,7 +73,7 @@
  * Static assets (CSS, JavaScript, Bootstrap) are reused from the frames theme to maintain consistency
  * and avoid duplication:
  * <pre>
- * variables.ASSETS_PATH = "/docbox/strategy/api/themes/frames/resources/static";
+ * variables.ASSETS_PATH = "/docbox/strategy/api/themes/frames/resources/static"; <br>
  * </pre>
  * <h3>Template Customization</h3>
  * CommandBox templates include:
@@ -86,14 +86,14 @@
  * </ul>
  * <h2>Generated Structure</h2>
  * <pre>
- * outputDir/
- * ├── index.html                  - Main entry point (frameset)
- * ├── overview-summary.html       - Namespace overview
- * ├── overview-frame.html         - Navigation sidebar
- * ├── css/, js/, bootstrap/       - Static assets (from frames theme)
- * └── {namespace}/
- *     ├── package-summary.html    - Namespace detail
- *     └── {command}.html          - Individual command docs
+ * outputDir/ <br>
+ * ├── index.html                  - Main entry point (frameset) <br>
+ * ├── overview-summary.html       - Namespace overview <br>
+ * ├── overview-frame.html         - Navigation sidebar <br>
+ * ├── css/, js/, bootstrap/       - Static assets (from frames theme) <br>
+ * └── {namespace}/ <br>
+ *     ├── package-summary.html    - Namespace detail <br>
+ *     └── {command}.html          - Individual command docs <br>
  * </pre>
  * <h2>Differences from HTMLAPIStrategy</h2>
  * <table>
@@ -171,23 +171,23 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 	 * <h3>Command Transformation</h3>
 	 * For each component in the metadata:
 	 * <pre>
-	 * Input:
-	 *   package:        "commandbox.commands.server.start"
-	 *   name:           "start"
-	 *   currentMapping: "commandbox.commands"
-	 *
-	 * Transformation:
-	 *   fullPath = package + "." + name
-	 *            = "commandbox.commands.server.start"
-	 *
-	 *   Remove mapping:
-	 *            = "server.start"
-	 *
-	 *   Convert dots to spaces:
-	 *   command  = "server start"
-	 *
-	 *   Remove last segment:
-	 *   namespace = "server"
+	 * Input: <br>
+	 *   package:        "commandbox.commands.server.start" <br>
+	 *   name:           "start" <br>
+	 *   currentMapping: "commandbox.commands" <br>
+	 * <br>
+	 * Transformation: <br>
+	 *   fullPath = package + "." + name <br>
+	 *            = "commandbox.commands.server.start" <br>
+	 * <br>
+	 *   Remove mapping: <br>
+	 *            = "server.start" <br>
+	 * <br>
+	 *   Convert dots to spaces: <br>
+	 *   command  = "server start" <br>
+	 * <br>
+	 *   Remove last segment: <br>
+	 *   namespace = "server" <br>
 	 * </pre>
 	 * <h3>Namespace Extraction</h3>
 	 * The namespace is the command path without the final command name:
@@ -313,9 +313,9 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 	 * Unlike the parent method which queries for distinct packages, this method queries for distinct
 	 * package/namespace pairs:
 	 * <pre>
-	 * SELECT DISTINCT [package], [namespace]
-	 * FROM metadata
-	 * ORDER BY [package]
+	 * SELECT DISTINCT [package], [namespace] <br>
+	 * FROM metadata <br>
+	 * ORDER BY [package] <br>
 	 * </pre>
 	 * This enables templates to display both the full package path and the user-facing namespace.
 	 * <h3>Query Column Escaping</h3>
@@ -401,19 +401,19 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 	 * </ul>
 	 * This enables the template to display CLI-appropriate syntax:
 	 * <pre>
-	 * // Instead of:
-	 * start.run( name="myServer" )
-	 *
-	 * // Template shows:
-	 * server start name=myServer
+	 * // Instead of: <br>
+	 * start.run( name="myServer" ) <br>
+	 * <br>
+	 * // Template shows: <br>
+	 * server start name=myServer <br>
 	 * </pre>
 	 * <h3>File Organization</h3>
 	 * Command pages are written to:
 	 * <pre>
-	 * outputDir/{package-path}/{CommandName}.html
-	 *
-	 * Example:
-	 * outputDir/commandbox/commands/server/start.html
+	 * outputDir/{package-path}/{CommandName}.html <br>
+	 * <br>
+	 * Example: <br>
+	 * outputDir/commandbox/commands/server/start.html <br>
 	 * </pre>
 	 * <h3>Relationship Queries</h3>
 	 * Like the parent method, this generates queries for:

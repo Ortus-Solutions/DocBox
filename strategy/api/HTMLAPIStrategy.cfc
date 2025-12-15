@@ -35,52 +35,52 @@
  * <h2>Usage Examples</h2>
  * <h3>Basic HTML Generation</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy( "HTML", {
- *         projectTitle : "My API Docs",
- *         outputDir    : "/var/www/docs"
- *     } )
- *     .generate( source = "/app", mapping = "app" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "HTML", { <br>
+ *         projectTitle : "My API Docs", <br>
+ *         outputDir    : "/var/www/docs" <br>
+ *     } ) <br>
+ *     .generate( source = "/app", mapping = "app" ); <br>
  * </pre>
  * <h3>Custom Theme Selection</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy(
- *         new docbox.strategy.api.HTMLAPIStrategy(
- *             outputDir    = "/var/www/docs",
- *             projectTitle = "My Project",
- *             theme        = "frames"  // or "default"
- *         )
- *     )
- *     .generate( source = "/app", mapping = "app" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( <br>
+ *         new docbox.strategy.api.HTMLAPIStrategy( <br>
+ *             outputDir    = "/var/www/docs", <br>
+ *             projectTitle = "My Project", <br>
+ *             theme        = "frames"  // or "default" <br>
+ *         ) <br>
+ *     ) <br>
+ *     .generate( source = "/app", mapping = "app" ); <br>
  * </pre>
  * <h3>Multiple Output Formats</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy( "HTML", {
- *         projectTitle : "My API",
- *         outputDir    : "/docs/html",
- *         theme        : "default"
- *     } )
- *     .addStrategy( "JSON", {
- *         projectTitle : "My API",
- *         outputDir    : "/docs/json"
- *     } )
- *     .generate( source = "/app", mapping = "app" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "HTML", { <br>
+ *         projectTitle : "My API", <br>
+ *         outputDir    : "/docs/html", <br>
+ *         theme        : "default" <br>
+ *     } ) <br>
+ *     .addStrategy( "JSON", { <br>
+ *         projectTitle : "My API", <br>
+ *         outputDir    : "/docs/json" <br>
+ *     } ) <br>
+ *     .generate( source = "/app", mapping = "app" ); <br>
  * </pre>
  * <h2>Generated Structure</h2>
  * <pre>
- * outputDir/
- * ├── index.html              - Main entry point
- * ├── overview-summary.html   - Package overview
- * ├── overview-frame.html     - Navigation frame
- * ├── allclasses-frame.html   - All classes list
- * ├── css/                    - Stylesheets
- * ├── js/                     - JavaScript files
- * ├── data/                   - Navigation data (default theme)
- * └── {package}/
- *     ├── package-summary.html
- *     └── ClassName.html      - Individual class documentation
+ * outputDir/ <br>
+ * ├── index.html              - Main entry point <br>
+ * ├── overview-summary.html   - Package overview <br>
+ * ├── overview-frame.html     - Navigation frame <br>
+ * ├── allclasses-frame.html   - All classes list <br>
+ * ├── css/                    - Stylesheets <br>
+ * ├── js/                     - JavaScript files <br>
+ * ├── data/                   - Navigation data (default theme) <br>
+ * └── {package}/ <br>
+ *     ├── package-summary.html <br>
+ *     └── ClassName.html      - Individual class documentation <br>
  * </pre>
  * <h2>Template Customization</h2>
  * Templates are located in <code>/docbox/strategy/api/themes/{themeName}/resources/templates/</code>.

@@ -16,24 +16,24 @@
  * </ul>
  * <h2>Generated Output</h2>
  * <pre>
- * outputFile.uml - Single XMI file containing:
- *   ├── Package hierarchy
- *   ├── Class definitions
- *   ├── Interface definitions
- *   ├── Properties (inferred from accessors)
- *   ├── Methods with parameters
- *   ├── Inheritance relationships
- *   └── Implementation relationships
+ * outputFile.uml - Single XMI file containing: <br>
+ *   ├── Package hierarchy <br>
+ *   ├── Class definitions <br>
+ *   ├── Interface definitions <br>
+ *   ├── Properties (inferred from accessors) <br>
+ *   ├── Methods with parameters <br>
+ *   ├── Inheritance relationships <br>
+ *   └── Implementation relationships <br>
  * </pre>
  * <h2>Property Inference</h2>
  * Unlike explicit CFML properties, this strategy infers properties from accessor method pairs:
  * <pre>
- * // These methods in a component:
- * function getUsername() { return variables.username; }
- * function setUsername( string username ) { variables.username = arguments.username; }
- *
- * // Become this property in UML:
- * - username : string
+ * // These methods in a component: <br>
+ * function getUsername() { return variables.username; } <br>
+ * function setUsername( string username ) { variables.username = arguments.username; } <br>
+ * <br>
+ * // Become this property in UML: <br>
+ * - username : string <br>
  * </pre>
  * <h3>Inference Rules</h3>
  * A property is detected when:
@@ -53,31 +53,31 @@
  * <h2>Usage Examples</h2>
  * <h3>Basic XMI Generation</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy( "XMI", {
- *         outputFile : "/docs/architecture.uml"
- *     } )
- *     .generate( source = "/app", mapping = "app" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "XMI", { <br>
+ *         outputFile : "/docs/architecture.uml" <br>
+ *     } ) <br>
+ *     .generate( source = "/app", mapping = "app" ); <br>
  * </pre>
  * <h3>Using Strategy Directly</h3>
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy(
- *         new docbox.strategy.uml2tools.XMIStrategy(
- *             outputFile = "/docs/myapp.uml"
- *         )
- *     )
- *     .generate( source = "/app", mapping = "app" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( <br>
+ *         new docbox.strategy.uml2tools.XMIStrategy( <br>
+ *             outputFile = "/docs/myapp.uml" <br>
+ *         ) <br>
+ *     ) <br>
+ *     .generate( source = "/app", mapping = "app" ); <br>
  * </pre>
  * <h3>File Extension Handling</h3>
  * <pre>
- * // Automatically appends .uml extension if missing:
- * new XMIStrategy( outputFile = "/docs/diagram" )
- * // Results in: /docs/diagram.uml
- *
- * // Extension preserved if already present:
- * new XMIStrategy( outputFile = "/docs/diagram.uml" )
- * // Results in: /docs/diagram.uml
+ * // Automatically appends .uml extension if missing: <br>
+ * new XMIStrategy( outputFile = "/docs/diagram" ) <br>
+ * // Results in: /docs/diagram.uml <br>
+ * <br>
+ * // Extension preserved if already present: <br>
+ * new XMIStrategy( outputFile = "/docs/diagram.uml" ) <br>
+ * // Results in: /docs/diagram.uml <br>
  * </pre>
  * <h2>Viewing Generated Diagrams</h2>
  * <h3>Eclipse UML2Tools</h3>
@@ -186,9 +186,9 @@ component
 	 * Returns the strategy instance to enable fluent method chaining with other DocBox operations.
 	 * <h3>Example Usage Context</h3>
 	 * <pre>
-	 * // This method is called automatically by DocBox:
-	 * var xmiStrategy = new XMIStrategy( outputFile = "/docs/app.uml" );
-	 * xmiStrategy.run( docboxMetadata ); // Generates /docs/app.uml
+	 * // This method is called automatically by DocBox: <br>
+	 * var xmiStrategy = new XMIStrategy( outputFile = "/docs/app.uml" ); <br>
+	 * xmiStrategy.run( docboxMetadata ); // Generates /docs/app.uml <br>
 	 * </pre>
 	 *
 	 * @metadata Query object from DocBox containing all component metadata with columns: package, name, type, extends, implements, metadata, fullextends
@@ -246,9 +246,9 @@ component
 	 * </ul>
 	 * <strong>Property Name Conversion:</strong>
 	 * <pre>
-	 * getUsername()  → username  (first char lowercased)
-	 * getUserID()    → userID    (preserves camelCase)
-	 * isEnabled()    → enabled   (removes "is" prefix)
+	 * getUsername()  → username  (first char lowercased) <br>
+	 * getUserID()    → userID    (preserves camelCase) <br>
+	 * isEnabled()    → enabled   (removes "is" prefix) <br>
 	 * </pre>
 	 * <h3>Access Level Resolution</h3>
 	 * <table>
@@ -271,14 +271,14 @@ component
 	 * <h3>Generic Types</h3>
 	 * Generic type information from the getter's @doc_generic annotation is preserved:
 	 * <pre>
-	 * /**
-	 *  * @doc_generic Array&lt;User&gt;
-	 *  *&#47;
-	 * function getUsers() { return variables.users; }
-	 * function setUsers( array users ) { variables.users = arguments.users; }
-	 *
-	 * // Results in property:
-	 * - users : array&lt;User&gt;
+	 * /** <br>
+	 *  * @doc_generic Array&lt;User&gt; <br>
+	 *  *&#47; <br>
+	 * function getUsers() { return variables.users; } <br>
+	 * function setUsers( array users ) { variables.users = arguments.users; } <br>
+	 * <br>
+	 * // Results in property: <br>
+	 * - users : array&lt;User&gt; <br>
 	 * </pre>
 	 * <h3>Query Structure</h3>
 	 * Returns a query with columns:

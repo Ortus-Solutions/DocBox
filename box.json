@@ -28,10 +28,12 @@
 	},
     "devDependencies":{
 		"commandbox-cfformat":"*",
-        "testbox":"*"
+        "testbox":"*",
+		"coldbox": "*"
     },
     "installPaths":{
-        "testbox":"testbox/"
+        "testbox":"testbox/",
+		"coldbox":"tests/resources/coldbox/"
     },
     "ignore":[
         "**/.*",

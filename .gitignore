@@ -10,6 +10,7 @@ WEB-INF
 coldbox/*
 testbox
 modules/*
+tests/resources/coldbox/*
 
 # Engines
 .engine/**
