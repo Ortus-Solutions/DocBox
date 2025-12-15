@@ -1,5 +1,5 @@
 /**
- * <h1>DocBox - JavaDoc Style API Documentation Generator</h1>
+ * <h1>Welcome To DocBox!</h1>
  *
  * <p>DocBox is a powerful API documentation generator for CFML (Adobe ColdFusion, Lucee) and BoxLang applications.
  * It automatically parses your codebase and generates beautiful, searchable documentation in multiple formats
@@ -8,15 +8,15 @@
  * <h2>Quick Start</h2>
  *
  * <pre>
- * // Initialize DocBox with HTML strategy
- * new docbox.DocBox( strategy: "HTML", properties: {
- *     outputDir: "/docs",
- *     projectTitle: "My Awesome API"
- * } )
- * .generate(
- *     source: "/path/to/code",
- *     mapping: "myapp"
- * );
+ * // Initialize DocBox with HTML strategy <br>
+ * new docbox.DocBox( strategy: "HTML", properties: { <br>
+ *     outputDir: "/docs", <br>
+ *     projectTitle: "My Awesome API" <br>
+ * } ) <br>
+ * .generate( <br>
+ *     source: "/path/to/code", <br>
+ *     mapping: "myapp" <br>
+ * ); <br>
  * </pre>
  *
  * <h2>Features</h2>
@@ -41,15 +41,15 @@
  * <li><strong>CommandBox</strong> - Specialized format for CommandBox CLI commands</li>
  * </ul>
  *
- * <h2>Multi-Strategy Generation</h2>
+ * <p>Multi-Strategy Generation</p>
  *
  * <p>You can generate multiple documentation formats in a single pass:</p>
  *
  * <pre>
- * new docbox.DocBox()
- *     .addStrategy( "HTML", { outputDir: "/docs/html", projectTitle: "My API" } )
- *     .addStrategy( "JSON", { outputDir: "/docs/json" } )
- *     .generate( source: "/app", mapping: "myapp" );
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "HTML", { outputDir: "/docs/html", projectTitle: "My API" } ) <br>
+ *     .addStrategy( "JSON", { outputDir: "/docs/json" } ) <br>
+ *     .generate( source: "/app", mapping: "myapp" ); <br>
  * </pre>
  *
  * <h2>Custom Annotations</h2>
@@ -102,27 +102,27 @@ component accessors="true" {
 	 *
 	 * <p>Basic initialization with no strategy (defaults to HTML when generate() is called):</p>
 	 * <pre>
-	 * docbox = new docbox.DocBox();
+	 * docbox = new docbox.DocBox(); <br>
 	 * </pre>
 	 *
 	 * <p>Initialize with HTML strategy using shorthand:</p>
 	 * <pre>
-	 * docbox = new docbox.DocBox(
-	 *     strategy: "HTML",
-	 *     properties: {
-	 *         outputDir: "/docs",
-	 *         projectTitle: "My API Docs",
-	 *         theme: "frames"
-	 *     }
-	 * );
+	 * docbox = new docbox.DocBox( <br>
+	 *     strategy: "HTML", <br>
+	 *     properties: { <br>
+	 *         outputDir: "/docs", <br>
+	 *         projectTitle: "My API Docs", <br>
+	 *         theme: "frames" <br>
+	 *     } <br>
+	 * ); <br>
 	 * </pre>
 	 *
 	 * <p>Initialize with full class path:</p>
 	 * <pre>
-	 * docbox = new docbox.DocBox(
-	 *     strategy: "docbox.strategy.json.JSONAPIStrategy",
-	 *     properties: { outputDir: "/api/json" }
-	 * );
+	 * docbox = new docbox.DocBox( <br>
+	 *     strategy: "docbox.strategy.json.JSONAPIStrategy", <br>
+	 *     properties: { outputDir: "/api/json" } <br>
+	 * ); <br>
 	 * </pre>
 	 *
 	 * @strategy The documentation output strategy to use. Can be:
@@ -199,13 +199,13 @@ component accessors="true" {
 	 *
 	 * <h2>Examples</h2>
 	 *
-	 * <p>Chain multiple strategies:</p>
-	 * <pre>
-	 * new docbox.DocBox()
-	 *     .addStrategy( "HTML", { outputDir: "/docs/html" } )
-	 *     .addStrategy( "JSON", { outputDir: "/docs/json" } )
-	 *     .generate( source: "/app", mapping: "myapp" );
-	 * </pre>
+ * <p>Chain multiple strategies:</p>
+ * <pre>
+ * new docbox.DocBox() <br>
+ *     .addStrategy( "HTML", { outputDir: "/docs/html" } ) <br>
+ *     .addStrategy( "JSON", { outputDir: "/docs/json" } ) <br>
+ *     .generate( source: "/app", mapping: "myapp" ); <br>
+ * </pre>
 	 *
 	 * @strategy The strategy to use for documentation generation. Accepts:
 	 *           <ul>
@@ -270,29 +270,29 @@ component accessors="true" {
 	 *
 	 * <p>Single source directory:</p>
 	 * <pre>
-	 * docbox.generate(
-	 *     source: "/path/to/myapp",
-	 *     mapping: "myapp"
-	 * );
+	 * docbox.generate( <br>
+	 *     source: "/path/to/myapp", <br>
+	 *     mapping: "myapp" <br>
+	 * ); <br>
 	 * </pre>
 	 *
 	 * <p>Multiple source directories:</p>
 	 * <pre>
-	 * docbox.generate(
-	 *     source: [
-	 *         { dir: "/path/to/models", mapping: "models" },
-	 *         { dir: "/path/to/services", mapping: "services" }
-	 *     ]
-	 * );
+	 * docbox.generate( <br>
+	 *     source: [ <br>
+	 *         { dir: "/path/to/models", mapping: "models" }, <br>
+	 *         { dir: "/path/to/services", mapping: "services" } <br>
+	 *     ] <br>
+	 * ); <br>
 	 * </pre>
 	 *
 	 * <p>With exclusions:</p>
 	 * <pre>
-	 * docbox.generate(
-	 *     source: "/coldbox",
-	 *     mapping: "coldbox",
-	 *     excludes: "(tests|build|temp)"
-	 * );
+	 * docbox.generate( <br>
+	 *     source: "/coldbox", <br>
+	 *     mapping: "coldbox", <br>
+	 *     excludes: "(tests|build|temp)" <br>
+	 * ); <br>
 	 * </pre>
 	 *
 	 * @source The source code to document. Accepts:
@@ -694,8 +694,8 @@ component accessors="true" {
 	 * <h2>Usage</h2>
 	 *
 	 * <pre>
-	 * result = DocBox::calculate( 10, 5 );  // returns true
-	 * result = DocBox::calculate( 5, 10 );  // returns false
+	 * result = DocBox::calculate( 10, 5 );  // returns true <br>
+	 * result = DocBox::calculate( 5, 10 );  // returns false <br>
 	 * </pre>
 	 *
 	 * @num1 The first number to compare (required)

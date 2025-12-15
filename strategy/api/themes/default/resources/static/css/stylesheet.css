@@ -102,6 +102,10 @@ html[data-theme="dark"] code {
 	display: none !important;
 }
 
+pre{
+	margin: 15px 0px;
+}
+
 /* ========================================
    Navbar
    ======================================== */
@@ -598,6 +602,40 @@ a:hover {
 	font-size: 1.125rem;
 	color: var(--text-secondary);
 	line-height: 1.8;
+}
+
+/* Documentation content formatting */
+.class-description pre,
+.method-item pre,
+.section-card pre {
+	background-color: var(--bg-secondary);
+	border: 1px solid var(--border-color);
+	border-left: 3px solid var(--primary-color);
+	border-radius: 6px;
+	padding: 1rem;
+	margin: 1rem 0;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	font-family: 'Courier New', Consolas, Monaco, monospace;
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+.class-description code,
+.method-item code,
+.section-card code {
+	background-color: var(--bg-secondary);
+	padding: 0.2rem 0.4rem;
+	border-radius: 3px;
+	font-family: 'Courier New', Consolas, Monaco, monospace;
+	font-size: 0.9em;
+}
+
+.class-description pre code {
+	background-color: transparent;
+	padding: 0;
+	border-radius: 0;
 }
 
 .section-card {
