@@ -226,7 +226,14 @@ local.inheritance = local.getInheritence( arguments.metadata );
 				!listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
 				<cfset local.attributesCount++>
 				<span class="badge bg-light text-dark border me-2 mb-2">
-					<strong>#lcase( local.classMeta )#</strong><cfif len( local.annotations[ local.classMeta ] )>: #local.annotations[ local.classMeta ]#</cfif>
+					<strong>#lcase( local.classMeta )#</strong><cfif len( local.annotations[ local.classMeta ] )>:
+						<cfif lcase( local.classMeta ) eq "see">
+							<!--- Use shared helper method for @see annotation formatting --->
+							#formatSeeAnnotation( local.annotations[ local.classMeta ], arguments.qMetaData, arguments.package )#
+						<cfelse>
+							#local.annotations[ local.classMeta ]#
+						</cfif>
+					</cfif>
 				</span>
 			</cfif>
 		</cfloop>

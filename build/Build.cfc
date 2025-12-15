@@ -329,15 +329,24 @@ component {
 		// Generate Docs
 		print.greenLine( "Generating API Docs, please wait..." ).toConsole();
 		directoryCreate( arguments.outputDir, true, true );
-		command( "docbox generate" )
-			.params(
-				"source"                = "/docbox",
-				"mapping"               = "docbox",
-				"excludes"              = "(build|docs|testbox|tests|.engine|.artifacts|.tmp)",
-				"strategy-projectTitle" = "#variables.projectName# v#arguments.version#",
-				"strategy-outputDir"    = arguments.outputDir
-			)
-			.run();
+
+		// Run the commandbox generate command
+		new docbox.DocBox(
+			strategy: "html",
+			properties: {
+				outputDir    : arguments.outputDir,
+				projectTitle : "#variables.projectName# v#arguments.version#"
+			}
+		).addStrategy(
+			"JSON",
+			{
+				outputDir : arguments.outputDir & "/json"
+			}
+		).generate(
+			source: variables.cwd,
+			mapping: variables.projectName,
+			excludes: "(.engine|.artifacts|.tmp|.github|build|testbox|tests)"
+		)
 
 		print.greenLine( "API Docs produced at #arguments.outputDir#" ).toConsole();
 

@@ -63,10 +63,10 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	/**
 	 * Run this strategy
 	 *
-	 * @qMetaData The metadata
+	 * @metadata The metadata
 	 * @throws InvalidConfigurationException if directory does not exist or other invalid configuration is detected
 	 */
-	HTMLAPIStrategy function run( required query qMetadata ){
+	IStrategy function run( required query metadata ){
 		if ( !directoryExists( getOutputDir() ) ) {
 			throw(
 				message = "Invalid configuration; output directory not found",
@@ -89,11 +89,11 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		};
 		writeTemplate( argumentCollection = args )
 			// Write overview summary and frame
-			.writeOverviewSummaryAndFrame( arguments.qMetaData )
+			.writeOverviewSummaryAndFrame( arguments.metadata )
 			// Write classes frame
-			.writeAllClassesFrame( arguments.qMetaData )
+			.writeAllClassesFrame( arguments.metadata )
 			// Write packages
-			.writePackagePages( arguments.qMetaData );
+			.writePackagePages( arguments.metadata );
 
 		return this;
 	}
@@ -217,6 +217,84 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		);
 
 		return this;
+	}
+
+	/************************** SHARED TEMPLATE HELPERS **************************/
+
+	/**
+	 * Format a @see annotation value as a clickable link (if applicable)
+	 *
+	 * This method handles three cases:
+	 * 1. HTTP URLs - Creates external links
+	 * 2. Package paths - Resolves to class documentation links
+	 * 3. Plain text - Returns as-is if not resolvable
+	 *
+	 * @seeValue The value of the @see annotation
+	 * @qMetaData The metadata query to search for class references
+	 * @currentPackage The current package context for relative path calculation
+	 *
+	 * @return string HTML string with link or plain text
+	 */
+	string function formatSeeAnnotation(
+		required string seeValue,
+		required query qMetaData,
+		required string currentPackage
+	){
+		var trimmedValue = trim( arguments.seeValue );
+
+		// Case 1: HTTP URL - create external link
+		if ( left( trimmedValue, 4 ) == "http" ) {
+			return '<a href="#trimmedValue#" target="_blank" class="text-decoration-none">#trimmedValue#</a>';
+		}
+
+		// Case 2: Try to resolve as package path
+		var seePackage = listLen( trimmedValue, "." ) > 1 ? left(
+			trimmedValue,
+			len( trimmedValue ) - len( listLast( trimmedValue, "." ) ) - 1
+		) : "";
+		var seeName    = listLast( trimmedValue, "." );
+		var qSeeClass  = getMetaSubQuery(
+			arguments.qMetaData,
+			"LOWER(package)=LOWER('#seePackage#') AND LOWER(name)=LOWER('#seeName#')"
+		);
+
+		if ( qSeeClass.recordCount ) {
+			// Calculate relative path from current package to target class
+			var relativePath = repeatString( "../", listLen( arguments.currentPackage, "." ) );
+			var classPath    = replace( qSeeClass.package, ".", "/", "all" );
+			return '<a href="#relativePath##classPath#/#qSeeClass.name#.html" class="text-decoration-none">#trimmedValue#</a>';
+		}
+
+		// Case 3: Not found - return plain text
+		return trimmedValue;
+	}
+
+	/**
+	 * Extract package name from a fully qualified class name
+	 *
+	 * @className The full class name (e.g., "com.example.MyClass")
+	 *
+	 * @return string The package portion (e.g., "com.example")
+	 */
+	string function getPackage( required string className ){
+		if ( listLen( arguments.className, "." ) > 1 ) {
+			return left(
+				arguments.className,
+				len( arguments.className ) - len( listLast( arguments.className, "." ) ) - 1
+			);
+		}
+		return "";
+	}
+
+	/**
+	 * Extract object/class name from a fully qualified class name
+	 *
+	 * @className The full class name (e.g., "com.example.MyClass")
+	 *
+	 * @return string The class name portion (e.g., "MyClass")
+	 */
+	string function getObjectName( required string className ){
+		return listLast( arguments.className, "." );
 	}
 
 }

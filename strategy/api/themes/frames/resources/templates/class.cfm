@@ -158,7 +158,14 @@
 				!listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
 			<cfset local.attributesCount++>
 			<span class="badge bg-light text-dark border">
-				<strong>#lcase( local.classMeta )#</strong><cfif len( annotations[ local.classMeta ] )>: #annotations[ local.classMeta ]#</cfif>
+				<strong>#lcase( local.classMeta )#</strong><cfif len( annotations[ local.classMeta ] )>:
+					<cfif lcase( local.classMeta ) eq "see">
+						<!--- Use shared helper method for @see annotation formatting --->
+						#formatSeeAnnotation( annotations[ local.classMeta ], arguments.qMetaData, arguments.package )#
+					<cfelse>
+						#annotations[ local.classMeta ]#
+					</cfif>
+				</cfif>
 			</span>
 		</cfif>
 		</cfloop>
