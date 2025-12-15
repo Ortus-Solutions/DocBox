@@ -123,7 +123,7 @@ jobs:
           AWS_S3_BUCKET: "apidocs.ortussolutions.com"
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
-          SOURCE_DIR: ".artifacts/${{ env.MODULE_ID }}"
+          SOURCE_DIR: ".tmp/apidocs"
           DEST_DIR: "${{ env.MODULE_ID }}"
 
       - name: Publish to ForgeBox
