@@ -82,7 +82,7 @@ for ( local.packageRow in local.qPackages ) {
 }
 
 // Ensure data directory exists
-local.dataDir = expandPath( navArgs.outputDir & "/data" );
+local.dataDir = navArgs.outputDir & "/data";
 if ( !directoryExists( local.dataDir ) ) {
 	directoryCreate( local.dataDir );
 }

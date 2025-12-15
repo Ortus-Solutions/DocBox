@@ -1118,34 +1118,69 @@
 			return inheritence;
 		}
 
-		function getImplements(metadata)
-		{
-			var localmeta = arguments.metadata;
-			var interfaces = {};
-			var key = 0;
-			var imeta = 0;
+	function getImplements(metadata)
+	{
+		var localmeta = arguments.metadata;
+		var interfaces = {};
+		var key = 0;
+		var imeta = 0;
 
-			while( localMeta.keyExists( "extends" ) and localMeta.extends.count() )
+		// Check the current class first
+		if(StructKeyExists(localmeta, "implements"))
+		{
+			// Handle both array and struct formats for implements
+			if( isArray( localmeta.implements ) )
 			{
-				if(StructKeyExists(localmeta, "implements"))
+				// Array format: each item is full metadata
+				for( imeta in localmeta.implements )
 				{
+					interfaces[imeta.name] = 1;
+				}
+			}
+			else
+			{
+				// Struct format: key is interface name, value is metadata
+				for(key in localmeta.implements)
+				{
+					imeta = localmeta.implements[local.key];
+					interfaces[imeta.name] = 1;
+				}
+			}
+		}
+
+		// Inspect the class ancestors for implemented interfaces
+		while( localMeta.keyExists( "extends" ) and localMeta.extends.count() )
+		{
+			localmeta = localmeta.extends;
+
+			if(StructKeyExists(localmeta, "implements"))
+			{
+				// Handle both array and struct formats for implements
+				if( isArray( localmeta.implements ) )
+				{
+					// Array format: each item is full metadata
+					for( imeta in localmeta.implements )
+					{
+						interfaces[imeta.name] = 1;
+					}
+				}
+				else
+				{
+					// Struct format: key is interface name, value is metadata
 					for(key in localmeta.implements)
 					{
 						imeta = localmeta.implements[local.key];
 						interfaces[imeta.name] = 1;
 					}
 				}
-				localmeta = localmeta.extends;
 			}
-
-			interfaces = structKeyArray(interfaces);
-
-			arraySort(interfaces, "textnocase");
-
-			return interfaces;
 		}
 
-		function findOverwrite(metadata, functionName)
+		var result = structKeyArray(interfaces);
+		arraySort(result, "textnocase");
+
+		return result;
+	}		function findOverwrite(metadata, functionName)
 		{
 			var qFunctions = 0;
 

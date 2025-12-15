@@ -100,25 +100,53 @@ local.getInheritence = function( metadata ) {
  * Gets all implemented interfaces for a class
  */
 local.getImplements = function( metadata ) {
-	var localMeta  = arguments.metadata;
+	var localMeta = arguments.metadata;
 	var interfaces = {};
 	var key        = 0;
 	var imeta      = 0;
 
-	while ( localMeta.keyExists( "extends" ) && localMeta.extends.count() ) {
-		if ( structKeyExists( localMeta, "implements" ) ) {
+	// Check the current class first
+	if ( structKeyExists( localMeta, "implements" ) ) {
+		// Handle both array and struct formats for implements
+		if ( isArray( localMeta.implements ) ) {
+			// Array format: each item is full metadata
+			for ( imeta in localMeta.implements ) {
+				interfaces[ imeta.name ] = 1;
+			}
+		} else {
+			// Struct format: key is interface name, value is metadata
 			for ( key in localMeta.implements ) {
 				imeta                = localMeta.implements[ key ];
 				interfaces[ imeta.name ] = 1;
 			}
 		}
-		localMeta = localMeta.extends;
 	}
 
-	interfaces = structKeyArray( interfaces );
-	arraySort( interfaces, "textnocase" );
+	// Inspect the class ancestors for implemented interfaces
+	while ( localMeta.keyExists( "extends" ) && localMeta.extends.count() ) {
+		localMeta = localMeta.extends;
 
-	return interfaces;
+		if ( structKeyExists( localMeta, "implements" ) ) {
+			// Handle both array and struct formats for implements
+			if ( isArray( localMeta.implements ) ) {
+				// Array format: each item is full metadata
+				for ( imeta in localMeta.implements ) {
+					interfaces[ imeta.name ] = 1;
+				}
+			} else {
+				// Struct format: key is interface name, value is metadata
+				for ( key in localMeta.implements ) {
+					imeta                = localMeta.implements[ key ];
+					interfaces[ imeta.name ] = 1;
+				}
+			}
+		}
+	}
+
+	var result = structKeyArray( interfaces );
+	arraySort( result, "textnocase" );
+
+	return result;
 }
 
 local.annotations = server.keyExists("boxlang") ? arguments.metadata.annotations : arguments.metadata
@@ -146,7 +174,7 @@ local.documentation = server.keyExists("boxlang") ? arguments.metadata.documenta
 		</ol>
 	</nav>
 
-	<!--- Class Name --->
+	<!--- Class Name + Type --->
 	<h1 class="class-title">
 		<cfif arguments.metadata.type eq "interface">
 			<span class="text-info">🔌</span> Interface #arguments.name#
@@ -159,6 +187,7 @@ local.documentation = server.keyExists("boxlang") ? arguments.metadata.documenta
 		</cfif>
 	</h1>
 
+	<!--- Class Hint --->
 	<cfif local.documentation.keyExists("hint") AND len(local.documentation.hint)>
 		<p class="class-description">#local.documentation.hint#</p>
 	</cfif>
@@ -169,7 +198,6 @@ local.documentation = server.keyExists("boxlang") ? arguments.metadata.documenta
 local.thisClass   = arguments.package & "." & arguments.name;
 local.inheritance = local.getInheritence( arguments.metadata );
 </cfscript>
-
 <cfif arrayLen( local.inheritance ) gt 1>
 	<div class="section-card">
 		<h3 class="section-title">
@@ -207,11 +235,12 @@ local.inheritance = local.getInheritence( arguments.metadata );
 			<h3 class="section-title">
 				<i class="bi bi-puzzle"></i> Implemented Interfaces
 			</h3>
-			<div class="implemented-interfaces">
+			<div class="inheritance-tree">
 				<cfloop array="#local.interfaces#" index="local.interface">
-					<span class="badge badge-info me-2 mb-2">
-						🔌 #local.getClassLink( local.interface, arguments.qMetaData )#
-					</span>
+					<div class="inheritance-level">
+						<span class="inheritance-arrow">🔌</span>
+						<code>#local.getClassLink( local.interface, arguments.qMetaData )#</code>
+					</div>
 				</cfloop>
 			</div>
 		</div>
@@ -227,7 +256,7 @@ local.inheritance = local.getInheritence( arguments.metadata );
 		<cfset local.attributesCount = 0>
 		<cfloop collection="#local.annotations#" item="local.classMeta">
 			<cfif isSimpleValue( local.annotations[ local.classMeta ] ) AND
-				!listFindNoCase( "hint,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
+				!listFindNoCase( "hint,implements,extends,fullname,functions,hashcode,name,path,properties,type,remoteaddress", local.classMeta ) >
 				<cfset local.attributesCount++>
 				<span class="badge bg-light text-dark border me-2 mb-2">
 					<strong>#lcase( local.classMeta )#</strong><cfif len( local.annotations[ local.classMeta ] )>:
@@ -248,10 +277,10 @@ local.inheritance = local.getInheritence( arguments.metadata );
 </div>
 
 <cfscript>
-local.qFunctions = buildFunctionMetaData(arguments.metadata);
-local.qProperties = buildPropertyMetadata(arguments.metadata);
-local.qInit = getMetaSubQuery(local.qFunctions, "UPPER(name)='INIT'");
-local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
+local.qFunctions = buildFunctionMetaData( arguments.metadata );
+local.qProperties = buildPropertyMetadata( arguments.metadata );
+local.qInit = getMetaSubQuery( local.qFunctions, "UPPER(name)='INIT'" );
+local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name)!='INIT'" );
 </cfscript>
 
 <!-- Properties Section -->
