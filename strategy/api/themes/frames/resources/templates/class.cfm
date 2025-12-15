@@ -228,7 +228,13 @@
 				<ul>
 				<cfloop collection="#local.propAnnotations#" item="local.propAnnotationKey">
 					<cfif not listFindNoCase( "hint,name,nameAsKey,default,type,serializable,required", local.propAnnotationKey ) >
-					<li class="badge bg-secondary label-annotations">#lcase( local.propAnnotationKey )# = #local.propAnnotations[ local.propAnnotationKey ]#</li>
+					<li class="badge bg-secondary label-annotations">#lcase( local.propAnnotationKey )# =
+						<cfif lcase( local.propAnnotationKey ) eq "see">
+							#formatSeeAnnotation( local.propAnnotations[ local.propAnnotationKey ], arguments.qMetaData, arguments.package )#
+						<cfelse>
+							#local.propAnnotations[ local.propAnnotationKey ]#
+						</cfif>
+					</li>
 					</cfif>
 				</cfloop>
 				</ul>
@@ -789,7 +795,13 @@
 						keyName ) && isSimpleValue( local.funcAnnotations[ keyName ] ) >
 						<div class="mb-1">
 							<span class="badge bg-secondary">#lcase( keyName )#</span>
-							<span class="text-muted">#local.funcAnnotations[ keyName ]#</span>
+							<span class="text-muted">
+								<cfif lcase( keyName ) eq "see">
+									#formatSeeAnnotation( local.funcAnnotations[ keyName ], arguments.qMetaData, arguments.package )#
+								<cfelse>
+									#local.funcAnnotations[ keyName ]#
+								</cfif>
+							</span>
 						</div>
 					</cfif>
 				</cfloop>

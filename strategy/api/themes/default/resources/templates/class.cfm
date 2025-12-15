@@ -279,17 +279,23 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 							<cfif local.propDoc.keyExists("hint") AND len(local.propDoc.hint)>
 								<div class="text-muted small">#local.propDoc.hint#</div>
 							</cfif>
-							<!--- Property Annotations --->
-							<div class="mt-1">
-								<cfloop collection="#local.propAnnotations#" item="local.propAnnotKey">
-									<cfif isSimpleValue( local.propAnnotations[ local.propAnnotKey ] ) AND
-										!listFindNoCase( "hint,type,name,default,required,serializable", local.propAnnotKey ) >
-										<span class="badge bg-light text-dark border me-1" style="font-size: 0.7rem;">
-											<strong>#lcase( local.propAnnotKey )#</strong><cfif len( local.propAnnotations[ local.propAnnotKey ] )>: #local.propAnnotations[ local.propAnnotKey ]#</cfif>
-										</span>
-									</cfif>
-								</cfloop>
-							</div>
+						<!--- Property Annotations --->
+						<div class="mt-1">
+							<cfloop collection="#local.propAnnotations#" item="local.propAnnotKey">
+								<cfif isSimpleValue( local.propAnnotations[ local.propAnnotKey ] ) AND
+									!listFindNoCase( "hint,type,name,default,required,serializable", local.propAnnotKey ) >
+									<span class="badge bg-light text-dark border me-1" style="font-size: 0.7rem;">
+										<strong>#lcase( local.propAnnotKey )#</strong><cfif len( local.propAnnotations[ local.propAnnotKey ] )>:
+											<cfif lcase( local.propAnnotKey ) eq "see">
+												#formatSeeAnnotation( local.propAnnotations[ local.propAnnotKey ], arguments.qMetaData, arguments.package )#
+											<cfelse>
+												#local.propAnnotations[ local.propAnnotKey ]#
+											</cfif>
+										</cfif>
+									</span>
+								</cfif>
+							</cfloop>
+						</div>
 						</td>
 							<td>
 								<cfif len(local.propAnnotations.default ?: "")>
@@ -397,7 +403,13 @@ local.qMethods = getMetaSubQuery(local.qFunctions, "UPPER(name)!='INIT'");
 						!listFindNoCase( "hint,access,returntype,name,output,static,abstract,parameters,return,returnformat,description,roles,verifyClient,secureJSON,secureJSONPrefix", local.annotKey ) >
 						<cfset local.methodAnnotCount++>
 						<span class="badge bg-light text-dark border me-1 mb-1">
-							<strong>#lcase( local.annotKey )#</strong><cfif len( local.funcAnnotations[ local.annotKey ] )>: #local.funcAnnotations[ local.annotKey ]#</cfif>
+							<strong>#lcase( local.annotKey )#</strong><cfif len( local.funcAnnotations[ local.annotKey ] )>:
+								<cfif lcase( local.annotKey ) eq "see">
+									#formatSeeAnnotation( local.funcAnnotations[ local.annotKey ], arguments.qMetaData, arguments.package )#
+								<cfelse>
+									#local.funcAnnotations[ local.annotKey ]#
+								</cfif>
+							</cfif>
 						</span>
 					</cfif>
 				</cfloop>
