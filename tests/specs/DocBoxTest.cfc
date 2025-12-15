@@ -64,9 +64,9 @@ component extends="BaseTest" {
 				expect( function(){
 					var myDemoStrategy = createStub( extends = "docbox.strategy.AbstractTemplateStrategy" );
 					myDemoStrategy.$(
-						method      = "run",
-						returns     = myDemoStrategy,
-						callLogging = true,
+						method             = "run",
+						returns            = myDemoStrategy,
+						callLogging        = true,
 						preserveReturnType = false
 					);
 					variables.docbox
