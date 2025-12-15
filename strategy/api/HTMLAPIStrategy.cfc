@@ -1,17 +1,131 @@
 /**
- * Default Document Strategy for DocBox
+ * HTML API Documentation Generation Strategy for DocBox
+ * <h2>Overview</h2>
+ * This strategy generates rich, searchable HTML documentation from CFML component metadata. It supports
+ * multiple themes, modern UI components, and both server-based and file:// protocol viewing modes.
+ * <h2>Key Features</h2>
+ * <ul>
+ * <li><strong>Multi-Theme Support</strong> - Choose between "default" (Alpine.js SPA) and "frames" (traditional frameset) themes</li>
+ * <li><strong>Modern UI</strong> - Bootstrap 5 with dark mode, responsive design, and interactive components</li>
+ * <li><strong>Smart Navigation</strong> - Hierarchical package trees, breadcrumbs, and real-time search</li>
+ * <li><strong>Code Highlighting</strong> - Syntax-highlighted code examples and method signatures</li>
+ * <li><strong>Cross-Linking</strong> - Automatic links between classes, interfaces, and related components</li>
+ * <li><strong>Annotation Support</strong> - Formats @see, @link, and custom annotations with clickable references</li>
+ * <li><strong>Offline Capable</strong> - Frames theme works with file:// protocol for offline documentation viewing</li>
+ * </ul>
+ * <h2>Themes</h2>
+ * <h3>Default Theme</h3>
+ * A modern Single Page Application (SPA) built with Alpine.js featuring:
+ * <ul>
+ * <li>Dark/light mode toggle with localStorage persistence</li>
+ * <li>Real-time class search with keyboard navigation</li>
+ * <li>Dynamic content loading without page refreshes</li>
+ * <li>Responsive layout optimized for desktop and mobile</li>
+ * <li><strong>Note:</strong> Requires a web server due to CORS restrictions with file:// protocol</li>
+ * </ul>
+ * <h3>Frames Theme</h3>
+ * A traditional frameset-based layout featuring:
+ * <ul>
+ * <li>Classic three-frame layout (navigation, class list, content)</li>
+ * <li>jQuery-based tree navigation with jsTree</li>
+ * <li>Works natively with file:// protocol for offline viewing</li>
+ * <li>Bootstrap 5 styling with dark mode support</li>
+ * <li>Syntax highlighting with SyntaxHighlighter</li>
+ * </ul>
+ * <h2>Usage Examples</h2>
+ * <h3>Basic HTML Generation</h3>
+ * <pre>
+ * new docbox.DocBox()
+ *     .addStrategy( "HTML", {
+ *         projectTitle : "My API Docs",
+ *         outputDir    : "/var/www/docs"
+ *     } )
+ *     .generate( source = "/app", mapping = "app" );
+ * </pre>
+ * <h3>Custom Theme Selection</h3>
+ * <pre>
+ * new docbox.DocBox()
+ *     .addStrategy(
+ *         new docbox.strategy.api.HTMLAPIStrategy(
+ *             outputDir    = "/var/www/docs",
+ *             projectTitle = "My Project",
+ *             theme        = "frames"  // or "default"
+ *         )
+ *     )
+ *     .generate( source = "/app", mapping = "app" );
+ * </pre>
+ * <h3>Multiple Output Formats</h3>
+ * <pre>
+ * new docbox.DocBox()
+ *     .addStrategy( "HTML", {
+ *         projectTitle : "My API",
+ *         outputDir    : "/docs/html",
+ *         theme        : "default"
+ *     } )
+ *     .addStrategy( "JSON", {
+ *         projectTitle : "My API",
+ *         outputDir    : "/docs/json"
+ *     } )
+ *     .generate( source = "/app", mapping = "app" );
+ * </pre>
+ * <h2>Generated Structure</h2>
+ * <pre>
+ * outputDir/
+ * ├── index.html              - Main entry point
+ * ├── overview-summary.html   - Package overview
+ * ├── overview-frame.html     - Navigation frame
+ * ├── allclasses-frame.html   - All classes list
+ * ├── css/                    - Stylesheets
+ * ├── js/                     - JavaScript files
+ * ├── data/                   - Navigation data (default theme)
+ * └── {package}/
+ *     ├── package-summary.html
+ *     └── ClassName.html      - Individual class documentation
+ * </pre>
+ * <h2>Template Customization</h2>
+ * Templates are located in <code>/docbox/strategy/api/themes/{themeName}/resources/templates/</code>.
+ * Each theme has its own template set, allowing full customization of output structure and styling.
+ * <h2>Performance</h2>
+ * <ul>
+ * <li>Query caching for metadata processing (inherited from AbstractTemplateStrategy)</li>
+ * <li>Static asset copying in a single operation</li>
+ * <li>Template rendering with minimal I/O operations</li>
+ * <li>Navigation data pre-generated for fast client-side filtering</li>
+ * </ul>
  * <br>
  * <small><em>Copyright 2015 Ortus Solutions, Corp <a href="www.ortussolutions.com">www.ortussolutions.com</a></em></small>
+ *
+ * @see AbstractTemplateStrategy
+ * @see IStrategy
  */
 component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 
 	/**
-	 * The output directory
+	 * The absolute file system path where HTML documentation will be generated
+	 * <br>
+	 * This directory will contain all generated HTML files, static assets, and navigation data.
+	 * The directory structure mirrors the package structure of the documented code.
+	 * <h3>Requirements</h3>
+	 * <ul>
+	 * <li>Must exist before running the strategy (throws InvalidConfigurationException if not found)</li>
+	 * <li>Must have write permissions for the current process</li>
+	 * <li>Should be empty or ready to be overwritten (existing files will be replaced)</li>
+	 * </ul>
 	 */
 	property name="outputDir" type="string";
 
 	/**
-	 * The project title to use
+	 * The project title displayed in HTML headers, page titles, and navigation
+	 * <br>
+	 * This title appears in:
+	 * <ul>
+	 * <li>Browser tab titles and bookmarks</li>
+	 * <li>Main heading on the overview page</li>
+	 * <li>Navigation headers and breadcrumbs</li>
+	 * <li>HTML meta tags for search engine optimization</li>
+	 * </ul>
+	 *
+	 * @default "Untitled"
 	 */
 	property
 		name   ="projectTitle"
@@ -19,7 +133,21 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		type   ="string";
 
 	/**
-	 * The theme to use for documentation generation
+	 * The visual theme to use for documentation generation
+	 * <br>
+	 * Determines the template set, UI components, and JavaScript frameworks used in the generated documentation.
+	 * <h3>Available Themes</h3>
+	 * <ul>
+	 * <li><strong>default</strong> - Modern Alpine.js SPA with dynamic content loading (requires web server)</li>
+	 * <li><strong>frames</strong> - Traditional frameset layout compatible with file:// protocol (offline capable)</li>
+	 * </ul>
+	 * <h3>Theme Selection Guidelines</h3>
+	 * <ul>
+	 * <li>Use <strong>default</strong> for: Internal documentation served via web server, modern UI requirements, advanced search features</li>
+	 * <li>Use <strong>frames</strong> for: Offline documentation, CD/USB distribution, legacy browser support, file:// protocol access</li>
+	 * </ul>
+	 *
+	 * @default "frames"
 	 */
 	property
 		name   ="theme"
@@ -61,10 +189,39 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	}
 
 	/**
-	 * Run this strategy
+	 * Executes the HTML documentation generation strategy
+	 * <br>
+	 * This is the main entry point for the strategy. It orchestrates the entire documentation generation process,
+	 * from validating configuration to copying assets and rendering all HTML templates.
+	 * <h3>Generation Process</h3>
+	 * <ol>
+	 * <li><strong>Validation</strong> - Ensures output directory exists</li>
+	 * <li><strong>Asset Copying</strong> - Copies CSS, JavaScript, images, and other static files from theme resources</li>
+	 * <li><strong>Index Generation</strong> - Creates the main index.html entry point</li>
+	 * <li><strong>Overview Pages</strong> - Generates overview-summary.html and overview-frame.html with package listings</li>
+	 * <li><strong>Class List</strong> - Creates allclasses-frame.html with alphabetical class index</li>
+	 * <li><strong>Package Pages</strong> - Generates package-summary.html and individual class documentation for each package</li>
+	 * </ol>
+	 * <h3>Output Structure</h3>
+	 * The method creates a complete documentation website with:
+	 * <ul>
+	 * <li>Hierarchical navigation matching package structure</li>
+	 * <li>Individual HTML pages for each class and interface</li>
+	 * <li>Cross-linked references between related components</li>
+	 * <li>Static assets (CSS, JS) copied from theme resources</li>
+	 * <li>Navigation data files for client-side filtering (default theme)</li>
+	 * </ul>
+	 * <h3>Error Handling</h3>
+	 * Throws <code>InvalidConfigurationException</code> if the output directory does not exist or is not writable.
+	 * Callers should catch this exception and create the directory before retrying.
+	 * <h3>Method Chaining</h3>
+	 * Returns the strategy instance to enable fluent method chaining with other DocBox operations.
 	 *
-	 * @metadata The metadata
-	 * @throws InvalidConfigurationException if directory does not exist or other invalid configuration is detected
+	 * @metadata Query object from DocBox containing all component metadata with columns: package, name, type, extends, implements, metadata, fullextends, currentMapping
+	 *
+	 * @return The strategy instance for method chaining
+	 *
+	 * @throws InvalidConfigurationException if output directory does not exist or other configuration is invalid
 	 */
 	IStrategy function run( required query metadata ){
 		if ( !directoryExists( getOutputDir() ) ) {
@@ -99,8 +256,36 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	}
 
 	/**
-	 * writes the package summaries
-	 * @qMetaData The metadata
+	 * Generates package summary pages and individual class documentation files
+	 * <br>
+	 * This method processes each package in the metadata and creates:
+	 * <ul>
+	 * <li>A package-summary.html page listing all classes and interfaces in the package</li>
+	 * <li>Individual HTML files for each class and interface with complete API documentation</li>
+	 * </ul>
+	 * <h3>Package Organization</h3>
+	 * Each package is written to a directory structure matching its dot notation:
+	 * <pre>
+	 * com.example.utils -&gt; outputDir/com/example/utils/
+	 *   ├── package-summary.html
+	 *   ├── StringHelper.html
+	 *   └── DateUtils.html
+	 * </pre>
+	 * <h3>Template Processing</h3>
+	 * This method includes the theme's packagePages.cfm template which handles the iteration logic.
+	 * The template has access to:
+	 * <ul>
+	 * <li><code>qMetaData</code> - Complete metadata query</li>
+	 * <li><code>buildClassPages()</code> - Method for generating individual class files</li>
+	 * <li><code>getMetaSubQuery()</code> - Helper for filtering metadata</li>
+	 * </ul>
+	 * <h3>Adobe ColdFusion Compatibility</h3>
+	 * The implementation uses a template include rather than query grouping in writeOutput
+	 * to maintain compatibility with Adobe ColdFusion's query iteration limitations.
+	 *
+	 * @qMetaData Complete query of component metadata from DocBox
+	 *
+	 * @return The strategy instance for method chaining
 	 */
 	HTMLAPIStrategy function writePackagePages( required query qMetadata ){
 		var currentDir  = 0;
@@ -115,9 +300,52 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	}
 
 	/**
-	 * builds the class pages
-	 * @qPackage the query for a specific package
-	 * @qMetaData The metadata
+	 * Generates individual HTML documentation files for each class in a package
+	 * <br>
+	 * This method creates detailed API documentation pages for each component in the provided package query.
+	 * Each generated page includes complete information about the class structure, inheritance, properties,
+	 * methods, and relationships with other components.
+	 * <h3>Page Content</h3>
+	 * Each class page includes:
+	 * <ul>
+	 * <li><strong>Class Header</strong> - Package breadcrumbs, class name, type (class/interface), abstract indicator</li>
+	 * <li><strong>Inheritance Tree</strong> - Visual hierarchy showing parent classes and implemented interfaces</li>
+	 * <li><strong>Class Description</strong> - JavaDoc-style documentation with formatted annotations</li>
+	 * <li><strong>Subclass Lists</strong> - Direct subclasses and implementing classes</li>
+	 * <li><strong>Property Summary</strong> - Table of all properties with types, access levels, and descriptions</li>
+	 * <li><strong>Constructor Summary</strong> - Initialization methods with parameters</li>
+	 * <li><strong>Method Summary</strong> - Tabbed interface (All/Public/Private/Static/Abstract) with method signatures</li>
+	 * <li><strong>Detailed Sections</strong> - Full documentation for each property, constructor, and method</li>
+	 * <li><strong>Method Search</strong> - Real-time filtering with keyboard navigation (default theme)</li>
+	 * </ul>
+	 * <h3>Relationship Queries</h3>
+	 * For components (classes), the method queries for:
+	 * <ul>
+	 * <li><strong>Direct subclasses</strong> - Components that extend this class</li>
+	 * </ul>
+	 * For interfaces, the method queries for:
+	 * <ul>
+	 * <li><strong>Extending interfaces</strong> - Interfaces that extend this interface</li>
+	 * <li><strong>Implementing classes</strong> - Components that implement this interface</li>
+	 * </ul>
+	 * <h3>File Location</h3>
+	 * Each class file is written to: <code>outputDir/{package}/{ClassName}.html</code>
+	 * <h3>Template Context</h3>
+	 * The class.cfm template receives these arguments:
+	 * <ul>
+	 * <li><code>projectTitle</code> - Project name for headers</li>
+	 * <li><code>package</code> - Package name</li>
+	 * <li><code>name</code> - Class name</li>
+	 * <li><code>metadata</code> - Complete component metadata</li>
+	 * <li><code>qMetadata</code> - Full metadata query for cross-linking</li>
+	 * <li><code>qSubClass</code> - Query of direct subclasses/extending interfaces</li>
+	 * <li><code>qImplementing</code> - Query of implementing classes (interfaces only)</li>
+	 * </ul>
+	 *
+	 * @qPackage Query containing metadata for all components in a single package
+	 * @qMetaData Complete query of all component metadata (used for cross-references and relationship queries)
+	 *
+	 * @return The strategy instance for method chaining
 	 */
 	HTMLAPIStrategy function buildClassPages(
 		required query qPackage,

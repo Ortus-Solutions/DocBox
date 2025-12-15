@@ -120,13 +120,16 @@ local.getImplements = function( metadata ) {
 
 	return interfaces;
 }
+
+local.annotations = server.keyExists("boxlang") ? arguments.metadata.annotations : arguments.metadata
+local.documentation = server.keyExists("boxlang") ? arguments.metadata.documentation : arguments.metadata
+
 </cfscript>
 <cfoutput>
-<cfset local.annotations = server.keyExists("boxlang") ? arguments.metadata.annotations : arguments.metadata>
-<cfset local.documentation = server.keyExists("boxlang") ? arguments.metadata.documentation : arguments.metadata>
-
 <!-- Class Header -->
 <div class="class-header">
+
+	<!--- Navigation Breadcrumbs --->
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item">
@@ -143,6 +146,7 @@ local.getImplements = function( metadata ) {
 		</ol>
 	</nav>
 
+	<!--- Class Name --->
 	<h1 class="class-title">
 		<cfif arguments.metadata.type eq "interface">
 			<span class="text-info">🔌</span> Interface #arguments.name#
