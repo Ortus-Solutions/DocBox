@@ -566,14 +566,42 @@ component accessors="true" {
 			return [];
 		}
 
-		// iterate
-		while ( structKeyExists( arguments.metadata, "extends" ) ) {
-			if ( structKeyExists( arguments.metadata, "implements" ) ) {
+		// Check current class first
+		if ( structKeyExists( arguments.metadata, "implements" ) ) {
+			// Handle both array and struct formats for implements
+			if ( isArray( arguments.metadata.implements ) ) {
+				// Array format: each item is full metadata
+				for ( var imeta in arguments.metadata.implements ) {
+					interfaces[ imeta.name ] = 1;
+				}
+			} else {
+				// Struct format: key is interface name, value is metadata
 				for ( var key in arguments.metadata.implements ) {
-					interfaces[ arguments.metadata.implements[ key ].name ] = 1;
+					var imeta = arguments.metadata.implements[ key ];
+					interfaces[ imeta.name ] = 1;
 				}
 			}
+		}
+
+		// iterate ancestors
+		while ( structKeyExists( arguments.metadata, "extends" ) ) {
 			arguments.metadata = arguments.metadata.extends;
+
+			if ( structKeyExists( arguments.metadata, "implements" ) ) {
+				// Handle both array and struct formats for implements
+				if ( isArray( arguments.metadata.implements ) ) {
+					// Array format: each item is full metadata
+					for ( var imeta in arguments.metadata.implements ) {
+						interfaces[ imeta.name ] = 1;
+					}
+				} else {
+					// Struct format: key is interface name, value is metadata
+					for ( var key in arguments.metadata.implements ) {
+						var imeta = arguments.metadata.implements[ key ];
+						interfaces[ imeta.name ] = 1;
+					}
+				}
+			}
 		}
 		// get as an array
 		interfaces = structKeyArray( interfaces );

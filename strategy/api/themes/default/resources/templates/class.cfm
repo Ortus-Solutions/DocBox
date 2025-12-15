@@ -245,6 +245,45 @@ local.inheritance = local.getInheritence( arguments.metadata );
 			</div>
 		</div>
 	</cfif>
+<cfelse>
+	<!--- For interfaces, show all known implementing classes --->
+	<cfif arguments.qImplementing.recordCount>
+		<div class="section-card">
+			<h3 class="section-title">
+				<i class="bi bi-puzzle"></i> All Known Implementing Classes
+			</h3>
+			<div class="inheritance-tree">
+				<cfloop query="arguments.qImplementing">
+					<div class="inheritance-level">
+						<span class="inheritance-arrow">📦</span>
+						<code>#local.getClassLink( arguments.qImplementing.package & "." & arguments.qImplementing.name, arguments.qMetaData )#</code>
+					</div>
+				</cfloop>
+			</div>
+		</div>
+	</cfif>
+</cfif>
+
+<!-- All Known Subclasses / Subinterfaces -->
+<cfif arguments.qSubClass.recordCount>
+	<div class="section-card">
+		<h3 class="section-title">
+			<i class="bi bi-diagram-3"></i>
+			<cfif listFindNoCase( "component,class", arguments.metadata.type )>
+				Direct Known Subclasses
+			<cfelse>
+				All Known Subinterfaces
+			</cfif>
+		</h3>
+		<div class="inheritance-tree">
+			<cfloop query="arguments.qSubClass">
+				<div class="inheritance-level">
+					<span class="inheritance-arrow">↳</span>
+					<code>#local.getClassLink( arguments.qSubClass.package & "." & arguments.qSubClass.name, arguments.qMetaData )#</code>
+				</div>
+			</cfloop>
+		</div>
+	</div>
 </cfif>
 
 <!-- Class Annotations -->
