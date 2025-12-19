@@ -1,6 +1,7 @@
 <cfparam name="url.version" default="0">
 <cfparam name="url.path" 	default="#expandPath( "./apidocs" )#">
 <cfparam name="url.theme" default="default">
+<cfsetting requestTimeout="500">
 <cfscript>
 	if( directoryExists( url.path ) ){
 		directoryDelete( url.path, true )
@@ -28,7 +29,7 @@
 	docbox.generate(
 		source=expandPath( "/docbox" ),
 		mapping="docbox",
-		excludes="(coldbox|build|testbox|tests|.engine)"
+		excludes="(coldbox|build|testbox|tests|.engine|.artifacts|.github|.tmp|boxlang_modules)"
 	);
 </cfscript>
 <h1>Done!</h1>

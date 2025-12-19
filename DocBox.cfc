@@ -218,8 +218,9 @@ component accessors="true" {
 	 *
 	 * @return The DocBox instance for method chaining
 	 *
+	 * @throws InvalidConfigurationException If the specified strategy class cannot be found
+	 *
 	 * @see docbox.strategy.IStrategy
-	 * @see generate
 	 */
 	DocBox function addStrategy(
 		any strategy      = "HTML",
