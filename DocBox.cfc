@@ -510,12 +510,12 @@ component accessors="true" {
 					if ( arguments.throwOnError ) {
 						rethrow;
 					} else {
-						trace(
-							type     = "warning",
-							category = "docbox",
-							inline   = "true",
-							text     = "Warning! The following script has errors: " & packagePath & "." & className & ": #e.message & e.detail & e.stacktrace#"
-						);
+						// trace(
+						// 	type     = "warning",
+						// 	category = "docbox",
+						// 	inline   = "true",
+						// 	text     = "Warning! The following script has errors: " & packagePath & "." & className & ": #e.message & e.detail & e.stacktrace#"
+						// );
 					}
 
 					// Console Debugging
@@ -527,9 +527,10 @@ component accessors="true" {
 						var    = "#e.message & e.detail#",
 						output = "console"
 					)
-					writeDump(
-						var    = e.stackTrace,
-						output = "console"
+					// Log it
+					writeLog(
+						text = "DocBox Warning: The following script has errors: " & packagePath & "." & className & ": #e.message & e.detail#",
+						file = "docbox"
 					)
 				}
 			}

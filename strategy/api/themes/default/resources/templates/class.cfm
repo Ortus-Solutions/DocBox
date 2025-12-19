@@ -79,21 +79,31 @@ local.getPackage = function( required class ) {
  * Gets the inheritance chain for a class/interface
  */
 local.getInheritence = function( metadata ) {
-	var localMeta   = arguments.metadata;
-	var inheritence = [ arguments.metadata.name ];
+	var localMeta   = arguments.metadata
+	var inheritence = [ arguments.metadata.name ]
+	var excludedClasses = [ "lucee.Componet", "WEB-INF.cftags.component" ]
 
+	// Check if we have an inheritance chain
 	while ( localMeta.keyExists( "extends" ) && localMeta.extends.count() ) {
 		// Manage interfaces
 		if ( localMeta.type eq "interface" ) {
-			localMeta = localMeta.extends[ structKeyList( localMeta.extends ) ];
+			// Skip excluded interfaces: Adobe's built-in ones
+			if(  localMeta.extends.keyList().findNoCase( "WEB-INF.cftags" ) ){
+				break;
+			}
+			localMeta = localMeta.extends[ structKeyList( localMeta.extends ) ]
 		} else {
-			localMeta = localMeta.extends;
+			// Skip excluded classes
+			if( excludedClasses.contains( localMeta.extends.name ) ){
+				break;
+			}
+			localMeta = localMeta.extends
 		}
 
-		arrayPrepend( inheritence, localMeta.name );
+		arrayPrepend( inheritence, localMeta.name )
 	}
 
-	return inheritence;
+	return inheritence
 }
 
 /**
