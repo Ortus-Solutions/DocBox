@@ -166,9 +166,10 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 
 	/**
 	 * Constructor
+	 *
 	 * @outputDir The output directory
 	 * @projectTitle The title used in the HTML output
-	 * @theme The theme to use for documentation (default: frames)
+	 * @theme The theme to use for documentation (default: default)
 	 */
 	HTMLAPIStrategy function init(
 		required outputDir,

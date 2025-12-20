@@ -3,18 +3,23 @@ reservedMethodAnnotations = [
 	"abstract",
 	"access",
 	"description",
+	"default",
 	"hint",
 	"name",
+	"modifier",
 	"output",
+	"owner",
 	"parameters",
 	"return",
 	"returnformat",
 	"returntype",
+	"required",
 	"roles",
 	"secureJSON",
 	"secureJSONPrefix",
 	"static",
 	"throws",
+	"type",
 	"verifyClient"
 ]
 /**
@@ -477,8 +482,10 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 					<span class="visibility-badge" title="Remote">🌐</span>
 				</cfif>
 
+				<!--- Method Name --->
 				#local.func.name#
 
+				<!--- Method Modifiers --->
 				<cfif structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static>
 					<span class="badge bg-info">⚡ Static</span>
 				</cfif>
@@ -570,10 +577,18 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 		allMethods: [],
 
 		init() {
-			const dataScript = document.getElementById('methods-data');
-			if (dataScript) {
-				this.allMethods = JSON.parse(dataScript.textContent);
+			const dataScript = document.getElementById( 'methods-data' );
+			if ( dataScript ) {
+				this.allMethods = JSON.parse( dataScript.textContent );
 			}
+		},
+
+		navigateToMethod( className, packageName, objectName, methodName ) {
+			this.navigateToClass( { fullname: className, package: packageName, name: objectName } );
+			this.$nextTick( () => {
+				const el = document.getElementById( 'method-' + methodName );
+				if ( el ) el.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+			} );
 		},
 
 		get counts() {
@@ -586,6 +601,7 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 				abstract: this.allMethods.filter( m => m.isAbstract ).length
 			};
 		},
+
 		get filteredMethods() {
 			let methods = this.allMethods;
 
@@ -611,7 +627,10 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 
 			return methods;
 		}
-	}" x-init="init()">
+	}"
+		x-init="init()"
+		>
+		<!--- Method Content --->
 		<div class="d-flex justify-content-between align-items-center mb-3">
 			<h3 class="section-title mb-0">
 				<i class="bi bi-gear"></i> Methods (<span x-text="filteredMethods.length"></span>)
@@ -694,7 +713,7 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 
 		<!-- Methods List -->
 		<template x-for="method in filteredMethods" :key="method.name">
-			<div class="method-item" x-html="method.html"></div>
+			<div class="method-item" :id="'method-' + method.name" x-html="method.html"></div>
 		</template>
 
 		<!-- No Results Message -->
@@ -719,12 +738,24 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 		} else {
 			local.localMeta = local.localMeta.extends;
 		}
+
+		local.qInheritedFunctions = buildFunctionMetaData( local.localMeta )
 	</cfscript>
 
-	<cfset local.qInheritedFunctions = buildFunctionMetaData( local.localMeta ) />
-
 	<cfif local.qInheritedFunctions.recordCount>
-		<div class="section-card">
+		<div
+			class="section-card"
+			id="inherited-methods"
+			x-data="{
+				navigateToMethod( className, packageName, objectName, methodName ) {
+					navigateToClass( { fullname: className, package: packageName, name: objectName } );
+					setTimeout( () => {
+						const el = document.getElementById( 'method-' + methodName );
+						if ( el ) el.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+					}, 100 );
+				}
+			}"
+		>
 			<h5 class="mb-3">
 				<i class="bi bi-diagram-3"></i>
 				<strong>Methods inherited from class <kbd>#local.getClassLink( local.localMeta.name, arguments.qMetaData )#</kbd></strong>
@@ -743,7 +774,11 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 				<p class="mb-0">
 					<cfloop array="#local.inheritedMethodsList#" index="local.idx" item="local.methodName">
 						<cfif local.idx gt 1>, </cfif>
-						<a href="##" @click.prevent="navigateToClass({ fullname: '#local.localMeta.name#', package: '#getPackage( local.localMeta.name )#', name: '#getObjectName( local.localMeta.name )#' }); $nextTick(() => { const el = document.getElementById('method-#local.methodName#'); if(el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); })">#local.methodName#</a>
+						<cfset local.parentClassPath = replace( getPackage( local.localMeta.name ), ".", "/", "all" ) & "/" & getObjectName( local.localMeta.name ) & ".html" />
+						<a
+							href="#local.parentClassPath###method-#local.methodName#"
+							@click.prevent="navigateToMethod( '#local.localMeta.name#', '#getPackage( local.localMeta.name )#', '#getObjectName( local.localMeta.name )#', '#local.methodName#' )"
+							>#local.methodName#</a>
 					</cfloop>
 				</p>
 			<cfelse>
