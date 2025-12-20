@@ -148,6 +148,7 @@
 				<h1 class="display-4 mb-4">#arguments.projectTitle#</h1>
 				<p class="lead">API Documentation</p>
 
+				<!--- Packages Overview --->
 				<div class="row g-4 mt-4">
 					<template x-for="pkg in packages" :key="pkg.name">
 						<div class="col-md-6 col-lg-4">

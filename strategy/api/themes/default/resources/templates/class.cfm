@@ -99,7 +99,7 @@ local.getPackage = function( required class ) {
 local.getInheritence = function( metadata ) {
 	var localMeta   = arguments.metadata
 	var inheritence = [ arguments.metadata.name ]
-	var excludedClasses = [ "lucee.Componet", "WEB-INF.cftags.component" ]
+	var excludedClasses = [ "lucee.Component", "WEB-INF.cftags.component" ]
 
 	// Check if we have an inheritance chain
 	while ( localMeta.keyExists( "extends" ) && localMeta.extends.count() ) {
@@ -537,8 +537,6 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 			</cfif>
 
 			<!--- Throws --->
-			<cfdump var="#local.funcAnnotations#">
-			<cfabort>
 			<cfif structKeyExists( local.funcAnnotations, "throws" ) AND len( local.funcAnnotations.throws )>
 				<h6 class="mt-3">Throws:</h6>
 				<ul>

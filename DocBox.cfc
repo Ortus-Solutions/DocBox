@@ -141,8 +141,7 @@ component accessors="true" {
 	 *
 	 * @return The DocBox instance for method chaining
 	 *
-	 * @see addStrategy
-	 * @see generate
+	 * @see addStrategy, generate
 	 */
 	DocBox function init(
 		any strategy      = "",
