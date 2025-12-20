@@ -112,7 +112,7 @@ local.getInheritence = function( metadata ) {
 			localMeta = localMeta.extends[ structKeyList( localMeta.extends ) ]
 		} else {
 			// Skip excluded classes
-			if( excludedClasses.contains( localMeta.extends.name ) ){
+			if( excludedClasses.containsNoCase( localMeta.extends.name ) ){
 				break;
 			}
 			localMeta = localMeta.extends
