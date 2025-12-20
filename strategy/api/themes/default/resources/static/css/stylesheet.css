@@ -374,6 +374,45 @@ pre{
 	color: var(--text-primary);
 }
 
+/* Stats Cards */
+.stats-card {
+	border: 2px solid var(--border-color);
+	transition: all 0.3s ease;
+	background: var(--card-bg);
+}
+
+.stats-card:hover {
+	border-color: var(--primary-color);
+	transform: translateY( -2px );
+	box-shadow: 0 4px 12px rgba( 0, 217, 145, 0.15 );
+}
+
+.stats-card .card-body {
+	padding: 1.5rem 1rem;
+}
+
+.stats-icon {
+	font-size: 2.5rem;
+	margin-bottom: 0.5rem;
+	line-height: 1;
+}
+
+.stats-value {
+	font-size: 2rem;
+	font-weight: 700;
+	color: var(--primary-color);
+	margin-bottom: 0.25rem;
+	line-height: 1;
+}
+
+.stats-label {
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	font-weight: 600;
+}
+
 .package-card {
 	cursor: pointer;
 	border: 2px solid var(--border-color);

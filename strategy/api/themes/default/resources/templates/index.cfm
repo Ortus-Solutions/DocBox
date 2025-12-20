@@ -150,6 +150,46 @@
 				<!--- Project Description --->
 				<p class="lead">#arguments.projectDescription#</p>
 
+				<!--- Documentation Stats --->
+				<div class="row g-3 my-4">
+					<div class="col-6 col-md-3">
+						<div class="card text-center stats-card">
+							<div class="card-body">
+								<div class="stats-icon">📁</div>
+								<div class="stats-value" x-text="packages.length"></div>
+								<div class="stats-label">Packages</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-6 col-md-3">
+						<div class="card text-center stats-card">
+							<div class="card-body">
+								<div class="stats-icon">📦</div>
+								<div class="stats-value" x-text="packages.reduce( ( sum, p ) => sum + p.classes.length, 0 )"></div>
+								<div class="stats-label">Classes</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-6 col-md-3">
+						<div class="card text-center stats-card">
+							<div class="card-body">
+								<div class="stats-icon">🔌</div>
+								<div class="stats-value" x-text="packages.reduce( ( sum, p ) => sum + p.interfaces.length, 0 )"></div>
+								<div class="stats-label">Interfaces</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-6 col-md-3">
+						<div class="card text-center stats-card">
+							<div class="card-body">
+								<div class="stats-icon">📚</div>
+								<div class="stats-value" x-text="packages.reduce( ( sum, p ) => sum + p.classes.length + p.interfaces.length, 0 )"></div>
+								<div class="stats-label">Total Types</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<!--- Packages Overview --->
 				<div class="row g-4 mt-4">
 					<template x-for="pkg in packages" :key="pkg.name">
