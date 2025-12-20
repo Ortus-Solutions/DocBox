@@ -10,19 +10,18 @@
 
 	docName = "DocBox v#url.version#";
 	// init docbox with default strategy and properites
-	docbox = new docbox.DocBox( properties={
-		projectTitle 	= "DocBox v#url.version#",
-		outputDir 		= url.path
+	docbox = new docbox.DocBox(
+		strategy = "HTML",
+		properties={
+		outputDir 		= url.path,
+		projectTitle = "DocBox v#url.version#",
+		projectDescription = "Comprehensive documentation for DocBox version #url.version#.",
+		theme        = url.theme
 	} );
 
 	docbox.addStrategy( "JSON", {
 		projectTitle = "DocBox v#url.version#",
 		outputDir    = url.path & "/json"
-	})
-	.addStrategy( "HTML", {
-		projectTitle = "DocBox v#url.version#",
-		outputDir    = url.path,
-		theme = url.theme
 	})
 
 	// generate

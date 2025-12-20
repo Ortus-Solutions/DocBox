@@ -133,6 +133,19 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 		type   ="string";
 
 	/**
+	 * A brief description of the project displayed on the overview page
+	 * <br>
+	 * This description appears prominently on the main overview page below the project title.
+	 * It provides context about the API or library being documented.
+	 *
+	 * @default "API Documentation"
+	 */
+	property
+		name   ="projectDescription"
+		default="API Documentation"
+		type   ="string";
+
+	/**
 	 * The visual theme to use for documentation generation
 	 * <br>
 	 * Determines the template set, UI components, and JavaScript frameworks used in the generated documentation.
@@ -169,18 +182,21 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 	 *
 	 * @outputDir The output directory
 	 * @projectTitle The title used in the HTML output
+	 * @projectDescription The description displayed on the overview page
 	 * @theme The theme to use for documentation (default: default)
 	 */
 	HTMLAPIStrategy function init(
 		required outputDir,
-		string projectTitle = "Untitled",
-		string theme        = "default"
+		string projectTitle       = "Untitled",
+		string projectDescription = "API Documentation",
+		string theme              = "default"
 	){
 		super.init();
 
-		variables.outputDir    = arguments.outputDir;
-		variables.projectTitle = arguments.projectTitle;
-		variables.theme        = arguments.theme;
+		variables.outputDir          = arguments.outputDir;
+		variables.projectTitle       = arguments.projectTitle;
+		variables.projectDescription = arguments.projectDescription;
+		variables.theme              = arguments.theme;
 
 		// Update paths based on theme
 		variables.TEMPLATE_PATH = "/docbox/strategy/api/themes/#variables.theme#/resources/templates";
@@ -241,9 +257,10 @@ component extends="docbox.strategy.AbstractTemplateStrategy" accessors="true" {
 
 		// write the index template
 		var args = {
-			path         : getOutputDir() & "/index.html",
-			template     : "#variables.TEMPLATE_PATH#/index.cfm",
-			projectTitle : getProjectTitle()
+			path               : getOutputDir() & "/index.html",
+			template           : "#variables.TEMPLATE_PATH#/index.cfm",
+			projectTitle       : getProjectTitle(),
+			projectDescription : getProjectDescription()
 		};
 		writeTemplate( argumentCollection = args )
 			// Write overview summary and frame

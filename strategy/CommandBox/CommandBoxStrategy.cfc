@@ -13,31 +13,7 @@
  * <li><strong>Custom Templates</strong> - CommandBox-specific templates with CLI-focused layouts</li>
  * <li><strong>Frames Theme</strong> - Uses proven frames theme assets for compatibility and stability</li>
  * </ul>
- * <h2>CommandBox-Specific Concepts</h2>
- * <h3>Commands vs Classes</h3>
- * In CommandBox documentation:
- * <ul>
- * <li><strong>Command</strong> - A CFC component representing a CLI command (e.g., "server.cfc" → "server" command)</li>
- * <li><strong>Namespace</strong> - A package containing related commands (e.g., "commandbox.commands.server")</li>
- * <li><strong>Full Command Path</strong> - Space-delimited command invocation (e.g., "package show" from "commandbox.commands.package.show")</li>
- * </ul>
- * <h3>Mapping Transformation</h3>
- * The strategy transforms package/class names into CLI command syntax:
- * <pre>
- * Package: commandbox.commands.server.start <br>
- * Class:   start <br>
- * <br>
- * Becomes: <br>
- * Command:   server start <br>
- * Namespace: server <br>
- * </pre>
- * <h3>Query Column Additions</h3>
- * The strategy adds two columns to the metadata query:
- * <ul>
- * <li><strong>command</strong> - Full command path with spaces (e.g., "server start")</li>
- * <li><strong>namespace</strong> - Command namespace (e.g., "server")</li>
- * </ul>
- * These enable command-specific sorting, grouping, and navigation in templates.
+ *
  * <h2>Usage Examples</h2>
  * <h3>Documenting CommandBox Core</h3>
  * <pre>
@@ -65,25 +41,7 @@
  *         mapping = "my-commands" <br>
  *     ); <br>
  * </pre>
- * <h2>Architecture</h2>
- * <h3>Template Path Override</h3>
- * This strategy uses custom templates from <code>/docbox/strategy/CommandBox/resources/templates/</code>
- * instead of the theme-based templates, enabling CommandBox-specific terminology and layout.
- * <h3>Asset Reuse</h3>
- * Static assets (CSS, JavaScript, Bootstrap) are reused from the frames theme to maintain consistency
- * and avoid duplication:
- * <pre>
- * variables.ASSETS_PATH = "/docbox/strategy/api/themes/frames/resources/static"; <br>
- * </pre>
- * <h3>Template Customization</h3>
- * CommandBox templates include:
- * <ul>
- * <li><strong>index.cfm</strong> - Main frameset entry point</li>
- * <li><strong>overview-summary.cfm</strong> - Namespace overview with command counts</li>
- * <li><strong>overview-frame.cfm</strong> - Left navigation with namespace tree</li>
- * <li><strong>package-summary.cfm</strong> - Namespace detail with command listings</li>
- * <li><strong>class.cfm</strong> - Individual command documentation with CLI examples</li>
- * </ul>
+ *
  * <h2>Generated Structure</h2>
  * <pre>
  * outputDir/ <br>
@@ -95,32 +53,8 @@
  *     ├── package-summary.html    - Namespace detail <br>
  *     └── {command}.html          - Individual command docs <br>
  * </pre>
- * <h2>Differences from HTMLAPIStrategy</h2>
- * <table>
- * <tr><th>Aspect</th><th>HTMLAPIStrategy</th><th>CommandBoxStrategy</th></tr>
- * <tr><td>Terminology</td><td>Classes, Packages</td><td>Commands, Namespaces</td></tr>
- * <tr><td>Templates</td><td>Theme-based</td><td>CommandBox-specific</td></tr>
- * <tr><td>Assets</td><td>Theme-specific</td><td>Reuses frames theme</td></tr>
- * <tr><td>Metadata</td><td>Standard columns</td><td>Adds command/namespace columns</td></tr>
- * <tr><td>Navigation</td><td>Package hierarchy</td><td>Command namespace hierarchy</td></tr>
- * <tr><td>Class Pages</td><td>Standard API docs</td><td>CLI-focused command docs</td></tr>
- * </table>
- * <h2>Method Overrides</h2>
- * This strategy overrides:
- * <ul>
- * <li><strong>run()</strong> - Adds command/namespace columns to metadata before generation</li>
- * <li><strong>writeOverviewSummaryAndFrame()</strong> - Uses namespace-aware queries for overview pages</li>
- * <li><strong>writePackagePages()</strong> - Delegates to CommandBox templates</li>
- * <li><strong>buildClassPages()</strong> - Passes command column to class template</li>
- * </ul>
- * <h2>Adobe ColdFusion Compatibility</h2>
- * The run() method uses array population before queryAddColumn to work around ACF limitations
- * with Query of Queries when adding columns. This ensures compatibility across all CFML engines.
- * <br>
- * <small><em>Copyright since 2012 Ortus Solutions, Corp <a href="www.ortussolutions.com/products/commandbox">www.ortussolutions.com/products/commandbox</a></em></small>
  *
- * @see HTMLAPIStrategy
- * @see AbstractTemplateStrategy
+ * <small><em>Copyright since 2012 Ortus Solutions, Corp <a href="www.ortussolutions.com/products/commandbox">www.ortussolutions.com/products/commandbox</a></em></small>
  */
 component extends="docbox.strategy.api.HTMLAPIStrategy" {
 

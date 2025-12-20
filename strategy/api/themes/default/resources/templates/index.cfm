@@ -146,7 +146,9 @@
 			<!-- Overview Page -->
 			<div x-show="currentView === 'overview'" x-cloak>
 				<h1 class="display-4 mb-4">#arguments.projectTitle#</h1>
-				<p class="lead">API Documentation</p>
+
+				<!--- Project Description --->
+				<p class="lead">#arguments.projectDescription#</p>
 
 				<!--- Packages Overview --->
 				<div class="row g-4 mt-4">
