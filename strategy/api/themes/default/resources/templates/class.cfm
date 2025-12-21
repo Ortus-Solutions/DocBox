@@ -369,6 +369,7 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 						<th>Type</th>
 						<th>Property</th>
 						<th>Default</th>
+						<th>Serializable</th>
 						<th>Required</th>
 					</tr>
 				</thead>
@@ -406,6 +407,9 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 								<cfif len(local.propAnnotations.default ?: "")>
 									<code>#local.propAnnotations.default#</code>
 								</cfif>
+							</td>
+							<td>
+								<code>#local.propAnnotations.serializable ?: true#</code>
 							</td>
 							<td>
 								<code>#local.propAnnotations.required ?: false#</code>

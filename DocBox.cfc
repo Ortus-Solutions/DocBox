@@ -136,6 +136,7 @@ component accessors="true" {
 	 *             <ul>
 	 *             <li><code>outputDir</code> (required): Directory where docs will be generated</li>
 	 *             <li><code>projectTitle</code>: Title for the documentation</li>
+	 * 				<li><code>projectDescription</code>: Description of the project</li>
 	 *             <li><code>theme</code>: Theme name for HTML output ("default" or "frames")</li>
 	 *             </ul>
 	 *
