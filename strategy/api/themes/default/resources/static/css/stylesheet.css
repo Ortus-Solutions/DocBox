@@ -726,9 +726,28 @@ a:hover {
 	border-bottom: none;
 }
 
-.method-item:hover {
+.method-header {
+	transition: background-color 0.2s ease;
+	padding: 0.5rem;
+	margin: -0.5rem;
+	border-radius: 6px;
+}
+
+.method-header:hover {
 	background-color: var(--bg-secondary);
-	border-radius: 8px;
+}
+
+.method-details {
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px dashed var(--border-color);
+}
+
+.expand-icon {
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+	transition: transform 0.2s ease;
+	display: inline-block;
 }
 
 .method-name {
