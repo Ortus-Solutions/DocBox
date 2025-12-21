@@ -98,7 +98,7 @@ component accessors="true" {
 	 * <p>Creates a new DocBox instance with an optional initial strategy. You can add
 	 * additional strategies later using <code>addStrategy()</code> or <code>setStrategy()</code>.</p>
 	 *
-	 * <h2>Examples</h2>
+	 * <h4>Examples</h4>
 	 *
 	 * <p>Basic initialization with no strategy (defaults to HTML when generate() is called):</p>
 	 * <pre>

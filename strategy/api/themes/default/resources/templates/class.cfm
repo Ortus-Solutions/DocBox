@@ -232,9 +232,11 @@ local.thisClass   = arguments.package & "." & arguments.name;
 local.inheritance = local.getInheritence( arguments.metadata );
 </cfscript>
 <cfif arrayLen( local.inheritance ) gt 1>
-	<div class="section-card">
+	<div class="section-card" id="inheritance-hierarchy">
 		<h3 class="section-title">
-			<i class="bi bi-diagram-3"></i> Inheritance Hierarchy
+			<a href="##inheritance-hierarchy" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##inheritance-hierarchy' )">
+				<i class="bi bi-diagram-3"></i> Inheritance Hierarchy
+			</a>
 		</h3>
 		<div class="inheritance-tree">
 			<cfloop array="#local.inheritance#" index="local.i" item="local.className">
@@ -264,9 +266,11 @@ local.inheritance = local.getInheritence( arguments.metadata );
 	</cfscript>
 
 	<cfif !arrayIsEmpty( local.interfaces )>
-		<div class="section-card">
+		<div class="section-card" id="implemented-interfaces">
 			<h3 class="section-title">
-				<i class="bi bi-puzzle"></i> Implemented Interfaces
+				<a href="##implemented-interfaces" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##implemented-interfaces' )">
+					<i class="bi bi-puzzle"></i> Implemented Interfaces
+				</a>
 			</h3>
 			<div class="inheritance-tree">
 				<cfloop array="#local.interfaces#" index="local.interface">
@@ -281,9 +285,11 @@ local.inheritance = local.getInheritence( arguments.metadata );
 <cfelse>
 	<!--- For interfaces, show all known implementing classes --->
 	<cfif arguments.qImplementing.recordCount>
-		<div class="section-card">
+		<div class="section-card" id="implementing-classes">
 			<h3 class="section-title">
-				<i class="bi bi-puzzle"></i> All Known Implementing Classes
+				<a href="##implementing-classes" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##implementing-classes' )">
+					<i class="bi bi-puzzle"></i> All Known Implementing Classes
+				</a>
 			</h3>
 			<div class="inheritance-tree">
 				<cfloop query="arguments.qImplementing">
@@ -299,14 +305,16 @@ local.inheritance = local.getInheritence( arguments.metadata );
 
 <!-- All Known Subclasses / Subinterfaces -->
 <cfif arguments.qSubClass.recordCount>
-	<div class="section-card">
+	<div class="section-card" id="subclasses">
 		<h3 class="section-title">
-			<i class="bi bi-diagram-3"></i>
-			<cfif listFindNoCase( "component,class", arguments.metadata.type )>
-				Direct Known Subclasses
-			<cfelse>
-				All Known Subinterfaces
-			</cfif>
+			<a href="##subclasses" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##subclasses' )">
+				<i class="bi bi-diagram-3"></i>
+				<cfif listFindNoCase( "component,class", arguments.metadata.type )>
+					Direct Known Subclasses
+				<cfelse>
+					All Known Subinterfaces
+				</cfif>
+			</a>
 		</h3>
 		<div class="inheritance-tree">
 			<cfloop query="arguments.qSubClass">
@@ -320,9 +328,11 @@ local.inheritance = local.getInheritence( arguments.metadata );
 </cfif>
 
 <!-- Class Annotations -->
-<div class="section-card">
+<div class="section-card" id="class-annotations">
 	<h3 class="section-title">
-		<i class="bi bi-tags"></i> Class Annotations
+		<a href="##class-annotations" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##class-annotations' )">
+			<i class="bi bi-tags"></i> Class Annotations
+		</a>
 	</h3>
 	<div>
 		<cfset local.attributesCount = 0>
@@ -357,9 +367,11 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 
 <!-- Properties Section -->
 <cfif local.qProperties.recordCount>
-	<div class="section-card">
+	<div class="section-card" id="properties">
 		<h3 class="section-title">
-			<i class="bi bi-boxes"></i> Properties
+			<a href="##properties" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##properties' )">
+				<i class="bi bi-boxes"></i> Properties
+			</a>
 		</h3>
 
 		<div class="table-responsive">
@@ -427,9 +439,11 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 	<cfset local.init = local.qInit.metadata />
 	<cfset local.initDoc = server.keyExists("boxlang") ? local.init.documentation : local.init />
 
-	<div class="section-card">
+	<div class="section-card" id="constructor">
 		<h3 class="section-title">
-			<i class="bi bi-hammer"></i> Constructor
+			<a href="##constructor" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##constructor' )">
+				<i class="bi bi-hammer"></i> Constructor
+			</a>
 		</h3>
 
 		<div class="method-item">
@@ -487,7 +501,7 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 				</cfif>
 
 				<!--- Method Name --->
-				#local.func.name#
+				<a href="##method-#local.func.name#" class="method-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##method-#local.func.name#' )">#local.func.name#</a>
 
 				<!--- Method Modifiers --->
 				<cfif structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static>
@@ -575,7 +589,7 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 
 	<script type="application/json" id="methods-data">#serializeJSON( local.methodsJSON )#</script>
 
-	<div class="section-card" x-data="{
+	<div class="section-card" id="methods" x-data="{
 		activeTab: 'all',
 		searchQuery: '',
 		allMethods: [],
@@ -637,7 +651,9 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 		<!--- Method Content --->
 		<div class="d-flex justify-content-between align-items-center mb-3">
 			<h3 class="section-title mb-0">
-				<i class="bi bi-gear"></i> Methods (<span x-text="filteredMethods.length"></span>)
+				<a href="##methods" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##methods' )">
+					<i class="bi bi-gear"></i> Methods (<span x-text="filteredMethods.length"></span>)
+				</a>
 			</h3>
 
 			<!-- Method Search -->

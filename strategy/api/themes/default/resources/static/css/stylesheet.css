@@ -695,6 +695,27 @@ a:hover {
 	gap: 0.5rem;
 }
 
+.section-anchor {
+	color: var(--text-primary);
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: color 0.2s ease;
+}
+
+.section-anchor:hover {
+	color: var(--primary-color);
+	text-decoration: none;
+}
+
+.section-anchor:hover::after {
+	content: "🔗";
+	font-size: 0.8em;
+	opacity: 0.6;
+	margin-left: 0.25rem;
+}
+
 .method-item {
 	padding: 1.25rem;
 	border-bottom: 1px solid var(--border-color);
@@ -715,6 +736,24 @@ a:hover {
 	font-weight: 600;
 	color: var(--primary-color);
 	margin-bottom: 0.5rem;
+}
+
+.method-anchor {
+	color: var(--primary-color);
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.method-anchor:hover {
+	color: var(--primary-hover);
+	text-decoration: none;
+}
+
+.method-anchor:hover::after {
+	content: "🔗";
+	font-size: 0.7em;
+	opacity: 0.6;
+	margin-left: 0.25rem;
 }
 
 .method-signature {
