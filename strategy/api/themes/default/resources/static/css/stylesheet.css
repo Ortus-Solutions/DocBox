@@ -730,6 +730,7 @@ a:hover {
 	padding: 0.75rem;
 	margin: -0.75rem -0.75rem 0 -0.75rem;
 	border-radius: 6px;
+	cursor: pointer;
 }
 
 .method-header:hover {
@@ -737,10 +738,7 @@ a:hover {
 }
 
 .method-details {
-	margin-top: 1rem;
 	padding: 1rem;
-	padding-top: 1.5rem;
-	border-top: 1px dashed var(--border-color);
 	overflow: hidden;
 	transition: all 0.3s ease-in-out;
 }
