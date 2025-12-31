@@ -602,8 +602,7 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 			if ( this.searchQuery.trim() ) {
 				const query = this.searchQuery.toLowerCase();
 				methods = methods.filter( m =>
-					m.name.toLowerCase().includes( query ) ||
-					m.html.toLowerCase().includes( query )
+					( m.name && m.name.toLowerCase().includes( query ) )
 				);
 			}
 
