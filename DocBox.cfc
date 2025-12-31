@@ -57,7 +57,6 @@
  * <p>DocBox recognizes standard JavaDoc tags plus custom annotations:</p>
  *
  * <ul>
- * <li><code>@doc_abstract</code> - Mark components as abstract</li>
  * <li><code>@doc_generic</code> - Specify generic types (e.g., <code>Array&lt;User&gt;</code>, <code>Struct&lt;String,Any&gt;</code>)</li>
  * </ul>
  *
@@ -68,10 +67,6 @@
  *
  * @author Luis Majano &lt;lmajano@ortussolutions.com&gt;
  * @version 3.0.0
- *
- * @see docbox.strategy.IStrategy
- * @see docbox.strategy.api.HTMLAPIStrategy
- * @see docbox.strategy.json.JSONAPIStrategy
  */
 component accessors="true" {
 

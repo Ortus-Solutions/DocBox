@@ -85,7 +85,6 @@ new docbox.DocBox()
 **Package Tree Navigation**: `buildPackageTree()` converts flat package names into nested structures for navigation. Example: `"coldbox.system.web"` becomes `{coldbox: {system: {web: {}}}}`. Used by HTML strategy for hierarchical navigation.
 
 **Custom Annotations**: DocBox recognizes standard JavaDoc tags plus custom annotations:
-- `@doc_abstract` - Mark components as abstract
 - `@doc_generic` - Specify generic types for returns/arguments (e.g., `@doc_generic="Array<User>"`)
 
 **Exclusion Regex**: Applied to relative file paths (not absolute) to ensure portability. Example: `excludes="(coldbox|build|tests)"` matches paths containing those strings.

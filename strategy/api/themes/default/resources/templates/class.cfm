@@ -2,6 +2,7 @@
 reservedMethodAnnotations = [
 	"abstract",
 	"access",
+	"closure",
 	"description",
 	"default",
 	"hint",
@@ -22,6 +23,20 @@ reservedMethodAnnotations = [
 	"type",
 	"verifyClient"
 ]
+reservedPropertyAnnotations = [
+	"access",
+	"default",
+	"hint",
+	"name",
+	"returnType",
+	"required",
+	"serializable",
+	"type",
+	"visibility"
+]
+// We use local scope, since this template is included multiple times into the same Class
+// To avoid variable collision, we use local scope
+
 /**
  * Gets formatted argument list for method signature
  */
@@ -96,7 +111,6 @@ local.getPackage = function( required class ) {
 	var lenCount   = len( arguments.class ) - ( len( objectname ) + 1 );
 	return ( lenCount gt 0 ? left( arguments.class, lenCount ) : arguments.class );
 }
-
 
 /**
  * Gets the inheritance chain for a class/interface
@@ -184,7 +198,6 @@ local.getImplements = function( metadata ) {
 
 local.annotations = server.keyExists("boxlang") ? arguments.metadata.annotations : arguments.metadata
 local.documentation = server.keyExists("boxlang") ? arguments.metadata.documentation : arguments.metadata
-
 </cfscript>
 <cfoutput>
 <!-- Class Header -->
@@ -369,7 +382,11 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 <cfif local.qProperties.recordCount>
 	<div class="section-card" id="properties">
 		<h3 class="section-title">
-			<a href="##properties" class="section-anchor" onclick="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##properties' )">
+			<a
+				href="##properties"
+				class="section-anchor"
+				onclick="navigator.clipboard.writeText( window.location.href.split( '##' )[ 0 ] + '##properties' )"
+			>
 				<i class="bi bi-boxes"></i> Properties
 			</a>
 		</h3>
@@ -400,8 +417,10 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 						<!--- Property Annotations --->
 						<div class="mt-1">
 							<cfloop collection="#local.propAnnotations#" item="local.propAnnotKey">
-								<cfif isSimpleValue( local.propAnnotations[ local.propAnnotKey ] ) AND
-									!listFindNoCase( "hint,type,name,default,required,serializable", local.propAnnotKey ) >
+								<cfif isSimpleValue( local.propAnnotations[ local.propAnnotKey ] )
+										AND
+										!arrayFindNoCase( reservedPropertyAnnotations, local.propAnnotKey )
+									>
 									<span class="badge bg-light text-dark border me-1" style="font-size: 0.7rem;">
 										<strong>#lcase( local.propAnnotKey )#</strong><cfif len( local.propAnnotations[ local.propAnnotKey ] )>:
 											<cfif lcase( local.propAnnotKey ) eq "see">
@@ -449,6 +468,7 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 		<div class="method-item">
 			<div class="method-name">#local.init.name#()</div>
 
+			<!--- Method Signature --->
 			<div class="method-signature">
 				#local.init.access# #writeTypeLink(
 					local.init.returnType,
@@ -458,10 +478,12 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 				)# #local.init.name#( #getArgumentList( local.init )# )
 			</div>
 
+			<!--- Hint --->
 			<cfif local.initDoc.keyExists( "hint" ) AND len( local.initDoc.hint )>
 				<p>#local.initDoc.hint#</p>
 			</cfif>
 
+			<!--- Parameters --->
 			<cfif structKeyExists( local.init, "parameters" ) AND arrayLen(local.init.parameters)>
 				<h6>Parameters:</h6>
 				<ul>
@@ -488,112 +510,45 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 		<cfset local.funcDoc = server.keyExists("boxlang") ? local.func.documentation : local.func />
 		<cfset local.funcAnnotations = server.keyExists("boxlang") ? local.func.annotations : local.func />
 
-		<cfsavecontent variable="local.methodHTML">
-			<div class="method-header" @click="expanded = !expanded" style="cursor: pointer;">
-				<div class="method-name">
-					<cfif local.func.access eq "public">
-						<span class="visibility-badge" title="Public">🟢</span>
-					<cfelseif local.func.access eq "private">
-						<span class="visibility-badge" title="Private">🔒</span>
-					<cfelseif local.func.access eq "package">
-						<span class="visibility-badge" title="Package">📦</span>
-					<cfelseif local.func.access eq "remote">
-						<span class="visibility-badge" title="Remote">🌐</span>
-					</cfif>
-
-					<!--- Method Name --->
-					<a href="##method-#local.func.name#" class="method-anchor" onclick="event.stopPropagation(); navigator.clipboard.writeText( window.location.href.split('##')[0] + '##method-#local.func.name#' )">#local.func.name#</a>
-
-					<!--- Method Modifiers --->
-					<cfif structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static>
-						<span class="badge bg-info">⚡ Static</span>
-					</cfif>
-					<cfif structKeyExists(local.funcAnnotations, "abstract") AND local.funcAnnotations.abstract>
-						<span class="badge bg-warning">📝 Abstract</span>
-					</cfif>
-
-					<!--- Expand/Collapse Icon --->
-					<span class="expand-icon ms-2" x-show="!expanded">▶</span>
-					<span class="expand-icon ms-2" x-show="expanded">▼</span>
-				</div>
-
-				<!--- Method Signature --->
-				<div class="method-signature">
-					#local.func.access# #writeTypeLink(local.func.returnType, arguments.package, arguments.qMetaData, local.func)# #local.func.name#(#getArgumentList(local.func)#)
-				</div>
-
-				<!--- Method Annotations --->
-				<cfset local.methodAnnotCount = 0>
-				<div class="mt-3 mb-3">
-					<cfloop collection="#local.funcAnnotations#" item="local.thisKey">
-						<cfif isSimpleValue( local.funcAnnotations[ local.thisKey ] ) AND
-							!arrayFindNoCase( reservedMethodAnnotations, local.thisKey ) >
-							<cfset local.methodAnnotCount++>
-							<span class="badge bg-light text-dark border me-1 mb-1">
-								<strong>#lcase( local.thisKey )#</strong><cfif len( local.funcAnnotations[ local.thisKey ] )>:
-									<cfif lcase( local.thisKey ) eq "see">
-										#formatSeeAnnotation( local.funcAnnotations[ local.thisKey ], arguments.qMetaData, arguments.package )#
-									<cfelse>
-										#local.funcAnnotations[ local.thisKey ]#
-									</cfif>
-								</cfif>
-							</span>
-						</cfif>
-					</cfloop>
-				</div>
-			</div>
-
-			<!--- Collapsible Method Details --->
-			<div class="method-details" x-show="expanded" x-collapse>
-				<!--- Method Hint --->
-				<cfif local.funcDoc.keyExists("hint") AND len(local.funcDoc.hint)>
-					<p class="mt-2">#local.funcDoc.hint#</p>
-				</cfif>
-
-				<!--- Parameters --->
-				<cfif structKeyExists( local.func, "parameters") AND arrayLen( local.func.parameters)>
-					<h6 class="mt-3">Parameters:</h6>
-					<ul>
-						<cfloop array="#local.func.parameters#" index="local.param">
-							<cfset local.paramDoc = server.keyExists("boxlang") ? local.param.documentation : local.param />
-							<li>
-								<code class="text-primary">#local.param.name#</code>
-								<cfif local.paramDoc.keyExists("type")>
-									(<code>#local.paramDoc.type#</code>)
-								</cfif>
-								<cfif local.paramDoc.keyExists("hint")>
-									- #local.paramDoc.hint#
-								</cfif>
-							</li>
-						</cfloop>
-					</ul>
-				</cfif>
-
-				<!--- Throws --->
-				<cfif structKeyExists( local.funcAnnotations, "throws" ) AND len( local.funcAnnotations.throws )>
-					<h6 class="mt-3">Throws:</h6>
-					<ul>
-						<cfloop list="#local.funcAnnotations.throws#" index="local.throwType">
-							<li><code class="text-danger">#local.throwType#</code></li>
-						</cfloop>
-					</ul>
-				</cfif>
-
-				<!--- Return Value --->
-				<cfif structKeyExists( local.funcAnnotations, "return" ) AND isSimpleValue( local.funcAnnotations.return )>
-					<h6 class="mt-3">Returns:</h6>
-					<p>#local.funcAnnotations.return#</p>
-				</cfif>
-			</div>
-		</cfsavecontent>
-
-		<cfset arrayAppend( local.methodsJSON, {
+		<cfset local.methodData = {
 			"name": local.func.name,
 			"access": local.func.access,
+			"returnType": local.func.returnType,
+			"signature": local.func.access & " " & writeTypeLink(local.func.returnType, arguments.package, arguments.qMetaData, local.func) & " " & local.func.name & "(" & getArgumentList(local.func) & ")",
 			"isStatic": structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static,
 			"isAbstract": structKeyExists(local.funcAnnotations, "abstract") AND local.funcAnnotations.abstract,
-			"html": trim(local.methodHTML)
-		}) />
+			"hint": local.funcDoc.keyExists("hint") ? local.funcDoc.hint : "",
+			"annotations": [],
+			"parameters": [],
+			"throws": structKeyExists( local.funcAnnotations, "throws" ) ? local.funcAnnotations.throws : "",
+			"returnDoc": structKeyExists( local.funcAnnotations, "return" ) AND isSimpleValue( local.funcAnnotations.return ) ? local.funcAnnotations.return : ""
+		} />
+
+		<!--- Collect annotations --->
+		<cfloop collection="#local.funcAnnotations#" item="local.thisKey">
+			<cfif isSimpleValue( local.funcAnnotations[ local.thisKey ] ) AND
+				!arrayFindNoCase( reservedMethodAnnotations, local.thisKey ) >
+				<cfset arrayAppend( local.methodData.annotations, {
+					"key": lcase( local.thisKey ),
+					"value": local.funcAnnotations[ local.thisKey ],
+					"formatted": lcase( local.thisKey ) eq "see" ? formatSeeAnnotation( local.funcAnnotations[ local.thisKey ], arguments.qMetaData, arguments.package ) : local.funcAnnotations[ local.thisKey ]
+				}) />
+			</cfif>
+		</cfloop>
+
+		<!--- Collect parameters --->
+		<cfif structKeyExists( local.func, "parameters") AND arrayLen( local.func.parameters)>
+			<cfloop array="#local.func.parameters#" index="local.param">
+				<cfset local.paramDoc = server.keyExists("boxlang") ? local.param.documentation : local.param />
+				<cfset arrayAppend( local.methodData.parameters, {
+					"name": local.param.name,
+					"type": local.paramDoc.keyExists("type") ? local.paramDoc.type : "any",
+					"hint": local.paramDoc.keyExists("hint") ? local.paramDoc.hint : ""
+				}) />
+			</cfloop>
+		</cfif>
+
+		<cfset arrayAppend( local.methodsJSON, local.methodData ) />
 	</cfloop>
 
 	<script type="application/json" id="methods-data">#serializeJSON( local.methodsJSON )#</script>
@@ -742,7 +697,91 @@ local.qMethods = getMetaSubQuery( local.qFunctions, "UPPER(name) != 'INIT'" );
 
 		<!-- Methods List -->
 		<template x-for="method in filteredMethods" :key="method.name">
-			<div class="method-item" :id="'method-' + method.name" x-data="{ expanded: false }" x-html="method.html"></div>
+			<div class="method-item" :id="'method-' + method.name" x-data="{ expanded: false }">
+				<!--- Method Header --->
+				<div
+					class="method-header"
+					@click="expanded = !expanded"
+					data-bs-toggle="tooltip"
+					data-bs-placement="top"
+					title="Click to expand/collapse method details"
+				>
+					<!--- Method Name and Modifiers --->
+					<div class="method-name">
+						<span x-show="method.access === 'public'" class="visibility-badge" title="Public">🟢</span>
+						<span x-show="method.access === 'private'" class="visibility-badge" title="Private">🔒</span>
+						<span x-show="method.access === 'package'" class="visibility-badge" title="Package">📦</span>
+						<span x-show="method.access === 'remote'" class="visibility-badge" title="Remote">🌐</span>
+						<span x-show="method.isStatic" class="visibility-badge" title="Static">⚡</span>
+						<span x-show="method.isAbstract" class="visibility-badge" title="Abstract">📝</span>
+
+						<!--- Method Name --->
+						<a
+							:href="'##method-' + method.name"
+							class="method-anchor"
+							@click.stop="navigator.clipboard.writeText( window.location.href.split('##')[0] + '##method-' + method.name )"
+							x-text="method.name"></a>
+
+						<!--- Expand/Collapse Icon --->
+						<span class="expand-icon ms-2" x-show="!expanded">▶</span>
+						<span class="expand-icon ms-2" x-show="expanded">▼</span>
+					</div>
+
+					<!--- Method Signature --->
+					<div class="method-signature" x-html="method.signature"></div>
+
+					<!--- Method Annotations --->
+					<div class="mt-3 mb-3" x-show="method.annotations.length > 0">
+						<template x-for="annot in method.annotations" :key="annot.key">
+							<span class="badge bg-light text-dark border me-1 mb-1">
+								<strong x-text="annot.key"></strong><span x-show="annot.value">: <span x-html="annot.formatted"></span></span>
+							</span>
+						</template>
+					</div>
+				</div>
+
+				<!--- Collapsible Method Details --->
+				<div class="method-details" x-show="expanded" x-collapse>
+					<!--- Method Hint --->
+					<p class="mt-2" x-show="method.hint" x-html="method.hint"></p>
+
+					<!--- Parameters --->
+					<template x-if="method.parameters.length > 0">
+						<div>
+							<h6 class="mt-3">Parameters:</h6>
+							<ul>
+								<template x-for="param in method.parameters" :key="param.name">
+									<li>
+										<code class="text-primary" x-text="param.name"></code>
+										<span x-show="param.type">(<code x-text="param.type"></code>)</span>
+										<span x-show="param.hint" x-text="'- ' + param.hint"></span>
+									</li>
+								</template>
+							</ul>
+						</div>
+					</template>
+
+					<!--- Throws --->
+					<template x-if="method.throws">
+						<div>
+							<h6 class="mt-3">Throws:</h6>
+							<ul>
+								<template x-for="throwType in method.throws.split(',')" :key="throwType">
+									<li><code class="text-danger" x-text="throwType.trim()"></code></li>
+								</template>
+							</ul>
+						</div>
+					</template>
+
+					<!--- Return Value --->
+					<template x-if="method.returnDoc">
+						<div>
+							<h6 class="mt-3">Returns:</h6>
+							<p x-text="method.returnDoc"></p>
+						</div>
+					</template>
+				</div>
+			</div>
 		</template>
 
 		<!-- No Results Message -->
