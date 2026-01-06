@@ -332,7 +332,7 @@
 			<cfset local.staticCount = 0 />
 			<cfset local.abstractCount = 0 />
 			<cfloop query="local.qFunctions">
-				<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.qFunctions.metadata.annotations : local.qFunctions.metadata />
+				<cfset local.funcAnnotations = server.keyExists( "boxlang" ) && local.qFunctions.metadata.keyExists( "annotations" ) ? local.qFunctions.metadata.annotations : local.qFunctions.metadata />
 				<cfset local.qFunctionsMetadata = local.qFunctions.metadata />
 				<cfif local.qFunctionsMetadata.access eq "public"><cfset local.publicCount++ /></cfif>
 				<cfif local.qFunctionsMetadata.access eq "private"><cfset local.privateCount++ /></cfif>
@@ -373,8 +373,8 @@
 					<tbody>
 					<cfloop query="local.qFunctions">
 					<cfset local.func = local.qFunctions.metadata />
-					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
-					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) && local.func.keyExists( "documentation" ) ? local.func.documentation : local.func />
+					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) && local.func.keyExists( "annotations" ) ? local.func.annotations : local.func />
 					<cfset local.localFunctions[ local.func.name ] = 1 />
 					<tr data-access="#local.func.access#" <cfif structKeyExists(local.funcAnnotations, "static") AND local.funcAnnotations.static>data-static="true"</cfif> <cfif structKeyExists(local.funcAnnotations, "abstract") AND local.funcAnnotations.abstract>data-abstract="true"</cfif>>
 						<td align="right" valign="top" width="1%">
@@ -399,8 +399,7 @@
 					<tbody>
 					<cfloop query="local.qFunctions">
 					<cfset local.func = local.qFunctions.metadata />
-					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
-					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) && local.func.keyExists( "documentation" ) ? local.func.documentation : local.func />
 					<cfif local.func.access eq "public">
 					<tr>
 						<td align="right" valign="top" width="1%">
@@ -426,8 +425,7 @@
 					<tbody>
 					<cfloop query="local.qFunctions">
 					<cfset local.func = local.qFunctions.metadata />
-					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
-					<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+					<cfset local.funcDocumentation = server.keyExists( "boxlang" ) && local.func.keyExists( "documentation" )  ? local.func.documentation : local.func />
 					<cfif local.func.access eq "private">
 					<tr>
 						<td align="right" valign="top" width="1%">
@@ -668,8 +666,8 @@
 
 <cfloop query="local.qFunctions">
 	<cfset local.func = local.qFunctions.metadata />
-	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func />
-	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func />
+	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) && local.func.keyExists( "documentation" )  ? local.func.documentation : local.func />
+	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) && local.func.keyExists( "annotations" )  ? local.func.annotations : local.func />
 
 	<div id="method-detail-#local.func.name#" class="method-detail-item <cfif local.qFunctions.currentRow lt local.qFunctions.recordCount>mb-4 pb-4 border-bottom</cfif>">
 		<a name="#local.func.name#()"><!-- --></a>
@@ -745,7 +743,7 @@
 				<h6 class="text-muted mb-2">📋 Parameters:</h6>
 				<ul class="list-unstyled ms-3">
 				<cfloop array="#local.func.parameters#" index="local.param">
-					<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param />
+					<cfset local.paramDocumentation = server.keyExists( "boxlang" ) && local.param.keyExists( "documentation" ) ? local.param.documentation : local.param />
 					<li class="mb-2">
 						<code class="text-primary">#local.param.name#</code>
 						<cfif StructKeyExists(local.paramDocumentation, "hint")>

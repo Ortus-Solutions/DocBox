@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Fixed
+
+- Fixed frames theme due to Boxlang compatibility issues
+
 ## [5.0.0] - 2026-01-06
 
 ### Added
@@ -24,8 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New filtering functionality for methods by visibility and type in API theme
 
 ## [4.2.1] - 2024-02-13
-
-## [4.1.1] - 2024-02-13
 
 ### Fixed
 
