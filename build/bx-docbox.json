@@ -2,7 +2,7 @@
     "name":"DocBox BoxLang Module",
     "version":"@build.version@+@build.number@",
     "author":"Ortus Solutions, Corp",
-    "location":"https://downloads.ortussolutions.com/ortussolutions/bx-docbox/@build.version@/bx-docbox-@build.version@.zip",
+    "location":"https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-docbox/@build.version@/bx-docbox-@build.version@.zip",
     "homepage":"https://forgebox.io/view/bx-docbox",
     "documentation":"https://docbox.ortusbooks.com/",
     "repository":{
