@@ -49,8 +49,9 @@ jobs:
       - name: Setup Environment Variables For Build Process
         id: current_version
         run: |
-          # Extract version from box.json and store it
-          echo "VERSION=`cat box.json | jq '.version' -r`" >> $GITHUB_ENV
+          # Extract version from box.json and store it in a shell variable
+          BASE_VERSION=`cat box.json | jq '.version' -r`
+          echo "VERSION=${BASE_VERSION}" >> $GITHUB_ENV
 
           # Set package version dynamically
           box package set version=@build.version@+@build.number@
@@ -61,7 +62,7 @@ jobs:
           if [ $GITHUB_REF == 'refs/heads/development' ]
           then
             echo "BRANCH=development" >> $GITHUB_ENV
-            echo "VERSION=${VERSION}-snapshot" >> $GITHUB_ENV
+            echo "VERSION=${BASE_VERSION}-snapshot" >> $GITHUB_ENV
           fi
 
       - name: Install Dependencies
