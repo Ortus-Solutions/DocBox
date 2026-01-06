@@ -1,0 +1,389 @@
+/**
+ * This is the module descriptor and entry point for your module in the runtime.
+ * The unique name of the module is the name of the directory on the modules folder
+ * or the name property in the box.json file.
+ * <p>
+ * A BoxLang mapping will be created for you with the name of the module as well using the
+ * this.mapping property.
+ *<p>
+ * Every module will have its own classloader that will be used to load the module libs and dependencies.
+ */
+
+class {
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Injections
+	 * --------------------------------------------------------------------------
+	 */
+	property name="moduleRecord";
+	property name="boxRuntime";
+	property name="functionService";
+	property name="componentService";
+	property name="interceptorService";
+	property name="asyncService";
+	property name="schedulerService";
+	property name="datasourceService";
+	property name="cacheService";
+	property name="log";
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Module Properties
+	 * --------------------------------------------------------------------------
+	 * Here is where you define the properties of your module that the module service
+	 * will use to register and activate your module
+	 */
+
+	/**
+	 * Your module version. Try to use semantic versioning
+	 * @mandatory
+	 */
+	this.version = "@build.version@+@build.number@";
+
+	/**
+	 * The BoxLang mapping for your module.  All BoxLang modules are registered with an internal
+	 * mapping prefix of : bxModules.{this.mapping}, /bxmodules/{this.mapping}. Ex: bxModules.test, /bxmodules/test
+	 */
+	this.mapping = {
+		// Name of the mapping
+		name: "docbox",
+		// Do not use the default prefix of bxModules, we use a global /docbox mapping
+		usePrefix: false
+	};
+
+	/**
+	 * Who built the module
+	 */
+	this.author = "Luis Majano";
+
+	/**
+	 * The module description
+	 */
+	this.description = "API Documentation generator for BoxLang classes using JavaDoc conventions";
+
+	/**
+	 * The module web URL
+	 */
+	this.webURL = "https://www.ortussolutions.com";
+
+	/**
+	 * This boolean flag tells the module service to skip the module registration/activation process.
+	 */
+	this.enabled = true;
+
+    /**
+	 * The module dependencies that this module needs to be activated before this module is activated.
+	 * A list of module slugs: Example: [ "bxai", "bxoshi" ]
+	 */
+	this.dependencies = [];
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Module Methods
+	 * --------------------------------------------------------------------------
+	 */
+
+	/**
+	 * Called by the ModuleService on module registration
+	 */
+	function configure(){
+		/**
+		 * Every module has a settings configuration object
+		 */
+		settings = {
+		};
+
+		/**
+		 * The module interceptors to register into the runtime
+		 */
+		interceptors = [
+			// { class="interceptors.Listener", properties={} }
+		];
+
+		/**
+		 * A list of custom interception points to register into the runtime
+		 */
+		customInterceptionPoints = [];
+	}
+
+	/**
+	 * Called by the ModuleService on module activation
+	 */
+	function onLoad(){
+
+	}
+
+	/**
+	 * Called by the ModuleService on module deactivation
+	 */
+	function onUnload(){
+
+	}
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Main CLI Command Entry Point
+	 * --------------------------------------------------------------------------
+	 * Creates documentation for BoxLang and CFML Classes JavaDoc style via DocBox
+	 *
+	 * Single source/mapping example:
+	 * boxlang module:docbox --source=/path/to/coldbox --mapping=coldbox --excludes=tests --output-dir=/output/path --project-title="My Docs"
+	 *
+	 * Multiple source/mapping example:
+	 * boxlang module:docbox --mappings:v1.models=/path/to/modules_app/v1/models --mappings:v2.models=/path/to/modules_app/v2/models --output-dir=/output/path --project-title="My Docs"
+	 *
+	 * Multiple source mappings may be specified as JSON:
+	 * boxlang module:docbox --source="[{'dir':'../src/v1/models', 'mapping':'v1.models'}, {'dir':'../src/v2/models', 'mapping':'v2.models'}]" --output-dir=docbox --project-title="My API"
+	 *
+	 * @args The CLI arguments
+	 */
+	function main( args = [] ){
+		// Get parsed arguments
+		var positionalArgs = cliGetArgs().positionals;
+		var options        = cliGetArgs().options;
+
+		// Check for --help or --version flags
+		if ( structKeyExists( options, "help" ) || structKeyExists( options, "h" ) ) {
+			return showHelp();
+		}
+
+		if ( structKeyExists( options, "version" ) || structKeyExists( options, "v" ) ) {
+			return showVersion();
+		}
+
+		// Route to generateDocs if no special flags
+		return generateDocs( positionalArgs, options );
+	}
+
+	/**
+	 * Show version information
+	 */
+	function showVersion(){
+		println( "" );
+		println( "📚 DocBox - API Documentation Generator" );
+		println( "Version: #this.version#" );
+		println( "Author:  #this.author#" );
+		println( "Website: #this.webURL#" );
+		println( "" );
+	}
+
+	/**
+	 * Show help information
+	 */
+	function showHelp(){
+		println( "" );
+		println( "📚 ═══════════════════════════════════════════════════════════════════" );
+		println( "   DocBox - JavaDoc Style API Documentation Generator" );
+		println( "   Version: #this.version#" );
+		println( "═══════════════════════════════════════════════════════════════════" );
+		println( "" );
+		println( "🎯 USAGE:" );
+		println( "   boxlang module:docbox [options]" );
+		println( "" );
+		println( "⚙️  REQUIRED OPTIONS:" );
+		println( "   --output-dir=<path>           📁 Output directory for generated docs" );
+		println( "   -o=<path>                     📁 Short form of --output-dir" );
+		println( "" );
+		println( "📂 SOURCE OPTIONS:" );
+		println( "   --source=<path>               Source directory to document" );
+		println( "   --mapping=<name>              Base mapping for the source folder" );
+		println( "   --mappings:<name>=<path>      Define multiple source mappings" );
+		println( "" );
+		println( "⚙️  ADDITIONAL OPTIONS:" );
+		println( "   --help, -h                    Show this help information" );
+		println( "   --version, -v                 Show version information" );
+		println( "   --excludes=<regex>            Regex pattern to exclude files/folders" );
+		println( "   --project-title=<title>       📖 Project title for documentation" );
+		println( "   --theme=<name>                🎨 Theme name (default/frames)" );
+		println( "   --strategy=<class>            Documentation strategy class" );
+		println( "                                 (default: docbox.strategy.api.HTMLAPIStrategy)" );
+		println( "" );
+		println( "💡 EXAMPLES:" );
+		println( "" );
+		println( "   📌 Basic usage:" );
+		println( "      boxlang module:docbox --source=/src/models --mapping=models \" );
+		println( "                             --output-dir=/docs" );
+		println( "" );
+		println( "   📌 With project title and excludes:" );
+		println( "      boxlang module:docbox --source=/src --mapping=myapp \" );
+		println( "                             --excludes=""(tests|build)"" \" );
+		println( "                             --output-dir=/docs \" );
+		println( "                             --project-title=""My API""" );
+		println( "" );
+		println( "   📌 Short form output directory:" );
+		println( "      boxlang module:docbox --source=/src --mapping=app -o=/docs" );
+		println( "" );
+		println( "   📌 Multiple source mappings:" );
+		println( "      boxlang module:docbox --mappings:v1=/src/v1/models \" );
+		println( "                             --mappings:v2=/src/v2/models \" );
+		println( "                             --output-dir=/docs \" );
+		println( "                             --project-title=""API Docs""" );
+		println( "" );
+		println( "   📌 Using frames theme:" );
+		println( "      boxlang module:docbox --source=/src --mapping=app \" );
+		println( "                             --output-dir=/docs \" );
+		println( "                             --theme=frames" );
+		println( "" );
+		println( "   📌 JSON array format:" );
+		println( "      boxlang module:docbox --source=""[{'dir':'/src/models', 'mapping':'models'}]"" \" );
+		println( "                             --output-dir=/docs" );
+		println( "" );
+		println( "🔗 MORE INFO:" );
+		println( "   Documentation: #this.webURL#" );
+		println( "   Repository:    https://github.com/Ortus-Solutions/DocBox" );
+		println( "" );
+		println( "═══════════════════════════════════════════════════════════════════" );
+		println( "" );
+	}
+
+	/**
+	 * Generate documentation
+	 *
+	 * @positionalArgs Array of positional arguments
+	 * @options Struct of named options
+	 */
+	function generateDocs( required array positionalArgs, required struct options ){
+		// Default values
+		var strategy         = options.strategy ?: "HTML";
+		var source           = options.source ?: "";
+		var mapping          = options.mapping ?: "";
+		var excludes         = options.excludes ?: "";
+		var outputDir        = options[ "output-dir" ] ?: ( options.o ?: "" );
+		var projectTitle     = options[ "project-title" ] ?: "";
+		var theme            = options.theme ?: "";
+		var docboxSourceMaps = [];
+
+		// Extract mappings from options (dynamic parameters with mappings: prefix)
+		var mappings = {};
+		for ( var key in options ) {
+			if ( reFindNoCase( "^mappings:", key ) ) {
+				mappings[ listLast( key, ":" ) ] = options[ key ];
+			}
+		}
+
+		// If mappings has been provided, it overrides the traditional source and mapping arguments
+		if ( !structIsEmpty( mappings ) ) {
+			for ( var key in mappings ) {
+				arrayAppend(
+					docboxSourceMaps,
+					{
+						"dir"     : expandPath( mappings[ key ] ),
+						"mapping" : key
+					}
+				);
+			}
+		} else if ( isJSON( source ) ) {
+			// Handle JSON array of source mappings
+			var sourceArray = deserializeJSON( source );
+			for ( var item in sourceArray ) {
+				arrayAppend(
+					docboxSourceMaps,
+					{
+						"dir"     : expandPath( item.dir ),
+						"mapping" : item.mapping
+					}
+				);
+			}
+		} else if ( len( source ) && len( mapping ) ) {
+			// Basic usage: provide a source directory and a mapping as separate arguments
+			arrayAppend(
+				docboxSourceMaps,
+				{
+					"dir"     : expandPath( source ),
+					"mapping" : mapping
+				}
+			);
+		}
+
+		// Validate we have at least one source mapping
+		if ( arrayLen( docboxSourceMaps ) == 0 ) {
+			println( "❌ ERROR: No valid source mappings found." );
+			println( "" );
+			println( "Usage examples:" );
+			println( "  boxlang module:docbox --source=/path/to/code --mapping=myapp --output-dir=/output" );
+			println( "  boxlang module:docbox --mappings:v1=/path/v1 --mappings:v2=/path/v2 --output-dir=/output" );
+			println( "" );
+			println( "Run 'boxlang module:docbox --help' for more information." );
+			return;
+		}
+
+		// Validate required outputDir
+		if ( !len( outputDir ) ) {
+			println( "❌ ERROR: --output-dir is required" );
+			println( "" );
+			println( "Example: boxlang module:docbox --source=/path --mapping=app --output-dir=/docs" );
+			println( "" );
+			println( "Run 'boxlang module:docbox --help' for more information." );
+			return;
+		}
+
+		// Build strategy properties
+		var properties = {
+			"outputDir" : expandPath( outputDir )
+		};
+
+		// Add optional properties if provided
+		if ( len( projectTitle ) ) {
+			properties[ "projectTitle" ] = projectTitle;
+		}
+		if ( len( theme ) ) {
+			properties[ "theme" ] = theme;
+		}
+
+		// Initialize DocBox with strategy and properties
+		var docbox = new docbox.DocBox(
+			strategy   = strategy,
+			properties = properties
+		);
+
+		// Provide feedback about sources
+		println( "" );
+		println( " ═══════════════════════════════════════════════════════════════════" );
+		println( "   📚 DocBox Documentation Generator" );
+		println( "═══════════════════════════════════════════════════════════════════" );
+		println( "" );
+
+		for ( var tuple in docboxSourceMaps ) {
+			if ( !directoryExists( tuple.dir ) ) {
+				println( "⚠️  Warning: '#tuple.dir#' does not exist." );
+			} else {
+				println( "📂 Source:  #tuple.dir#" );
+				println( "🔗 Mapping: #tuple.mapping#" );
+			}
+		}
+
+		println( "📁 Output:  #properties.outputDir#" );
+		println( "" );
+		println( "⏳ Starting generation, please wait..." );
+
+		// Create mappings for source directories
+		var appMappings = GetApplicationMetadata().mappings;
+		for ( var tuple in docboxSourceMaps ) {
+			appMappings[ "/" & replace( tuple.mapping, ".", "/", "all" ) ] = tuple.dir;
+		}
+
+		// Update mappings
+		bx:application action="update" mappings=appMappings;
+
+		// Generate documentation
+		try {
+			docbox.generate(
+				source   = docboxSourceMaps,
+				excludes = excludes
+			);
+
+			println( "" );
+			println( "🥊 Generation complete!" );
+			println( "Documentation available at: #properties.outputDir#" );
+		} catch ( any e ) {
+			println( "❌ ERROR: Generation failed" );
+			println( "Message: #e.message#" );
+			println( "Detail: #e.detail#" );
+			if ( structKeyExists( e, "tagContext" ) && arrayLen( e.tagContext ) ) {
+				println( "Location: #e.tagContext[1].template#:#e.tagContext[1].line#" );
+			}
+		}
+	}
+
+}

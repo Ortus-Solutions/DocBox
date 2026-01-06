@@ -2,18 +2,17 @@
 	// Build out data
 	variables.namespaces = {};
 	variables.topLevel = {};
+
 	// Loop over commands
 	for( local.row in qMetaData ) {
 		// Skip our template CFC
 		if( row.name == 'CommandTemplate' ) {
 			continue;
 		}
+
 		local.command = row.command;
-		local.bracketPath = '';
-		// Build bracket notation
-		for( local.item in listToArray( row.namespace, ' ' ) ) {
-			bracketPath &= '[ "#item#" ]';
-		}
+		local.namespaceParts = listToArray( row.namespace, ' ' );
+
 		// Set "deep" struct to create nested data
 		local.link = replace( row.package, ".", "/", "all") & '/' & row.name & '.html';
 		local.packagelink = replace( row.package, ".", "/", "all") & '/package-summary.html';
@@ -22,13 +21,30 @@
 			searchList &= ',' & row.metadata.aliases;
 		}
 
-		local.thisTree = ( listLen( command, ' ' ) == 1 ? "topLevel" : "namespaces" );
-		evaluate( '#local.thisTree##local.bracketPath#[ local.row.name ] = structNew()' );
-		evaluate( '#local.thisTree##local.bracketPath#[ local.row.name ][ "$command"] = structNew()' );
-		evaluate( '#local.thisTree#[ "$link" ] = packageLink' );
+		// Determine which tree to use (top level commands vs namespaced commands)
+		local.targetTree = ( listLen( command, ' ' ) == 1 ? variables.topLevel : variables.namespaces );
+
+		// Set the package link on the root
+		local.targetTree[ "$link" ] = local.packagelink;		// Navigate/create nested namespace structure
+		local.currentNode = local.targetTree;
+		for( local.namespacePart in local.namespaceParts ) {
+			if( !structKeyExists( local.currentNode, local.namespacePart ) ) {
+				local.currentNode[ local.namespacePart ] = {};
+			}
+			local.currentNode = local.currentNode[ local.namespacePart ];
+		}
+
+		// Create command entry
+		if( !structKeyExists( local.currentNode, local.row.name ) ) {
+			local.currentNode[ local.row.name ] = {};
+		}
+
+		local.currentNode[ local.row.name ][ "$command" ] = {};
+
+		// Add link and searchList for non-help commands
 		if( row.name != 'help') {
-			evaluate( '#local.thisTree##local.bracketPath#[ row.name ][ "$command"].link = link' );
-			evaluate( '#local.thisTree##local.bracketPath#[ row.name ][ "$command"].searchList = searchList' );
+			local.currentNode[ row.name ][ "$command" ].link = local.link;
+			local.currentNode[ row.name ][ "$command" ].searchList = local.searchList;
 		}
 	}
 	// writeDump( variables.topLevel );abort;

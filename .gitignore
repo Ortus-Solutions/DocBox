@@ -10,6 +10,7 @@ WEB-INF
 coldbox/*
 testbox
 modules/*
+tests/resources/coldbox/*
 
 # Engines
 .engine/**
@@ -28,3 +29,5 @@ tests/tmp/
 .tmp/*
 changelog-latest.md
 tests/FunkyComponent.cfc
+boxlang_modules/*
+!boxlang_modules/.gitkeep

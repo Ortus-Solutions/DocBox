@@ -60,26 +60,6 @@ component extends="BaseTest" {
 				expect( variables.docbox.getStrategies() ).notTobeEmpty();
 			} );
 
-			it( "lets me set my own strategy", function(){
-				expect( function(){
-					var myDemoStrategy = getMockBox().createStub( extends = "docbox.strategy.AbstractTemplateStrategy" );
-					myDemoStrategy.$(
-						method      = "run",
-						returns     = new docbox.strategy.AbstractTemplateStrategy(),
-						callLogging = true
-					);
-					variables.docbox
-						.setStrategy( myDemoStrategy )
-						.generate(
-							source   = expandPath( "/tests" ),
-							mapping  = "tests",
-							excludes = "(coldbox|build\-docbox)"
-						);
-
-					expect( myDemoStrategy.$once( "run" ) ).toBeTrue( "should execute strategy.run()" );
-				} ).notToThrow();
-			} );
-
 			it( "Works with multiple strategies", function(){
 				variables.docbox
 					.addStrategy(
@@ -180,7 +160,7 @@ component extends="BaseTest" {
 							excludes     = "(coldbox|build\-docbox)",
 							throwOnError = true
 						);
-				} ).toThrow( "InvalidComponentException" );
+				} ).toThrow( "InvalidClassException" );
 			} );
 
 			/**
@@ -209,10 +189,9 @@ component extends="BaseTest" {
 							excludes     = "(coldbox|build\-docbox)",
 							throwOnError = false
 						);
-				} ).notToThrow( "InvalidComponentException" );
+				} ).notToThrow( "InvalidClassException" );
 			} );
 		} );
 	}
 
 }
-

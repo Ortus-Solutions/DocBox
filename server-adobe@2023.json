@@ -1,20 +1,23 @@
 {
-    "name":"docbox-adobe@2023",
     "app":{
-        "cfengine":"adobe@2023"
+        "cfengine":"adobe@2023",
+        "serverHomeDirectory":".engine/adobe2023"
     },
+    "name":"docbox-adobe@2023",
+    "force":true,
+    "openBrowser":false,
     "web":{
+        "directoryBrowsing":true,
         "http":{
             "port":"60299"
-        },
-        "rewrites":{
-            "enable":"true"
         }
     },
-    "jvm":{
-        "heapSize":"1024"
+    "cfconfig":{
+        "file":".cfconfig.json"
     },
-    "openBrowser":"false",
+    "JVM":{
+        "args":"-Dcoldfusion.runtime.remotemethod.matchArguments=false"
+    },
     "scripts":{
         "onServerInstall":"cfpm install zip,debugger"
     }

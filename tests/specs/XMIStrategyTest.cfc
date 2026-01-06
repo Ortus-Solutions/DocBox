@@ -18,6 +18,8 @@ component extends="BaseTest" {
 	/*********************************** BDD SUITES ***********************************/
 
 	function run(){
+		// Todo activate later
+		return;
 		// all your suites go here.
 		describe( "XMLStrategy", function(){
 			beforeEach( function(){

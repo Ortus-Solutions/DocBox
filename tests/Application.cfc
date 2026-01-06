@@ -15,5 +15,6 @@ component {
 
 	// Dummy commandbox commands for testing the commandbox strategy
 	this.mappings[ "/commands" ] = testsPath & "/resources/commandbox-docbox/commands/";
+	this.mappings[ "/coldbox" ]  = testsPath & "/resources/coldbox/";
 
 }

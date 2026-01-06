@@ -1,6 +1,6 @@
 {
     "name":"DocBox",
-    "version":"4.2.1",
+    "version":"5.0.0",
     "author":"Ortus Solutions, Corp",
     "location":"https://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
     "homepage":"https://forgebox.io/view/docbox",
@@ -11,9 +11,9 @@
     },
     "bugs":"https://ortussolutions.atlassian.net/projects/DOCBOX",
     "slug":"docbox",
-    "shortDescription":"CFC API Documentation generator for ColdFusion (CFML) using JavaDoc conventions",
+    "shortDescription":"API Documentation generator for BoxLang and CFML classes using JavaDoc conventions",
     "type":"projects",
-    "keywords":"apidocs, coldfusion docs, javadocs, cfc docs",
+    "keywords":"apidocs, docs, javadocs",
     "organization":"ortus-solutions",
     "license":[
         {
@@ -25,13 +25,15 @@
         "Brad Wood <brad@bradwood.com>"
     ],
     "dependencies":{
-        "commandbox-cfformat":"*"
-    },
+	},
     "devDependencies":{
-        "testbox":"^5"
+		"commandbox-cfformat":"*",
+        "testbox":"*",
+		"coldbox": "*"
     },
     "installPaths":{
-        "testbox":"testbox/"
+        "testbox":"testbox/",
+		"coldbox":"tests/resources/coldbox/"
     },
     "ignore":[
         "**/.*",
@@ -42,7 +44,7 @@
     ],
     "scripts":{
         "build":"task run taskFile=build/Build.cfc :projectName=docbox :version=`package show version`",
-        "build:docs":"task run build/Docs.cfc",
+        "build:docs":"task run taskFile=build/Build.cfc target='docs' :version=`package show version`",
         "tests":"task run taskFile=build/Build.cfc target=runTests",
         "release":"recipe build/release.boxr",
         "format":"cfformat run --overwrite DocBox.cfc,build,strategy,tests",

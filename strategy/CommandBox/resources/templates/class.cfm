@@ -1,5 +1,7 @@
 <cfoutput>
 <cfset instance.class.root = RepeatString( '../', ListLen( arguments.package, ".") ) />
+<cfset annotations = server.keyExists( "boxlang" ) ? arguments.metadata.annotations : arguments.metadata>
+<cfset documentation = server.keyExists( "boxlang" ) ? arguments.metadata.documentation : arguments.metadata>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +13,7 @@
 	<link type="text/css" rel="stylesheet" href="#instance.class.root#highlighter/styles/shCoreEmacs.css">
 	<script src="#instance.class.root#highlighter/scripts/shCore.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushBash.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushBoxLang.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushColdFusion.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushCss.js"></script>
 	<script src="#instance.class.root#highlighter/scripts/shBrushJava.js"></script>
@@ -38,10 +41,11 @@
 			file="#replace(arguments.package, '.', '/', 'all')#/#arguments.name#"
 			>
 
+<!-- ======== start of class data ======== -->
 <h1>#arguments.command#</h1>
 
-<cfif structKeyExists( arguments.metadata, 'aliases' ) and len( arguments.metadata.aliases ) >
-	<cfset aliases = listToArray( arguments.metadata.aliases )>
+<cfif structKeyExists( annotations, 'aliases' ) and len( annotations.aliases ) >
+	<cfset aliases = listToArray( annotations.aliases )>
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<strong>Aliases:&nbsp;</strong>
@@ -57,12 +61,14 @@
 
 <cfscript>
 	// All we care about is the "run()" method
-	local.qFunctions = buildFunctionMetaData(arguments.metadata);
+	local.qFunctions = buildFunctionMetaData( arguments.metadata );
 	local.qFunctions = getMetaSubQuery(local.qFunctions, "UPPER(name)='RUN'");
 </cfscript>
 
 <cfif local.qFunctions.recordCount>
 	<cfset local.func = local.qFunctions.metadata>
+	<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func>
+	<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func>
 	<cfset local.params = local.func.parameters>
 
 	<cfif arrayLen( local.params )>
@@ -77,6 +83,8 @@
 						<td><strong>Hint</strong></td>
 					</tr>
 					<cfloop array="#local.params#" index="local.param">
+						<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param>
+						<cfset local.paramAnnotations = server.keyExists( "boxlang" ) ? local.param.annotations : local.param>
 						<tr>
 							<td>#local.param.name#</td>
 							<td>
@@ -86,15 +94,15 @@
 									#local.param.type#
 								</cfif>
 							</td>
-							<td>#local.param.required#</td>
+							<td>#local.paramAnnotations.required ?: false#</td>
 							<td>
-								<cfif !isNull(local.param.default) and local.param.default!= '[runtime expression]' >
-									#local.param.default#
+								<cfif !isNull(local.paramAnnotations.default) and local.paramAnnotations.default!= '[runtime expression]' >
+									#local.paramAnnotations.default#
 								</cfif>
 							</td>
 							<td>
-								<cfif structKeyExists( local.param, 'hint' )>
-									#local.param.hint#
+								<cfif structKeyExists( local.paramDocumentation, 'hint' )>
+									#local.paramDocumentation.hint#
 								</cfif>
 							</td>
 						</tr>
@@ -108,10 +116,10 @@
 
 <hr>
 
-<cfif StructKeyExists(arguments.metadata, "hint")>
+<cfif StructKeyExists( documentation, "hint")>
 	<h3>Command Usage</h3>
 	<div id="class-hint">
-		<p>#writeHint( arguments.metadata.hint )#</p>
+		<p>#writeHint(  documentation.hint )#</p>
 	</div>
 </cfif>
 

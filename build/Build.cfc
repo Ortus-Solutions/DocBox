@@ -7,11 +7,11 @@ component {
 	 * Constructor
 	 */
 	function init(){
-		// Setup Pathing
+		// Setup Global Variables
+		variables.projectName  = "docbox";
 		variables.cwd          = getCWD().reReplace( "\.$", "" );
 		variables.artifactsDir = cwd & "/.artifacts";
 		variables.buildDir     = cwd & "/.tmp";
-		variables.testRunner   = "http://localhost:60299/tests/runner.cfm";
 
 		// Source Excludes Not Added to final binary
 		variables.excludes = [
@@ -19,9 +19,9 @@ component {
 			"testbox",
 			"tests",
 			"server-.*\.json",
-			"^\..*",
-			"coldbox-5-router-documentation.png",
-			"docs"
+			"tests\/results",
+			"boxlang_modules",
+			"^\..*"
 		];
 
 		// Cleanup + Init Build Directories
@@ -37,13 +37,13 @@ component {
 		} );
 
 		// Create Mappings
-		fileSystemUtil.createMapping( "docbox", variables.cwd );
+		fileSystemUtil.createMapping( variables.projectName, variables.cwd );
 
 		return this;
 	}
 
 	/**
-	 * Run the build process: test, build source, checksums
+	 * Run the build process: test, build source, docs, checksums
 	 *
 	 * @projectName The project name used for resources and slugs
 	 * @version The version you are building
@@ -51,60 +51,50 @@ component {
 	 * @branch The branch you are building
 	 */
 	function run(
-		required projectName,
 		version = "1.0.0",
 		buildID = createUUID(),
 		branch  = "development"
 	){
-		// Create project mapping
-		fileSystemUtil.createMapping( arguments.projectName, variables.cwd );
-
 		// Build the source
 		buildSource( argumentCollection = arguments );
+
+		// Build the BoxLang version
+		buildBoxLangSource( argumentCollection = arguments );
+
+		// Build Docs
+		arguments.outputDir = variables.buildDir & "/apidocs";
+		docs( argumentCollection = arguments );
 
 		// checksums
 		buildChecksums();
 
 		// Finalize Message
-		variables.print
+		print
 			.line()
-			.boldMagentaLine( "Build Process is done! Enjoy your build!" )
+			.boldWhiteOnGreenLine( "Build Process is done! Enjoy your build!" )
 			.toConsole();
 	}
 
 	/**
-	 * Run the test suites
+	 * Run all the tests
 	 */
 	function runTests(){
-		variables.print
-			.line()
-			.boldGreenLine( "------------------------------------------------" )
-			.boldGreenLine( "Starting to execute your tests..." )
-			.boldGreenLine( "------------------------------------------------" )
-			.toConsole();
+		var resultsDir = "tests/results";
 
-		var sTime = getTickCount();
+		print.blueLine( "Testing the package, please wait...#resultsDir#" ).toConsole();
+		directoryCreate(
+			variables.cwd & resultsDir,
+			true,
+			true
+		);
 
 		command( "testbox run" )
 			.params(
-				runner        = variables.testRunner,
 				verbose       = true,
-				outputFile    = "#variables.cwd#/tests/results/test-results",
+				outputFile    = resultsDir & "/test-results",
 				outputFormats = "json,antjunit"
 			)
 			.run();
-
-		// Check Exit Code?
-		if ( shell.getExitCode() ) {
-			return error( "Cannot continue building, tests failed!" );
-		} else {
-			variables.print
-				.line()
-				.boldGreenLine( "------------------------------------------------" )
-				.boldGreenLine( "All tests passed in #getTickCount() - sTime#ms! Ready to go, great job!" )
-				.boldGreenLine( "------------------------------------------------" )
-				.toConsole();
-		}
 	}
 
 	/**
@@ -116,21 +106,22 @@ component {
 	 * @branch The branch you are building
 	 */
 	function buildSource(
-		required projectName,
 		version = "1.0.0",
 		buildID = createUUID(),
 		branch  = "development"
 	){
 		// Build Notice ID
-		variables.print
+		print
 			.line()
-			.boldMagentaLine( "Building #arguments.projectName# v#arguments.version#" )
+			.boldMagentaLine(
+				"Building #variables.projectName# v#arguments.version#+#arguments.buildID# from #cwd# using the #arguments.branch# branch."
+			)
 			.toConsole();
 
 		ensureExportDir( argumentCollection = arguments );
 
 		// Project Build Dir
-		variables.projectBuildDir = variables.buildDir & "/#projectName#";
+		variables.projectBuildDir = variables.buildDir & "/#variables.projectName#";
 		directoryCreate(
 			variables.projectBuildDir,
 			true,
@@ -146,8 +137,8 @@ component {
 
 		// Create build ID
 		fileWrite(
-			"#variables.projectBuildDir#/#projectName#-#version#",
-			"Built with love on #dateTimeFormat( now(), "full" )#"
+			"#variables.projectBuildDir#/#variables.projectName#-#version#+#buildID#.md",
+			"Built with ❤️ love ❤️ on #dateTimeFormat( now(), "full" )#"
 		);
 
 		// Updating Placeholders
@@ -156,23 +147,21 @@ component {
 			.params(
 				path        = "/#variables.projectBuildDir#/**",
 				token       = "@build.version@",
-				replacement = arguments.version,
-				verbose     = true
+				replacement = arguments.version
 			)
 			.run();
 
-		print.greenLine( "Updating build identifier to [#arguments.buildID#-#arguments.branch#]..." ).toConsole();
+		print.greenLine( "Updating build identifier to #arguments.buildID#" ).toConsole();
 		command( "tokenReplace" )
 			.params(
 				path        = "/#variables.projectBuildDir#/**",
 				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
-				replacement = ( arguments.branch == "master" ? arguments.buildID : "-snapshot" ),
-				verbose     = true
+				replacement = ( arguments.branch == "master" ? arguments.buildID : "" )
 			)
 			.run();
 
 		// zip up source
-		var destination = "#variables.exportsDir#/#projectName#-#version#.zip";
+		var destination = "#variables.exportsDir#/#variables.projectName#-#version#.zip";
 		print.greenLine( "Zipping code to #destination#" ).toConsole();
 		cfzip(
 			action    = "zip",
@@ -186,6 +175,190 @@ component {
 		fileCopy(
 			"#variables.projectBuildDir#/box.json",
 			variables.exportsDir
+		);
+
+		// Copy BE to root
+		fileCopy(
+			"#variables.projectBuildDir#/box.json",
+			variables.artifactsDir & "/#variables.projectName#"
+		);
+		fileCopy(
+			destination,
+			variables.artifactsDir & "/#variables.projectName#/#variables.projectName#-be.zip"
+		);
+		command( "checksum" )
+			.params(
+				path      = variables.artifactsDir & "/#variables.projectName#/#variables.projectName#-be.zip",
+				algorithm = "md5",
+				extension = "md5",
+				write     = true
+			)
+			.run();
+	}
+
+	/**
+	 * Build the BoxLang source version
+	 *
+	 * @version The version you are building
+	 * @buldID The build identifier
+	 * @branch The branch you are building
+	 */
+	function buildBoxLangSource(
+		version = "1.0.0",
+		buildID = createUUID(),
+		branch  = "development"
+	){
+		var bxProjectName = "bx-docbox";
+
+		// Build Notice ID
+		print
+			.line()
+			.boldMagentaLine(
+				"Building BoxLang Edition: #bxProjectName# v#arguments.version#+#arguments.buildID# from #cwd# using the #arguments.branch# branch."
+			)
+			.toConsole();
+
+		// Ensure BoxLang export directory
+		var bxExportsDir = variables.artifactsDir & "/#bxProjectName#/#arguments.version#";
+		directoryCreate( bxExportsDir, true, true );
+
+		// BoxLang Project Build Dir
+		var bxProjectBuildDir = variables.buildDir & "/#bxProjectName#";
+		directoryCreate( bxProjectBuildDir, true, true );
+
+		// Copy source
+		print.blueLine( "Copying source to BoxLang build folder..." ).toConsole();
+		copy( variables.cwd, bxProjectBuildDir );
+
+		// Replace box.json with build/bx-docbox.json
+		print.greenLine( "Replacing box.json with build/bx-docbox.json..." ).toConsole();
+		if ( fileExists( "#bxProjectBuildDir#/box.json" ) ) {
+			fileDelete( "#bxProjectBuildDir#/box.json" );
+		}
+		fileCopy(
+			"#variables.cwd#/build/bx-docbox.json",
+			"#bxProjectBuildDir#/box.json"
+		);
+
+		// Create build ID
+		fileWrite(
+			"#bxProjectBuildDir#/#bxProjectName#-#version#+#buildID#.md",
+			"Built with ❤️ love ❤️ on #dateTimeFormat( now(), "full" )#"
+		);
+
+		// Updating Placeholders
+		print.greenLine( "Updating version identifier to #arguments.version#" ).toConsole();
+		command( "tokenReplace" )
+			.params(
+				path        = "/#bxProjectBuildDir#/**",
+				token       = "@build.version@",
+				replacement = arguments.version
+			)
+			.run();
+
+		print.greenLine( "Updating build identifier to #arguments.buildID#" ).toConsole();
+		command( "tokenReplace" )
+			.params(
+				path        = "/#bxProjectBuildDir#/**",
+				token       = ( arguments.branch == "master" ? "@build.number@" : "+@build.number@" ),
+				replacement = ( arguments.branch == "master" ? arguments.buildID : "" )
+			)
+			.run();
+
+		// zip up source
+		var destination = "#bxExportsDir#/#bxProjectName#-#version#.zip";
+		print.greenLine( "Zipping BoxLang code to #destination#" ).toConsole();
+		cfzip(
+			action    = "zip",
+			file      = "#destination#",
+			source    = "#bxProjectBuildDir#",
+			overwrite = true,
+			recurse   = true
+		);
+
+		// Copy box.json for convenience
+		fileCopy(
+			"#bxProjectBuildDir#/box.json",
+			bxExportsDir
+		);
+
+		// Copy BE to root
+		fileCopy(
+			"#bxProjectBuildDir#/box.json",
+			variables.artifactsDir & "/#bxProjectName#"
+		);
+		fileCopy(
+			destination,
+			variables.artifactsDir & "/#bxProjectName#/#bxProjectName#-be.zip"
+		);
+
+		// Build checksums for BoxLang version
+		print.greenLine( "Building checksums for BoxLang edition" ).toConsole();
+		command( "checksum" )
+			.params(
+				path      = "#bxExportsDir#/*.zip",
+				algorithm = "SHA-512",
+				extension = "sha512",
+				write     = true
+			)
+			.run();
+		command( "checksum" )
+			.params(
+				path      = "#bxExportsDir#/*.zip",
+				algorithm = "md5",
+				extension = "md5",
+				write     = true
+			)
+			.run();
+		command( "checksum" )
+			.params(
+				path      = variables.artifactsDir & "/#bxProjectName#/#bxProjectName#-be.zip",
+				algorithm = "md5",
+				extension = "md5",
+				write     = true
+			)
+			.run();
+	}
+
+	/**
+	 * Produce the API Docs
+	 */
+	function docs(
+		version   = "1.0.0",
+		outputDir = "#variables.cwd#.tmp/apidocs"
+	){
+		// Generate Docs
+		print.greenLine( "Generating API Docs, please wait..." ).toConsole();
+		directoryCreate( arguments.outputDir, true, true );
+
+		// Run the commandbox generate command
+		new docbox.DocBox(
+			strategy  : "html",
+			properties: {
+				outputDir    : arguments.outputDir,
+				projectTitle : "#variables.projectName# v#arguments.version#"
+			}
+		).addStrategy(
+				"JSON",
+				{ outputDir : arguments.outputDir & "/json" }
+			)
+			.generate(
+				source  : variables.cwd,
+				mapping : variables.projectName,
+				excludes: "(.engine|.artifacts|.tmp|.github|build|testbox|tests|boxlang_modules)"
+			)
+
+		print.greenLine( "API Docs produced at #arguments.outputDir#" ).toConsole();
+
+		ensureExportDir( argumentCollection = arguments );
+		var docsArchivePath = "#variables.exportsDir#/#variables.projectName#-docs-#arguments.version#.zip";
+		print.greenLine( "Zipping apidocs to #docsArchivePath#" ).toConsole();
+		cfzip(
+			action    = "zip",
+			file      = "#docsArchivePath#",
+			source    = "#arguments.outputDir#",
+			overwrite = true,
+			recurse   = true
 		);
 	}
 
@@ -249,19 +422,9 @@ component {
 	}
 
 	/**
-	 * Gets the last Exit code to be used
-	 **/
-	private function getExitCode(){
-		return ( createObject( "java", "java.lang.System" ).getProperty( "cfml.cli.exitCode" ) ?: 0 );
-	}
-
-	/**
 	 * Ensure the export directory exists at artifacts/NAME/VERSION/
 	 */
-	private function ensureExportDir(
-		required projectName,
-		version = "1.0.0"
-	){
+	private function ensureExportDir( version = "1.0.0" ){
 		if ( structKeyExists( variables, "exportsDir" ) && directoryExists( variables.exportsDir ) ) {
 			return;
 		}

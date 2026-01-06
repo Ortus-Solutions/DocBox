@@ -1,0 +1,25 @@
+{
+    "app":{
+        "cfengine":"adobe@2025",
+        "serverHomeDirectory":".engine/adobe2025"
+    },
+    "name":"docbox-adobe@2025",
+    "force":true,
+    "openBrowser":false,
+    "web":{
+        "directoryBrowsing":true,
+        "http":{
+            "port":"60299"
+        }
+    },
+    "JVM":{
+        "javaVersion":"openjdk21_jre",
+        "args":"-Dcoldfusion.runtime.remotemethod.matchArguments=false"
+    },
+    "cfconfig":{
+        "file":".cfconfig.json"
+    },
+    "scripts":{
+        "onServerInstall":"cfpm install zip,debugger"
+    }
+}

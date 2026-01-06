@@ -1,5 +1,4 @@
-[![All Contributors](https://img.shields.io/github/contributors/Ortus-Solutions/DocBox?style=flat-square)](https://github.com/michaelborn/DocBox/graphs/contributors)
-|
+[![All Contributors](https://img.shields.io/github/contributors/Ortus-Solutions/DocBox?style=flat-square)](https://github.com/Ortus-Solutions/DocBox/graphs/contributors)
 ![Latest release](https://img.shields.io/github/v/release/Ortus-Solutions/DocBox?style=flat-square)
 
 ```text
@@ -11,125 +10,234 @@
 ╚═════╝  ╚═════╝  ╚═════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝
 ```
 
-# Welcome to DocBox!
+# 📚 DocBox - API Documentation Generator
 
-DocBox is a JavaDoc-style documentation generator for your CFML codebase based on Mark Mandel's ColdDoc project.
+DocBox is a **JavaDoc-style documentation generator** for BoxLang and CFML codebases, featuring modern HTML themes, JSON output, and UML diagram generation.
 
-[Docs][1] | [Github][2] | [Ortus Community][3]
+📖 [Documentation][1] | 💻 [GitHub][2] | 💬 [Ortus Community][3]
 
-![Coldbox 5 Router class documentation, generated via DocBox](https://github.com/Ortus-Solutions/DocBox/blob/development/coldbox-5-router-documentation.png)
+---
 
-## FEATURES
+## ✨ Features
 
-* Read [JavaDoc comment blocks](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html#format)
-* Document your class API - components, methods, and properties
-* Generate HTML documentation
-* Generate machine-readable JSON
-* generate XMI file which can be converted to a UML diagram
+* 🎨 **Modern HTML Documentation** - Two professional themes with dark mode support
+* 🔍 **Real-time Search** - Live method filtering with keyboard navigation
+* 📋 **Multiple Output Formats** - HTML, JSON, and XMI/UML diagrams
+* 🦤 **BoxLang Native** - First-class BoxLang runtime and CLI support
+* 📝 **JavaDoc Compatible** - Standard JavaDoc comment block parsing
+* ⚡ **Alpine.js SPA** - Fast, modern single-page application interface
+* 🌓 **Dark Mode** - System preference detection with manual toggle
 
-## SYSTEM REQUIREMENTS
+---
 
-* Lucee 5+
-* ColdFusion 2016+
+## 🚀 Quick Start
 
-## Usage
+### BoxLang Module (Recommended)
 
-Use the DocBox library to generate API docs from your CFC files.  Install Docbox with CommandBox like so:
+Install DocBox as a BoxLang module for CLI access:
 
 ```bash
-box install docbox
+# CommandBox web runtimes
+box install bx-docbox
+
+# BoxLang OS runtime
+install-bx-module bx-docbox
 ```
 
-### Standalone Application
+Generate documentation from the command line:
 
-If you want to use DocBox for document generation in your CFML application, then just drop it into any location and create a `/docbox` mapping to it.  You will then instantiate the `DocBox` generator class with a `strategy` and `properties` for the strategy.
+```bash
+boxlang module:docbox --source=/path/to/code \
+                       --mapping=myapp \
+                       --output-dir=/docs \
+                       --project-title="My API"
+```
+
+### CFML Library
+
+Install as a development dependency:
+
+```bash
+box install docbox --saveDev
+```
+
+Use programmatically in your build scripts:
 
 ```js
-// use custom strategy found at class.path
-docbox = new docbox.DocBox( strategy="class.path", properties={} );
-
-// create with HTML strategy
-docbox = new docbox.DocBox(
-  strategy = "HTML",
-  properties = {
-    projectTitle="My Docs",
-    outputDir="#expandPath( '/docs' )#"
-  }
-);
+new docbox.DocBox()
+    .addStrategy( "HTML", {
+        projectTitle : "My API Docs",
+        outputDir    : expandPath( "./docs" ),
+        theme        : "default"  // or "frames"
+    })
+    .generate(
+        source   = expandPath( "./models" ),
+        mapping  = "models",
+        excludes = "(tests|build)"
+    );
 ```
 
-#### Generating Docs
+---
 
-To generate the documentation you will then execute the `generate()` method on the DocBox object and pass in the following parameters:
+## 📦 Installation Options
 
-#### Generate Params
+| Method | Command | Use Case |
+|--------|---------|----------|
+| **BoxLang Module** | `box install bx-docbox` | CLI usage, BoxLang projects |
+| **CFML Library** | `box install docbox --saveDev` | Programmatic use, build scripts |
+| **CommandBox Module** | `box install commandbox-docbox` | Task runner, automated builds |
 
-* `source` : A path to the source location or an array of structs of locations that must have a `dir` and `mapping` key on it.
-* `mapping` : The base mapping for the folder source. Used only if `source` is a path
-* `excludes` : A regular expression that will be evaluated against all CFCs sent for documentation.  If the regex matches the CFC name and path then the CFC will be excluded from documentation.
+---
 
+## 🎨 Modern Themes
 
-```js
-docbox.generate( source="/my/path", mapping="coldbox" );
+### Default Theme (Alpine.js SPA)
 
-docbox.generate(
-    source  = "#expandPath( '/docbox' )#",
-    mapping = "docbox",
-    excludes = "tests"
-);
+- ⚡ Client-side routing and dynamic filtering
+- 🌓 Dark mode with localStorage persistence
+- 🔍 Real-time method search
+- 📑 Method tabs (All/Public/Private/Static/Abstract)
+- 💜 Modern purple gradient design
+
+### Frames Theme (Traditional)
+
+- 🗂️ Classic frameset layout
+- 📚 jstree navigation sidebar
+- 🎯 Bootstrap 5 styling
+- 📱 Mobile-friendly design
+
+---
+
+## 💻 System Requirements
+
+* **BoxLang 1.0+** or **CFML Engine** (Lucee 5+, Adobe ColdFusion 2023+)
+* **CommandBox** (for installation and CLI usage)
+
+---
+
+## 📚 Output Formats
+
+| Format | Description | Use Case |
+|--------|-------------|----------|
+| **HTML** | Modern browsable documentation | Developer reference, public API docs |
+| **JSON** | Machine-readable structured data | Integration with other tools, custom processing |
+| **XMI** | UML diagram generation | Architecture diagrams, visual documentation |
+
+---
+
+## 🛠️ CLI Examples
+
+### BoxLang Module CLI
+
+```bash
+# Basic usage
+boxlang module:docbox --source=/src --mapping=app --output-dir=/docs
+
+# Multiple source mappings
+boxlang module:docbox --mappings:v1=/src/v1 --mappings:v2=/src/v2 -o=/docs
+
+# With theme selection
+boxlang module:docbox --source=/src --mapping=app --theme=frames -o=/docs
+
+# Show help
+boxlang module:docbox --help
 ```
 
-Once the generation finalizes, you will see your beautiful docs!
+### CommandBox Task Runner
 
-#### Available Strategies & Properties
-
-* `HTML` - **default**
-  * `projectTitle` : The HTML title
-  * `outputDir` : The output directory
-* `JSON`
-  * `projectTitle` : The HTML title
-  * `outputDir` : The output directory
-* `XMI`
-  * `outputFile` : The output file
-
-### CommandBox Command
-
-There is a related project you can install which wraps up the DocBox library in a Custom CLI command so you can generate API docs from the command line.
+Install the [commandbox-docbox](https://github.com/Ortus-Solutions/commandbox-docbox) module:
 
 ```bash
 box install commandbox-docbox
 ```
 
-Read more here: https://github.com/Ortus-Solutions/commandbox-docbox
+Generate documentation using CommandBox commands:
 
-----
+```bash
+# Generate HTML docs
+box docbox generate source=/path/to/code mapping=myapp outputDir=/docs
 
-## LICENSE
+# Generate with excludes
+box docbox generate source=/src mapping=app outputDir=/docs excludes=(tests|build)
 
-Apache License, Version 2.0.
+# Generate JSON docs
+box docbox generate source=/src mapping=app outputDir=/docs strategy=JSON
 
-## BUGS + NEW FEATURES
+# Show help
+box docbox generate help
+```
 
-Please use our Jira instance to create bugs and new feature issues: https://ortussolutions.atlassian.net/projects/DOCBOX
+Use in a `task.cfc` for automated builds:
 
-## CREDITS & CONTRIBUTIONS
+```js
+component {
+    function run() {
+        command( "docbox generate" )
+            .params(
+                source    = getCWD() & "/models",
+                mapping   = "models",
+                outputDir = getCWD() & "/docs",
+                excludes  = "tests"
+            )
+            .run();
+    }
+}
+```
 
-Thanks to Mark Mandel for allowing us to fork his project.
+---
 
-I THANK GOD FOR HIS WISDOM FOR THIS PROJECT
+## 📖 Documentation
 
-## THE DAILY BREAD
+Complete documentation is available at **[docbox.ortusbooks.com][1]**
 
-"I am the way, and the truth, and the life; no one comes to the Father, but by me (JESUS)" Jn 14:1-12
+* [Getting Started](https://docbox.ortusbooks.com/getting-started/getting-started-with-docbox)
+* [BoxLang CLI Tool](https://docbox.ortusbooks.com/getting-started/boxlang-cli)
+* [Configuration](https://docbox.ortusbooks.com/getting-started/configuration)
+* [Annotating Your Code](https://docbox.ortusbooks.com/getting-started/annotating-your-code)
+* [HTML Output](https://docbox.ortusbooks.com/output-formats/html-output)
+* [JSON Output](https://docbox.ortusbooks.com/output-formats/json-output)
+
+---
+
+## 🔗 Related Projects
+
+* **[commandbox-docbox](https://github.com/Ortus-Solutions/commandbox-docbox)** - CommandBox module for task runner integration
+* **[bx-docbox](https://forgebox.io/view/bx-docbox)** - BoxLang native module with CLI
+
+---
+
+## 🐛 Issues & Feature Requests
+
+Found a bug or have an idea? Report it on our [Jira issue tracker](https://ortussolutions.atlassian.net/projects/DOCBOX)
+
+---
+
+## 💬 Community & Support
+
+* 💬 [CFML Slack](http://cfml-slack.herokuapp.com/) - #box-products channel
+* 🗨️ [Ortus Community Forums][3]
+* 📧 [Professional Support](https://www.ortussolutions.com/services/support)
+
+---
+
+## 🙏 Credits
+
+Thanks to **Mark Mandel** for the original project that inspired DocBox.
+
+---
+
+## 📄 License
+
+Apache License, Version 2.0
+
+---
+
+## ✝️ The Daily Bread
+
+*"I am the way, and the truth, and the life; no one comes to the Father, but by me (JESUS)"* - John 14:6
+
+---
 
 [1]: https://docbox.ortusbooks.com/
 [2]: https://github.com/Ortus-Solutions/DocBox
 [3]: https://community.ortussolutions.com/c/communities/docbox/17
-
-## Have Questions?
-
-Come find us on the [CFML Slack](http://cfml-slack.herokuapp.com/) (#box-products channel) and ask us there.  We'd be happy to help!
-
-## Ortus Community
-
-Join us in our Ortus Community and become a valuable member of this project https://community.ortussolutions.com/c/communities/docbox/17. We are looking forward to hearing from you!

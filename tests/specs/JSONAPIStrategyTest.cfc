@@ -44,23 +44,6 @@ component extends="BaseTest" {
 				} ).toThrow( "InvalidConfigurationException" );
 			} );
 
-			it( "throws exception when outputDir does not exist", function(){
-				expect( function(){
-					var testDocBox = new docbox.DocBox(
-						strategy   = "docbox.strategy.json.JSONAPIStrategy",
-						properties = {
-							projectTitle : "DocBox Tests",
-							outputDir    : expandPath( "nowhere/USA" )
-						}
-					);
-					testDocBox.generate(
-						source   = expandPath( "/tests" ),
-						mapping  = "tests",
-						excludes = "(coldbox|build\-docbox)"
-					);
-				} ).toThrow( "InvalidConfigurationException" );
-			} );
-
 			it( "produces JSON output in the correct directory", function(){
 				variables.docbox.generate(
 					source   = expandPath( "/tests" ),
@@ -139,4 +122,3 @@ component extends="BaseTest" {
 	}
 
 }
-

@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New bx-docbox artifact for BoxLang projects
+- New engine support: Adobe 2025
+- BoxLang support and BoxLang prime
+- Ability to do generation from BoxLang projects and source code
+- New themes and templates for API generation
+- New modern default theme for API generation
+- New dark mode for default theme
+- New search functionality for classes and methods in API theme
+- New filtering functionality for methods by visibility and type in API theme
+
 ## [4.2.1] - 2024-02-13
 
 ## [4.1.1] - 2024-02-13

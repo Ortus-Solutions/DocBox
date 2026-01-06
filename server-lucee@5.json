@@ -1,15 +1,18 @@
 {
     "name":"docbox-lucee@5",
-    "app":{
-        "cfengine":"lucee@5"
-    },
+    "force":true,
+    "openbrowser":"false",
     "web":{
+        "directoryBrowsing":true,
         "http":{
             "port":"60299"
-        },
-        "rewrites":{
-            "enable":"true"
         }
     },
-    "openBrowser":"false"
+    "app":{
+        "cfengine":"lucee@5",
+        "serverHomeDirectory":".engine/lucee5"
+    },
+    "cfconfig":{
+        "file":".cfconfig.json"
+    }
 }

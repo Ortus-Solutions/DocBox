@@ -1,0 +1,47 @@
+{
+    "name":"DocBox BoxLang Module",
+    "version":"@build.version@+@build.number@",
+    "author":"Ortus Solutions, Corp",
+    "location":"https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-docbox/@build.version@/bx-docbox-@build.version@.zip",
+    "homepage":"https://forgebox.io/view/bx-docbox",
+    "documentation":"https://docbox.ortusbooks.com/",
+    "repository":{
+        "type":"git",
+        "url":"https://github.com/Ortus-Solutions/DocBox"
+    },
+    "bugs":"https://ortussolutions.atlassian.net/projects/DOCBOX",
+    "slug":"bx-docbox",
+    "shortDescription":"API Documentation generator for BoxLang classes using JavaDoc conventions",
+    "type":"projects",
+    "keywords":"apidocs, docs, javadocs",
+    "organization":"ortus-solutions",
+    "license":[
+        {
+            "type":"Apache2",
+            "url":"https://www.apache.org/licenses/LICENSE-2.0"
+        }
+    ],
+    "contributors":[
+        "Brad Wood <brad@bradwood.com>"
+    ],
+    "dependencies":{
+	},
+    "devDependencies":{
+		"commandbox-cfformat":"*",
+        "testbox":"*"
+    },
+    "installPaths":{
+        "testbox":"testbox/"
+    },
+    "ignore":[
+        "**/.*",
+        "tests/**",
+        ".git*",
+        "docs/",
+        "coldbox-5-router-documentation.png"
+    ],
+    "boxlang":{
+        "minimumVersion":"1.8.0",
+        "moduleName":"docbox"
+    }
+}

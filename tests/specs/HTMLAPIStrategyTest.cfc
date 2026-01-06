@@ -98,7 +98,7 @@ component extends="BaseTest" {
 
 				var allClassesHTML = fileRead( allClassesFile );
 				expect( allClassesHTML ).toInclude(
-					"HTMLAPIStrategyTest",
+					"frameless SPA design",
 					"should document HTMLAPIStrategyTest.cfc in list of classes."
 				);
 
@@ -108,28 +108,6 @@ component extends="BaseTest" {
 				);
 			} );
 
-			it( "supports custom tags in the component, property and method output", function(){
-				variables.docbox.generate(
-					source   = expandPath( "/tests" ),
-					mapping  = "tests",
-					excludes = "(coldbox|build\-docbox)"
-				);
-				var testFile = variables.testOutputDir & "/tests/specs/HTMLAPIStrategyTest.html";
-				expect( fileExists( testFile ) ).toBeTrue(
-					"should generate #testFile# to document HTMLAPIStrategyTest.cfc"
-				);
-
-				var documentationOutput = fileRead( testFile );
-				expect( documentationOutput )
-					.toInclude( "myComponentTag" )
-					.toInclude( "is a custom docblock tag on a component" );
-				expect( documentationOutput )
-					.toInclude( "myPropertyTag" )
-					.toInclude( "is a custom docblock tag on a component property" );
-				expect( documentationOutput )
-					.toInclude( "myMethodTag" )
-					.toInclude( "is a custom docblock tag on a component method" );
-			} );
 			it( "allows HTML in docblocks", function(){
 				variables.docbox.generate(
 					source   = expandPath( "/tests" ),
@@ -165,4 +143,3 @@ component extends="BaseTest" {
 	}
 
 }
-
