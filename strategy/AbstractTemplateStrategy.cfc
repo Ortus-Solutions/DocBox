@@ -11,7 +11,7 @@
  * <li><strong>Package Tree Building</strong> - Constructs hierarchical package structures from flat package names</li>
  * <li><strong>Template Rendering</strong> - Provides writeTemplate() method for generating output files from CFML templates</li>
  * <li><strong>Type Resolution</strong> - Resolves class names, determines primitive types, and validates type existence</li>
- * <li><strong>Generic Type Handling</strong> - Processes @doc_generic annotations for generic type documentation</li>
+ * <li><strong>Generic Type Handling</strong> - Processes @doc.type annotations for generic type documentation</li>
  * </ul>
  * <h2>Extending This Class</h2>
  * Concrete strategy implementations must:
@@ -66,7 +66,7 @@ abstract component accessors="true" implements="IStrategy" {
 	 *
 	 * @url https://docbox.ortusbooks.com/getting-started/annotating-your-code#custom-docbox-blocks
 	 */
-	variables.META_GENERIC = "doc_generic";
+	variables.META_GENERIC = "doc.type";
 
 	/**
 	 * Constructor
@@ -739,22 +739,22 @@ abstract component accessors="true" implements="IStrategy" {
 	/**
 	 * Extracts generic type information from function or argument metadata
 	 * <br>
-	 * This method processes the custom <code>@doc_generic</code> annotation to extract generic type
+	 * This method processes the custom <code>@doc.type</code> annotation to extract generic type
 	 * parameters for documentation purposes. It resolves non-primitive types to their fully qualified
 	 * class names for proper linking in documentation.
 	 * <h3>Generic Types Annotation</h3>
-	 * The <code>@doc_generic</code> annotation is a DocBox extension that allows documenting generic
+	 * The <code>@doc.type</code> annotation is a DocBox extension that allows documenting generic
 	 * type parameters for methods and arguments:
 	 * <pre>
 	 * /** <br>
 	 *  * Returns a list of users <br>
-	 *  * @doc_generic Array&lt;User&gt; <br>
+	 *  * @doc.type Array&lt;User&gt; <br>
 	 *  *&#47; <br>
 	 * function getUsers() { } <br>
 	 * <br>
 	 * /** <br>
 	 *  * Processes items <br>
-	 *  * @items.doc_generic Array&lt;Product&gt; <br>
+	 *  * @items.doc.type Array&lt;Product&gt; <br>
 	 *  *&#47; <br>
 	 * function processItems( required array items ) { } <br>
 	 * </pre>
@@ -768,10 +768,10 @@ abstract component accessors="true" implements="IStrategy" {
 	 * <h3>Multiple Generics</h3>
 	 * The annotation supports comma-delimited lists for multiple generic types:
 	 * <pre>
-	 * @doc_generic Map&lt;String,User&gt;, List&lt;Product&gt; <br>
+	 * @doc.type Map&lt;String,User&gt;, List&lt;Product&gt; <br>
 	 * </pre>
 	 *
-	 * @meta Function or argument metadata structure that may contain the doc_generic annotation
+	 * @meta Function or argument metadata structure that may contain the doc.type annotation
 	 * @package The package context for resolving relative class names
 	 *
 	 * @return Array of fully qualified class names representing generic types, or empty array if no generics are defined

@@ -10,7 +10,7 @@
  * <li><strong>Class Diagrams</strong> - Visual representation of components, interfaces, and relationships</li>
  * <li><strong>Inheritance Trees</strong> - Displays extends and implements relationships</li>
  * <li><strong>Property Detection</strong> - Infers properties from getter/setter method pairs</li>
- * <li><strong>Generic Type Support</strong> - Handles @doc_generic annotations for typed collections</li>
+ * <li><strong>Generic Type Support</strong> - Handles @doc.type annotations for typed collections</li>
  * <li><strong>Access Modifiers</strong> - Preserves public/private/package visibility levels</li>
  * <li><strong>Tool Integration</strong> - Compatible with Eclipse UML2Tools, ArgoUML, and other UML viewers</li>
  * </ul>
@@ -99,12 +99,12 @@
  * <li>Only infers properties from getter/setter pairs (explicit properties in metadata are not included)</li>
  * <li>Does not capture method implementations or business logic</li>
  * <li>Sequence diagrams and other UML diagram types are not supported</li>
- * <li>Custom annotations beyond @doc_generic are not preserved</li>
+ * <li>Custom annotations beyond @doc.type are not preserved</li>
  * </ul>
  * <h2>Best Practices</h2>
  * <ul>
  * <li>Use consistent naming for accessors (get/set/is prefixes)</li>
- * <li>Document generic types with @doc_generic for collections</li>
+ * <li>Document generic types with @doc.type for collections</li>
  * <li>Ensure setter parameter types match getter return types</li>
  * <li>Keep the output file in version control to track architectural changes</li>
  * <li>Regenerate diagrams periodically during development to maintain accuracy</li>
@@ -235,7 +235,7 @@ component
 	 * <li><strong>Find Matching Setter</strong> - Looks for a "set" method with the same property name</li>
 	 * <li><strong>Validate Signature</strong> - Ensures setter has exactly one parameter matching the getter's return type</li>
 	 * <li><strong>Determine Access</strong> - Resolves access level from getter/setter visibility</li>
-	 * <li><strong>Extract Generics</strong> - Processes @doc_generic annotations from getter for typed collections</li>
+	 * <li><strong>Extract Generics</strong> - Processes @doc.type annotations from getter for typed collections</li>
 	 * </ol>
 	 * <h3>Naming Conventions</h3>
 	 * <strong>Getter Methods:</strong>
@@ -269,10 +269,10 @@ component
 	 * <li>Parameter name is ignored (only type matters)</li>
 	 * </ul>
 	 * <h3>Generic Types</h3>
-	 * Generic type information from the getter's @doc_generic annotation is preserved:
+	 * Generic type information from the getter's @doc.type annotation is preserved:
 	 * <pre>
 	 * /** <br>
-	 *  * @doc_generic Array&lt;User&gt; <br>
+	 *  * @doc.type Array&lt;User&gt; <br>
 	 *  *&#47; <br>
 	 * function getUsers() { return variables.users; } <br>
 	 * function setUsers( array users ) { variables.users = arguments.users; } <br>
@@ -286,7 +286,7 @@ component
 	 * <li><strong>name</strong> (string) - Property name in camelCase</li>
 	 * <li><strong>access</strong> (string) - "public", "private", or "package"</li>
 	 * <li><strong>type</strong> (string) - Data type from getter's return type</li>
-	 * <li><strong>generic</strong> (array) - Generic type annotations from @doc_generic</li>
+	 * <li><strong>generic</strong> (array) - Generic type annotations from @doc.type</li>
 	 * </ul>
 	 * <h3>Example</h3>
 	 * <pre>

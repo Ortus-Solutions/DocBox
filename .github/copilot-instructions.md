@@ -7,14 +7,17 @@ DocBox is a JavaDoc-style API documentation generator for CFML/BoxLang codebases
 **Core Generator** (`DocBox.cfc`): Main orchestrator that accepts source directories and delegates to one or more output strategies. Supports multiple strategies simultaneously (e.g., generate both HTML and JSON in one pass).
 
 **Strategy Pattern**: All output formats extend `AbstractTemplateStrategy.cfc` and implement a `run(query metadata)` method:
-- `strategy/api/HTMLAPIStrategy.cfc` - Default HTML documentation with frames/navigation using Bootstrap 5
+- `strategy/api/HTMLAPIStrategy.cfc` - HTML documentation with two themes (default SPA, frames layout)
 - `strategy/json/JSONAPIStrategy.cfc` - Machine-readable JSON output
 - `strategy/uml2tools/XMIStrategy.cfc` - XMI/UML diagram generation
-- `strategy/CommandBox/CommandBoxStrategy.cfc` - CommandBox-specific output format
+- `strategy/CommandBox/CommandBoxStrategy.cfc` - CommandBox CLI commands documentation with namespace hierarchy
 
-**Theme Support**: HTMLAPIStrategy now supports theming via the `theme` property (default: "frames"). Theme resources are organized under `/strategy/api/themes/{themeName}/resources/`:
-- `/templates/` - CFML template files
-- `/static/` - CSS, JS, image assets
+**Theme Support**: HTMLAPIStrategy supports two themes via the `theme` property:
+- `"default"` - Modern Alpine.js SPA with client-side routing, dark mode, real-time search (default)
+- `"frames"` - Traditional frameset layout with jstree navigation
+- Theme resources organized under `/strategy/api/themes/{themeName}/resources/`:
+  - `/templates/` - CFML template files
+  - `/static/` - CSS, JS, image assets
 
 **Metadata Pipeline**: DocBox builds a query object containing parsed CFC metadata via `buildMetaDataCollection()` which:
 1. Recursively scans source directories for `*.cfc` files
@@ -23,7 +26,19 @@ DocBox is a JavaDoc-style API documentation generator for CFML/BoxLang codebases
 4. Applies exclusion regex patterns
 5. Returns query with columns: `package`, `name`, `extends`, `metadata`, `type`, `implements`, `fullextends`, `currentMapping`
 
-**Strategy Initialization**: Strategies can be specified as:
+**Strategy Initialization**: Strategies can be specified as:default")`
+
+## BoxLang Module Integration
+
+**ModuleConfig.bx**: DocBox includes native BoxLang module configuration for seamless integration:
+- Module mapping: `/docbox` (global, not prefixed with `bxModules`)
+- CLI Command: `boxlang module:docbox` for command-line documentation generation
+- Dual metadata handling: Automatically detects BoxLang array format vs CFML struct format for `implements`
+
+**Build Separation**: Two distinct artifacts are created:
+- `docbox` - Standard CFML library with `box.json`
+- `bx-docbox` - BoxLang module edition with `build/bx-docbox.json` replacing `box.json`
+- Both published to ForgeBox under different slugs
 - String shortcuts: `"HTML"`, `"JSON"`, `"XMI"`, `"CommandBox"`
 - Full class paths: `"docbox.strategy.api.HTMLAPIStrategy"`
 - Instantiated objects: `new docbox.strategy.api.HTMLAPIStrategy(outputDir="/docs", theme="frames")`
@@ -85,7 +100,7 @@ new docbox.DocBox()
 **Package Tree Navigation**: `buildPackageTree()` converts flat package names into nested structures for navigation. Example: `"coldbox.system.web"` becomes `{coldbox: {system: {web: {}}}}`. Used by HTML strategy for hierarchical navigation.
 
 **Custom Annotations**: DocBox recognizes standard JavaDoc tags plus custom annotations:
-- `@doc_generic` - Specify generic types for returns/arguments (e.g., `@doc_generic="Array<User>"`)
+- `@doc.type` - Specify generic types for returns/arguments (e.g., `@doc.type="Array<User>"`)
 
 **Exclusion Regex**: Applied to relative file paths (not absolute) to ensure portability. Example: `excludes="(coldbox|build|tests)"` matches paths containing those strings.
 
@@ -100,16 +115,43 @@ new docbox.DocBox()
 
 ## Build Process Details
 
+**GitHub Actions Workflow** (`.github/workflows/release.yml`):
+- Triggered on push to `master`/`main` (stable release) or `development` (snapshot build)
+- Version handling: Reads from `box.json`, appends `-snapshot` suffix for development builds
+- Environment variables: `BASE_VERSION` (shell variable) used before writing to `$GITHUB_ENV` (available in subsequent steps only)
+- Build artifacts: Creates both `docbox` (CFML) and `bx-docbox` (BoxLang module) distributions
+- Dual publishing: Uploads to S3, publishes to ForgeBox, creates GitHub releases
+- Automatic version bumping: After master release, bumps development branch version
+
 **Token Replacement**: Build system replaces `@build.version@` and `@build.number@` tokens in files during packaging. Handled by CommandBox's `tokenReplace` command.
+
+**Build Script** (`build/Build.cfc`):
+- `run()` - Orchestrates full build: source, BoxLang edition, docs, checksums
+- `buildSource()` - Creates main CFML distribution with token replacement
+- `buildBoxLangSource()` - Creates BoxLang module edition using `build/bx-docbox.json`
+- `docs()` - Generates HTML and JSON API documentation for DocBox itself
+- Key insight: DocBox documents itself by running its own generator
 
 **Artifact Structure**: Build outputs to `.artifacts/{projectName}/{version}/` with:
 - Source ZIP with version in filename
+- Separate `bx-docbox` artifact for BoxLang modules directory
 - API docs ZIP
-- MD5 and SHA-512 checksums for all artifacts
+- MD5 and SHA-512 checksums for all artifacts:
+- HTML strategy: `outputDir` (required), `projectTitle` (optional), `theme` (optional: "default" or "frames")
+- JSON strategy: `outputDir` (required), `projectTitle` (optional)
+- XMI strategy: `outputFile` (required - note: single file, not directory)
+- CommandBox strategy: `outputDir` (required), `projectTitle` (optional) - always uses frames theme
 
-**Exclusion Patterns** (`variables.excludes` in Build.cfc):
-```cfml
-["build", "testbox", "tests", "server-.*\.json", "^\..*", "coldbox-5-router-documentation.png", "docs"]
+**Error Handling**: Strategies throw `InvalidConfigurationException` for missing directories or invalid configuration. DocBox's `generate()` method accepts `throwOnError` boolean to control behavior on invalid components.
+
+**Caching**: `AbstractTemplateStrategy` includes `functionQueryCache` and `propertyQueryCache` properties for storing filtered query results to avoid repeated QoQ operations during rendering.
+
+**Troubleshooting Common Issues**:
+- **GitHub Actions VERSION empty**: Environment variables written to `$GITHUB_ENV` aren't available in same step - use shell variables first
+- **Method filter errors**: Ensure null checks before calling `.toLowerCase()` on object properties
+- **Theme not loading**: Verify `theme` property is "default" or "frames" - case sensitive
+- **Exclusion patterns**: Applied to relative paths, not absolute - use `(tests|build)` format
+["build", "testbox", "tests", "server-.*\.json", "tests\/results", "boxlang_modules", "^\..*"]
 ```
 
 ## Common Development Patterns

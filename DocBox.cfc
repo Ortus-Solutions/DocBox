@@ -57,7 +57,7 @@
  * <p>DocBox recognizes standard JavaDoc tags plus custom annotations:</p>
  *
  * <ul>
- * <li><code>@doc_generic</code> - Specify generic types (e.g., <code>Array&lt;User&gt;</code>, <code>Struct&lt;String,Any&gt;</code>)</li>
+ * <li><code>@doc.type</code> - Specify generic types (e.g., <code>Array&lt;User&gt;</code>, <code>Struct&lt;String,Any&gt;</code>)</li>
  * </ul>
  *
  * <h2>Version Information</h2>
@@ -85,7 +85,7 @@ component accessors="true" {
 	property
 		name       ="strategies"
 		type       ="array"
-		doc_generic="Array<docbox.strategy.AbstractTemplateStrategy>";
+		doc.type="Array<docbox.strategy.AbstractTemplateStrategy>";
 
 	/**
 	 * Initialize a new DocBox documentation generator
@@ -704,12 +704,12 @@ component accessors="true" {
 	/**
 	 * Example method demonstrating generic type documentation
 	 *
-	 * <p>The <code>@doc_generic</code> annotation specifies more precise type information
+	 * <p>The <code>@doc.type</code> annotation specifies more precise type information
 	 * than CFML's basic type system.</p>
 	 *
 	 * @return array An array of numeric values
 	 *
-	 * @doc_generic Array&lt;Numeric&gt;
+	 * @doc.type Array&lt;Numeric&gt;
 	 */
 	static array function getArrayExample(){
 		return [ 1, 2, 3 ];
