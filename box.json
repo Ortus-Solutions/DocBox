@@ -1,6 +1,6 @@
 {
     "name":"DocBox",
-    "version":"5.0.0",
+    "version":"5.1.0",
     "author":"Ortus Solutions, Corp",
     "location":"https://downloads.ortussolutions.com/ortussolutions/docbox/@build.version@/docbox-@build.version@.zip",
     "homepage":"https://forgebox.io/view/docbox",
@@ -24,16 +24,15 @@
     "contributors":[
         "Brad Wood <brad@bradwood.com>"
     ],
-    "dependencies":{
-	},
+    "dependencies":{},
     "devDependencies":{
-		"commandbox-cfformat":"*",
+        "commandbox-cfformat":"*",
         "testbox":"*",
-		"coldbox": "*"
+        "coldbox":"*"
     },
     "installPaths":{
         "testbox":"testbox/",
-		"coldbox":"tests/resources/coldbox/"
+        "coldbox":"tests/resources/coldbox/"
     },
     "ignore":[
         "**/.*",
