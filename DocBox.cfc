@@ -82,10 +82,7 @@ component accessors="true" {
 	 * @see docbox.strategy.IStrategy
 	 * @see docbox.strategy.AbstractTemplateStrategy
 	 */
-	property
-		name       ="strategies"
-		type       ="array"
-		doc.type="Array<docbox.strategy.AbstractTemplateStrategy>";
+	property name="strategies" type="array" doc;
 
 	/**
 	 * Initialize a new DocBox documentation generator
