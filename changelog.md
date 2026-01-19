@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.2] - 2026-01-19
+
 ### Fixed
 
-- Not scanning for *.bx classes in BoxLang projects
+- Not scanning for \*.bx classes in BoxLang projects
 
 ## [5.0.1] - 2026-01-06
 
@@ -198,7 +200,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to DocBox styles
 
-[Unreleased]: https://github.com/Ortus-Solutions/DocBox/compare/v5.0.1...HEAD
+[Unreleased]: https://github.com/Ortus-Solutions/DocBox/compare/v5.0.2...HEAD
+
+[5.0.2]: https://github.com/Ortus-Solutions/DocBox/compare/v5.0.1...v5.0.2
 
 [5.0.1]: https://github.com/Ortus-Solutions/DocBox/compare/v5.0.0...v5.0.1
 
