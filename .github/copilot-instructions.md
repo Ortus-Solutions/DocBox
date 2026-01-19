@@ -20,7 +20,7 @@ DocBox is a JavaDoc-style API documentation generator for CFML/BoxLang codebases
   - `/static/` - CSS, JS, image assets
 
 **Metadata Pipeline**: DocBox builds a query object containing parsed CFC metadata via `buildMetaDataCollection()` which:
-1. Recursively scans source directories for `*.cfc` files
+1. Recursively scans source directories for `*.cfc` and `*.bx` files
 2. Parses JavaDoc-style comments and component metadata
 3. Resolves inheritance chains (`extends`, `implements`)
 4. Applies exclusion regex patterns
