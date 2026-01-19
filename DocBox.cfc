@@ -410,7 +410,7 @@ component accessors="true" {
 					detail  = "Configured source #thisInput.dir# does not exist."
 				);
 			}
-			var aFiles = directoryList( thisInput.dir, true, "path", "*.cfc" );
+			var aFiles = directoryList( thisInput.dir, true, "path", "*.cfc|*.bx" );
 
 			// iterate over files found
 			for ( var thisFile in aFiles ) {
