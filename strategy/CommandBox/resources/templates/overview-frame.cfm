@@ -84,6 +84,7 @@
 		$(function () {
 			// Initialize tree
 			$('##commandTree')
+				// Remove role from root and add to container for better screen reader support
 				.on('ready.jstree refresh.jstree', function() {
 					$(this).removeAttr('role');
 					$(this).children('.jstree-container-ul').attr('role', 'tree');
