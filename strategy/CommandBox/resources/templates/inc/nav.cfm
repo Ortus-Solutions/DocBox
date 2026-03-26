@@ -5,7 +5,7 @@
 
 <!-- ========= START OF NAVBAR ======= -->
 <a name="navbar_top"></a>
-<a href="#skip-navbar_top" title="skip navigation links"></a>
+<a href="#skip-navbar_top" title="skip navigation links" aria-label="skip navigation links" ></a>
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<div class="container-fluid">

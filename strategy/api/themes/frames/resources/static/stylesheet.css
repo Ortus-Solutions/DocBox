@@ -444,3 +444,19 @@ input[type="text"]:focus {
 	background-color: #fff3cd !important;
 	border: 2px solid #ffc107 !important;
 }
+
+table > tbody > tr > td > b > a {
+	color: #004A6F;
+}
+
+.navbar-default .navbar-brand {
+    color: #3E3E3E;
+}
+
+.navbar-default .navbar-brand:hover {
+    color: #555555;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #525252;
+}
