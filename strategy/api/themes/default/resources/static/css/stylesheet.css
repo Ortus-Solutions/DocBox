@@ -30,6 +30,7 @@
 	--primary-hover: #00A372;
 	--link-color: #00A372;
 	--link-hover: #00D991;
+	--text-badge-color: #fff;
 
 	/* Component Specific */
 	--navbar-height: 60px;
@@ -53,6 +54,7 @@
 	--primary-hover: var(--boxlang-green-light);
 	--link-color: var(--boxlang-teal);
 	--link-hover: var(--boxlang-teal-light);
+	--text-badge-color: #000;
 
 	color-scheme: dark;
 }
@@ -460,6 +462,10 @@ pre{
 	color: var(--text-primary);
 }
 
+.btn-link {
+	color: var(--link-color);
+}
+
 /* ========================================
    Links
    ======================================== */
@@ -560,6 +566,7 @@ a:hover {
 	font-weight: 500;
 	padding: 0.35rem 0.65rem;
 	border-radius: 6px;
+	color: var(--text-badge-color);
 }
 
 .badge-primary {

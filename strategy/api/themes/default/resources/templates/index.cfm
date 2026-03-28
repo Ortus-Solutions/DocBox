@@ -73,7 +73,7 @@
 		<aside class="sidebar" :class="{ 'collapsed': sidebarCollapsed }">
 			<div class="sidebar-header">
 				<h6 class="mb-0">📚 Packages</h6>
-				<button class="btn btn-sm btn-link p-0" @click="sidebarCollapsed = !sidebarCollapsed">
+				<button aria-label="SideSidebar collapse button" class="btn btn-sm btn-link p-0" @click="sidebarCollapsed = !sidebarCollapsed">
 					<i class="bi" :class="sidebarCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'"></i>
 				</button>
 			</div>
@@ -142,7 +142,7 @@
 		</aside>
 
 		<!-- Main Content -->
-		<main class="content" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+		<main class="content overflow-y-auto" tabindex="0" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
 			<!-- Overview Page -->
 			<div x-show="currentView === 'overview'" x-cloak>
 				<h1 class="display-4 mb-4">#arguments.projectTitle#</h1>
@@ -288,6 +288,7 @@
 	<script src="data/navigation.js"></script>
 
 	<!-- Alpine.js -->
+	<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
 	<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 	<!-- App Script -->
