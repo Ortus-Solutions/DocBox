@@ -3,7 +3,7 @@
    ======================================== */
 
 :root {
-	--docbox-primary: #5e72e4;
+	--docbox-primary: #3469ee;
 	--docbox-secondary: #6c757d;
 	--docbox-success: #2dce89;
 	--docbox-info: #11cdef;
@@ -15,6 +15,8 @@
 	--docbox-border: #e9ecef;
 	--docbox-nav-height: 70px;
 	--docbox-card-header-bg: #f7fafc;
+	--docbox-link: #036fad;
+	--docbox-link-hover: #013f8a;
 }
 
 body {
@@ -47,13 +49,13 @@ h4 { font-size: 1.25rem; }
 
 /* Links */
 a {
-	color: var(--docbox-primary);
+	color: var(--docbox-link);
 	text-decoration: none;
 	transition: color 0.15s ease-in-out;
 }
 
 a:hover {
-	color: #0a58ca;
+	color: var(--docbox-link-hover);
 	text-decoration: underline;
 }
 
