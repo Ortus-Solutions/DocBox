@@ -133,7 +133,7 @@
 								class="namespace-btn"
 								:class="{ 'active': currentNamespace?.name === ns.name }"
 								:aria-expanded="isExpanded( ns.name )"
-								@click="showNamespace( ns )"
+							@click="isExpanded( ns.name ) ? toggleNamespace( ns.name ) : ( toggleNamespace( ns.name ), showNamespace( ns ) )"
 							>
 								<i class="bi" :class="isExpanded( ns.name ) ? 'bi-folder2-open' : 'bi-folder2'" aria-hidden="true"></i>
 								<span x-text="ns.name" class="flex-grow-1"></span>
@@ -267,10 +267,10 @@
 						<div class="col-md-6 col-lg-4">
 							<div
 								class="card namespace-card border-0"
-								@click="showNamespace( ns )"
+								@click="toggleNamespace( ns.name ); showNamespace( ns )"
 								role="button"
 								tabindex="0"
-								@keydown.enter.prevent="showNamespace( ns )"
+								@keydown.enter.prevent="toggleNamespace( ns.name ); showNamespace( ns )"
 								:aria-label="'Browse ' + ns.name + ' namespace'"
 							>
 								<div class="card-body">
