@@ -344,8 +344,8 @@
 				<!-- Breadcrumb -->
 				<nav aria-label="breadcrumb" class="mb-3" x-show="!contentLoading && currentCommand">
 					<ol class="breadcrumb">
-						<li class="breadcrumb-item">
-							<a href="##" @click.prevent="showOverview()">⚡ All Namespaces</a>
+						<li class="breadcrumb-item me-2">
+							<a href="##" @click.prevent="showOverview()">⚡ All Namespaces /</a>
 						</li>
 						<template x-if="currentCommand?.namespace">
 							<li class="breadcrumb-item">
