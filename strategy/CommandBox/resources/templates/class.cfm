@@ -44,7 +44,9 @@
 <!-- ======== start of class data ======== -->
 <div class="container-fluid" id="command-content">
 <a name="class"><!-- --></a>
-<h1 class="display-5 mb-3"><i class="bi bi-lightning-charge text-primary"></i> #arguments.command#</h1>
+<h1 class="display-5 mb-3">
+	<i class="bi bi-lightning-charge text-primary"></i> #arguments.command#
+</h1>
 
 <cfif structKeyExists( annotations, 'aliases' ) and len( annotations.aliases ) >
 	<cfset aliases = listToArray( annotations.aliases )>
@@ -121,7 +123,7 @@
 <hr>
 
 <cfif StructKeyExists( documentation, "hint")>
-	<h3><i class="bi bi-info-circle text-primary"></i> Command Usage</h3>
+	<h2><i class="bi bi-info-circle text-primary"></i> Command Usage</h2>
 	<div id="class-hint" class="mb-4">
 		<p>#writeHint(  documentation.hint )#</p>
 	</div>

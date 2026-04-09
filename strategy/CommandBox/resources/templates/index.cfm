@@ -101,7 +101,7 @@
 			aria-label="Command navigation"
 		>
 			<div class="sidebar-header">
-				<h6><i class="bi bi-terminal" aria-hidden="true"></i> Commands</h6>
+				<h1 class="fs-6"><i class="bi bi-terminal" aria-hidden="true"></i> Commands</h1>
 				<button
 					class="sidebar-toggle"
 					@click="sidebarCollapsed = !sidebarCollapsed"
@@ -244,7 +244,7 @@
 					<div class="col-6 col-md-3">
 						<div class="card text-center stats-card border-0">
 							<div class="card-body">
-								<div class="stats-icon">📁</div>
+								<div class="stats-icon" aria-hidden="true">📁</div>
 								<div class="stats-value" x-text="totalNamespaceCount"></div>
 								<div class="stats-label">Namespaces</div>
 							</div>
@@ -253,7 +253,7 @@
 					<div class="col-6 col-md-3">
 						<div class="card text-center stats-card border-0">
 							<div class="card-body">
-								<div class="stats-icon">⚡</div>
+								<div class="stats-icon" aria-hidden="true">⚡</div>
 								<div class="stats-value" x-text="totalCommandCount"></div>
 								<div class="stats-label">Commands</div>
 							</div>
@@ -274,10 +274,10 @@
 								:aria-label="'Browse ' + ns.name + ' namespace'"
 							>
 								<div class="card-body">
-									<h5 class="card-title d-flex align-items-center gap-2 mb-2">
+									<h2 class="card-title d-flex align-items-center gap-2 mb-2">
 										<i class="bi bi-folder2" aria-hidden="true"></i>
 										<span x-text="ns.name"></span>
-									</h5>
+									</h2>
 									<span
 										class="badge"
 										style="background: rgba(0,180,216,.2); color: var(--cb-primary);"
