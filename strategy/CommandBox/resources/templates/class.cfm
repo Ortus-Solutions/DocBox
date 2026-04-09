@@ -42,7 +42,7 @@
 			>
 
 <!-- ======== start of class data ======== -->
-<div class="container-fluid">
+<div class="container-fluid" id="command-content">
 <a name="class"><!-- --></a>
 <h1 class="display-5 mb-3"><i class="bi bi-lightning-charge text-primary"></i> #arguments.command#</h1>
 

@@ -83,8 +83,9 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 		super.init( argumentCollection = arguments );
 
 		// Override the parent's theme-based paths with CommandBox-specific paths
-		variables.TEMPLATE_PATH = "/docbox/strategy/CommandBox/resources/templates";
-		variables.ASSETS_PATH   = "/docbox/strategy/api/themes/frames/resources/static";
+		variables.TEMPLATE_PATH          = "/docbox/strategy/CommandBox/resources/templates";
+		variables.ASSETS_PATH            = "/docbox/strategy/api/themes/frames/resources/static";
+		variables.COMMANDBOX_STATIC_PATH = "/docbox/strategy/CommandBox/resources/static";
 
 		return this;
 	}
@@ -199,9 +200,16 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 			index++;
 		}
 
-		// copy over the static assets
+		// copy over the static assets from the frames theme (highlighter, jstree, stylesheet)
 		directoryCopy(
 			expandPath( variables.ASSETS_PATH ),
+			getOutputDir(),
+			true
+		);
+
+		// Overlay CommandBox-specific SPA assets (css/stylesheet.css, js/app.js)
+		directoryCopy(
+			expandPath( variables.COMMANDBOX_STATIC_PATH ),
 			getOutputDir(),
 			true
 		);

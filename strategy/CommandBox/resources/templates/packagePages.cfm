@@ -30,3 +30,13 @@
 		buildClassPages( qPackage, arguments.qMetadata );
 	</cfscript>
 </cfoutput>
+
+<cfscript>
+// Generate navigation data for the Alpine.js SPA
+// Must run after all command pages are built so every link exists
+local.navArgs = {
+	outputDir : this.getOutputDir(),
+	qMetaData : arguments.qMetadata
+};
+include "#variables.TEMPLATE_PATH#/generateNavigation.cfm";
+</cfscript>
