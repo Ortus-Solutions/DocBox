@@ -62,14 +62,15 @@ for ( local.row in navArgs.qMetaData ) {
 	if ( !structKeyExists( local.currentNode, local.row.name ) ) {
 		local.currentNode[ local.row.name ] = {};
 	}
-	local.currentNode[ local.row.name ][ "$command" ] = {
-		"link"       : local.link,
-		"searchList" : local.searchList,
-		"hint"       : local.hint
-	};
 
-	// Add to flat allCommands list (skip "help" special case)
+    // (skip "help" special case)
 	if ( local.row.name != "help" ) {
+		local.currentNode[ local.row.name ][ "$command" ] = {
+			"link"       : local.link,
+			"searchList" : local.searchList,
+			"hint"       : local.hint
+		};
+		// Add to flat allCommands list
 		arrayAppend( local.navData.allCommands, {
 			"name"       : local.row.name,
 			"command"    : local.command,
@@ -104,7 +105,9 @@ for ( local.nsKey in local.nsKeys ) {
 	for ( local.nodeKey in local.nodeKeys ) {
 		if ( left( local.nodeKey, 1 ) == "$" ) continue;
 		local.nodeChild = local.nsNode[ local.nodeKey ];
-
+        if(IsStruct(local.nodeChild) && structIsEmpty(local.nodeChild)){
+			continue;
+		} 
 		if ( structKeyExists( local.nodeChild, "$command" ) ) {
 			// Direct command under this namespace
 			local.cmdData = local.nodeChild[ "$command" ];
