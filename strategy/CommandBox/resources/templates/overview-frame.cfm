@@ -29,7 +29,9 @@
 		local.currentNode = local.targetTree;
 		for( local.namespacePart in local.namespaceParts ) {
 			if( !structKeyExists( local.currentNode, local.namespacePart ) ) {
-				local.currentNode[ local.namespacePart ] = {};
+				local.currentNode[ local.namespacePart ] = {
+					"$link" : local.packagelink
+				};
 			}
 			local.currentNode = local.currentNode[ local.namespacePart ];
 		}
