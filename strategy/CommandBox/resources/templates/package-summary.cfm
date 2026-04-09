@@ -15,9 +15,19 @@
 				package = "#arguments.package#"
 				file="#replace(arguments.package, '.', '/', 'all')#/package-summary"
 				>
-	<h2>
-	<span class="label label-success">#arguments.namespace#</span>
-	</h2>
+	<div class="container-fluid">
+		<!-- Breadcrumb Navigation -->
+		<nav aria-label="breadcrumb" class="mb-3">
+			<ol class="breadcrumb package-breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="#assetPath#overview-summary.html">⚡ All Namespaces</a>
+				</li>
+				<li class="breadcrumb-item active" aria-current="page">
+					<i class="bi bi-terminal"></i> #arguments.namespace#
+				</li>
+			</ol>
+		</nav>
+		<h2 class="mb-4"><i class="bi bi-terminal text-primary"></i> #arguments.namespace#</h2>
 
 	<cfset namespaces = {}>
 	<cfloop query="arguments.qMetadata">
@@ -28,36 +38,42 @@
 
 	<div class="table-responsive">
 	<cfif structCount( namespaces )>
-		<table class="table table-striped table-hover table-bordered">
-			<thead>
-				<tr class="info">
-					<th align="left" colspan="2"><font size="+2">
-					<b>Namespaces</b></font></th>
+		<div class="card mb-4">
+		<table class="table table-hover mb-0">
+			<thead class="table-light">
+				<tr>
+					<th colspan="2" class="fs-5 py-3">
+						<i class="bi bi-folder2 text-primary"></i> <strong>Namespaces</strong>
+					</th>
 				</tr>
 			</thead>
-			<cfset sortedNamespaces = listToArray( structKeyList( namespaces ) )>
-			<cfset arraySort( sortedNamespaces, 'text' )>
-			<cfloop array="#sortedNamespaces#" index="thisNamespace">
-				<tr>
-					<td width="15%" nowrap=true><b><a href="#namespaces[ thisNamespace ]#">#thisNamespace#</a></b></td>
-					<td>&nbsp;</td>
-				</tr>
-			</cfloop>
-
+			<tbody>
+				<cfset sortedNamespaces = listToArray( structKeyList( namespaces ) )>
+				<cfset arraySort( sortedNamespaces, 'text' )>
+				<cfloop array="#sortedNamespaces#" index="thisNamespace">
+					<tr>
+						<td width="15%"><b><a href="#namespaces[ thisNamespace ]#">#thisNamespace#</a></b></td>
+						<td>&nbsp;</td>
+					</tr>
+				</cfloop>
+			</tbody>
 		</table>
+		</div>
 	</cfif>
 	<cfif arguments.qClasses.recordCount>
-		<table class="table table-striped table-hover table-bordered">
-			<thead>
-				<tr class="info">
-					<th align="left" colspan="2"><font size="+2">
-					<b>Commands</b></font></th>
+		<div class="card mb-4">
+		<table class="table table-hover mb-0">
+			<thead class="table-light">
+				<tr>
+					<th colspan="2" class="fs-5 py-3">
+						<i class="bi bi-lightning-charge text-primary"></i> <strong>Commands</strong>
+					</th>
 				</tr>
 			</thead>
-
+			<tbody>
 			<cfloop query="arguments.qclasses">
 				<tr>
-					<td width="15%" nowrap=true><b><a href="#name#.html">#command#</a></b></td>
+					<td width="15%"><b><a href="#name#.html">#command#</a></b></td>
 					<td>
 						<cfset meta = metadata>
 						<cfif structkeyexists(meta, "hint") and len(meta.hint) gt 0>
@@ -66,10 +82,12 @@
 					</td>
 				</tr>
 			</cfloop>
-
+			</tbody>
 		</table>
+		</div>
 	</cfif>
 	</div>
+	</div><!-- end container-fluid -->
 
 </body>
 </html>

@@ -12,7 +12,6 @@
 
 		local.command = row.command;
 		local.namespaceParts = listToArray( row.namespace, ' ' );
-
 		// Set "deep" struct to create nested data
 		local.link = replace( row.package, ".", "/", "all") & '/' & row.name & '.html';
 		local.packagelink = replace( row.package, ".", "/", "all") & '/package-summary.html';
@@ -61,11 +60,13 @@
 	<link rel="stylesheet" href="jstree/themes/default/style.min.css" />
 </head>
 
-<body>
-	<h3><strong>#arguments.projecttitle#</strong></h3>
+<body class="frame-sidebar">
+	<div class="mb-3">
+		<h5 class="text-primary mb-3"><i class="bi bi-lightning-charge"></i> #arguments.projecttitle#</h5>
 
-	<!--- Search box --->
-	<input type="text" id="commandSearch" placeholder="Search..."><br><br>
+		<!--- Search box --->
+		<input type="text" id="commandSearch" placeholder="⚡ Search commands..." class="form-control form-control-sm">
+	</div>
 	<!--- Container div for tree --->
 	<div id="commandTree">
 		<ul>
@@ -95,13 +96,13 @@
 					// Shortcut types to control icons
 				    "types" : {
 				      "namespace" : {
-				        "icon" : "glyphicon glyphicon-th-large"
+				        "icon" : "bi bi-folder2-open"
 				      },
 				      "command" : {
-				        "icon" : "glyphicon glyphicon-flash"
+				        "icon" : "bi bi-lightning-charge"
 				      },
 				      "system" : {
-				        "icon" : "glyphicon glyphicon-cog"
+				        "icon" : "bi bi-gear"
 				      }
 				    },
 				    // Smart search callback to do lookups on full command name and aliases

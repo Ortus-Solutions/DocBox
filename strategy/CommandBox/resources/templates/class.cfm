@@ -42,18 +42,19 @@
 			>
 
 <!-- ======== start of class data ======== -->
-<h1>#arguments.command#</h1>
+<div class="container-fluid">
+<a name="class"><!-- --></a>
+<h1 class="display-5 mb-3"><i class="bi bi-lightning-charge text-primary"></i> #arguments.command#</h1>
 
 <cfif structKeyExists( annotations, 'aliases' ) and len( annotations.aliases ) >
 	<cfset aliases = listToArray( annotations.aliases )>
-	<div class="panel panel-default">
-		<div class="panel-body">
+	<div class="card mb-3">
+		<div class="card-body">
 			<strong>Aliases:&nbsp;</strong>
 			<cfloop array="#aliases#" index="local.alias">
-				<li class="label label-danger label-annotations">
+				<span class="badge bg-danger me-1">
 					#local.alias#
-				</li>
-				&nbsp;
+				</span>
 			</cfloop>
 		</div>
 	</div>
@@ -72,43 +73,46 @@
 	<cfset local.params = local.func.parameters>
 
 	<cfif arrayLen( local.params )>
-		<div class="panel panel-default">
-			<div class="panel-heading"><strong>Parameters:</strong></div>
-				<table class="table table-bordered table-hover">
+		<div class="card mb-4">
+			<div class="card-header"><strong>Parameters:</strong></div>
+			<table class="table table-bordered table-hover mb-0">
+				<thead class="table-light">
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Default</th>
+					<th>Hint</th>
+				</tr>
+				</thead>
+				<tbody>
+				<cfloop array="#local.params#" index="local.param">
+					<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param>
+					<cfset local.paramAnnotations = server.keyExists( "boxlang" ) ? local.param.annotations : local.param>
 					<tr>
-						<td width="1%"><strong>Name</strong></td>
-						<td width="1%"><strong>Type</strong></td>
-						<td width="1%"><strong>Required</strong></td>
-						<td width="1%"><strong>Default</strong></td>
-						<td><strong>Hint</strong></td>
+						<td>#local.param.name#</td>
+						<td>
+							<cfif local.param.type eq "any">
+								string
+							<cfelse>
+								#local.param.type#
+							</cfif>
+						</td>
+						<td>#local.paramAnnotations.required ?: false#</td>
+						<td>
+							<cfif !isNull(local.paramAnnotations.default) and local.paramAnnotations.default!= '[runtime expression]' >
+								#local.paramAnnotations.default#
+							</cfif>
+						</td>
+						<td>
+							<cfif structKeyExists( local.paramDocumentation, 'hint' )>
+								#local.paramDocumentation.hint#
+							</cfif>
+						</td>
 					</tr>
-					<cfloop array="#local.params#" index="local.param">
-						<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param>
-						<cfset local.paramAnnotations = server.keyExists( "boxlang" ) ? local.param.annotations : local.param>
-						<tr>
-							<td>#local.param.name#</td>
-							<td>
-								<cfif local.param.type eq "any">
-									string
-								<cfelse>
-									#local.param.type#
-								</cfif>
-							</td>
-							<td>#local.paramAnnotations.required ?: false#</td>
-							<td>
-								<cfif !isNull(local.paramAnnotations.default) and local.paramAnnotations.default!= '[runtime expression]' >
-									#local.paramAnnotations.default#
-								</cfif>
-							</td>
-							<td>
-								<cfif structKeyExists( local.paramDocumentation, 'hint' )>
-									#local.paramDocumentation.hint#
-								</cfif>
-							</td>
-						</tr>
-					</cfloop>
-				</table>
-			</div>
+				</cfloop>
+				</tbody>
+			</table>
 		</div>
 	</cfif>
 
@@ -117,12 +121,13 @@
 <hr>
 
 <cfif StructKeyExists( documentation, "hint")>
-	<h3>Command Usage</h3>
-	<div id="class-hint">
+	<h3><i class="bi bi-info-circle text-primary"></i> Command Usage</h3>
+	<div id="class-hint" class="mb-4">
 		<p>#writeHint(  documentation.hint )#</p>
 	</div>
 </cfif>
 
+</div><!-- end container-fluid -->
 </body>
 </html>
 </cfoutput>

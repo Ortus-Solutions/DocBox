@@ -5,46 +5,42 @@
 
 <!-- ========= START OF NAVBAR ======= -->
 <a name="navbar_top"></a>
-<a href="#skip-navbar_top" title="skip navigation links" aria-label="skip navigation links" ></a>
+<a href="#skip-navbar_top" title="skip navigation links"></a>
 
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" role="navigation">
 	<div class="container-fluid">
 
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#class-navigation">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="#"><strong><cfoutput>#attributes.projecttitle#</cfoutput></strong></a>
-		</div>
+		<a class="navbar-brand" href="#"><strong><cfoutput>#attributes.projecttitle#</cfoutput></strong></a>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#class-navigation" aria-controls="class-navigation" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
 
 	    <div class="collapse navbar-collapse" id="class-navigation">
-	    	<ul class="nav navbar-nav">
+	    	<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<cfif attributes.page eq "overview">
-					<li class="active"><a href="#"><i class="glyphicon glyphicon-plane"></i> overview</a></li>
+					<li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><i class="bi bi-airplane"></i> Overview</a></li>
 				<cfelse>
 					<cfoutput>
-					<li><a href="#root#overview-summary.html"><i class="glyphicon glyphicon-plane"></i> overview</a></li>
+					<li class="nav-item"><a class="nav-link" href="#root#overview-summary.html"><i class="bi bi-airplane"></i> Overview</a></li>
 					</cfoutput>
 				</cfif>
 
 				<cfif attributes.page eq "package">
-					<li class="active"><a href="#"><i class="glyphicon glyphicon-folder-open"></i> &nbsp;Namespace</a></li>
+					<li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><i class="bi bi-terminal"></i> Namespace</a></li>
 				<cfelseif attributes.page eq "class">
-					<li><a href="package-summary.html"><i class="glyphicon glyphicon-folder-open"></i> &nbsp;Namespace</a></li>
+					<li class="nav-item"><a class="nav-link" href="package-summary.html"><i class="bi bi-terminal"></i> Namespace</a></li>
 				</cfif>
 
 	      	</ul>
 
-			<ul class="nav navbar-nav navbar-right">
-				<li><cfoutput><a href="#root#index.html?#attributes.file#.html" target="_top">
-					<i class="glyphicon glyphicon-fullscreen"></i> Frames
+			<ul class="navbar-nav">
+				<li class="nav-item"><cfoutput><a class="nav-link" href="#root & attributes.file#.html" target="_blank" title="Open in new window without frames">
+					<i class="bi bi-box-arrow-up-right"></i>
 					</a></cfoutput>
 				</li>
 			</ul>
-	    </div>
-
+	    </div>	
 	</div>
 </nav>
 
