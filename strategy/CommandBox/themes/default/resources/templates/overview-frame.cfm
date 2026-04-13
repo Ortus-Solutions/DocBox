@@ -139,7 +139,12 @@
 				.on("changed.jstree", function (e, data) {
 					var obj = data.instance.get_node(data.selected[0]).li_attr;
 					if( obj.linkhref ) {
-						window.parent.frames['classFrame'].location.href = obj.linkhref;
+						var classFrame = window.parent.frames['classFrame'];
+						classFrame.location.href = obj.linkhref;
+						classFrame.addEventListener( 'load', function onLoad() {
+							classFrame.removeEventListener( 'load', onLoad );
+							classFrame.focus();
+						} );
 					}
 			});
 
