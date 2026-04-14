@@ -78,7 +78,7 @@
 		<div class="card mb-4">
 			<div class="card-header"><strong>Parameters:</strong></div>
 			<table class="table table-bordered table-hover mb-0">
-				<thead class="table-light">
+				<thead>
 				<tr>
 					<th>Name</th>
 					<th>Type</th>
