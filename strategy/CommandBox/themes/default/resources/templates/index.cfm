@@ -1,6 +1,6 @@
 <cfoutput>
 <!DOCTYPE html>
-<html lang="en" x-data="commandApp()" x-init="init()">
+<html lang="en" x-data="commandApp()" x-init="init()" data-theme="dark">
 <head>
 	<title>#arguments.projectTitle# - Command API Documentation</title>
 	<cfmodule template="inc/common.cfm" rootPath="">
@@ -13,24 +13,15 @@
 	<!-- ── Top Navbar ──────────────────────────────────────────────── -->
 	<header class="cs-navbar fixed-top" role="banner">
 		<a class="cs-navbar-brand" href="##" @click.prevent="showOverview()" aria-label="#arguments.projectTitle# home">
-			<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 565.97 411.5" style="height: 20px;">
-				<g id="Layer_1-2" data-name="Layer 1">
-					<g>
-						<path class="swirl" d="M504.76,73.24c-47.74-38.38-157.72-64.12-240.56,19.19-90.33,112.33-50.55,280.35,120.74,297.2,94.55-2.81,140.88-42.6,140.88-42.6,9.84-1.87-124.02,125.91-288.76,26.69-76.29-55.23-96.41-139.01-83.31-206.4,13.57-66.46,62.25-119.82,89.86-136.2,123.09-75.35,240.1,5.15,261.15,42.12Z"/>
-						<path class="swirl" d="M451.41,64.81s72.54,22,80.03,129.18c7.96,107.64-116.54,161.94-190.01,136.19-71.14-19.65-107.18-114.2-99.22-172.23-6.55,10.3-16.84,93.14,15.45,145.09,41.18,66.46,180.66,118.4,274.73,9.82,68.8-85.65,13.1-192.82-2.34-202.18-7.02-14.52-54.76-43.07-78.63-45.87Z"/>
-						<path class="swirl" d="M275.9,144.85s76.29-81.91,157.25-17.32c74.44,70.21,17.8,157.73-13.1,168.96-25.74,18.73-82.37,18.26-82.37,18.26,17.79,7.49,125.43,21.06,157.72-80.03,25.28-97.35-60.37-153.98-108.12-154.92-65.05-.46-97.34,33.23-111.39,65.06Z"/>
-					</g>
-					<path class="chevron" d="M.5,47.65l132.03,137.37v56.6L.5,379.56v-62.29l100.31-103.53L.5,109.93v-62.29Z"/>
-				</g>
-			</svg>
+			<i class="bi bi-book"></i>
 			#arguments.projectTitle#
 		</a>
 
 		<!-- Global search -->
-		<div class="spa-search-wrap">
+		<div class="search-wrap">
 			<input
 				type="search"
-				class="spa-search-input"
+				class="form-control form-control-sm search-input"
 				placeholder="⚡ Search commands..."
 				x-model="searchQuery"
 				@input="performSearch()"
@@ -113,15 +104,15 @@
 				</div>
 
 				<!-- Namespace tree -->
-				<nav class="command-tree" aria-label="Command namespaces">
+				<nav class="doc-tree" aria-label="Commands Navigation">
 
 					<template x-for="ns in filteredNamespaces" :key="ns.name">
-						<div class="namespace-item">
+						<div class="doc-item">
 							<button
-								class="namespace-btn"
+								class="doc-name-btn"
 								:class="{ 'active': currentNamespace?.name === ns.name }"
 								:aria-expanded="isExpanded( ns.name )"
-							@click="isExpanded( ns.name ) ? toggleNamespace( ns.name ) : ( toggleNamespace( ns.name ), showNamespace( ns ) )"
+								@click="isExpanded( ns.name ) ? toggleNamespace( ns.name ) : ( toggleNamespace( ns.name ), showNamespace( ns ) )"
 							>
 								<i class="bi" :class="isExpanded( ns.name ) ? 'bi-folder2-open' : 'bi-folder2'" aria-hidden="true"></i>
 								<span x-text="ns.name" class="flex-grow-1"></span>
@@ -129,11 +120,11 @@
 							</button>
 
 							<!-- Commands in this namespace -->
-							<div class="namespace-commands" x-show="isExpanded( ns.name )" x-cloak>
+							<div class="doc-subitems" x-show="isExpanded( ns.name )" x-cloak>
 								<template x-for="cmd in ns.commands" :key="cmd.link">
 									<a
 										href="##"
-										class="command-item"
+										class="doc-subitem"
 										:class="{ 'active': currentCommand?.link === cmd.link }"
 										@click.prevent="loadCommand( cmd )"
 										x-text="cmd.name"
@@ -144,7 +135,7 @@
 								<template x-for="child in ns.children" :key="child.name">
 									<div class="child-ns-block">
 										<button
-											class="namespace-btn child-ns"
+											class="doc-name-btn child-ns"
 											:aria-expanded="isExpanded( ns.name + '/' + child.name )"
 											@click="toggleNamespace( ns.name + '/' + child.name )"
 										>
@@ -152,11 +143,11 @@
 											<span x-text="child.name" class="flex-grow-1"></span>
 											<span class="badge" x-text="child.commands.length"></span>
 										</button>
-										<div class="namespace-commands" x-show="isExpanded( ns.name + '/' + child.name )" x-cloak>
+										<div class="doc-subitems" x-show="isExpanded( ns.name + '/' + child.name )" x-cloak>
 											<template x-for="cmd in child.commands" :key="cmd.link">
 												<a
 													href="##"
-													class="command-item"
+													class="doc-subitem"
 													:class="{ 'active': currentCommand?.link === cmd.link }"
 													@click.prevent="loadCommand( cmd )"
 													x-text="cmd.name"
@@ -172,7 +163,7 @@
 					<!-- System (top-level) commands -->
 					<div class="namespace-item" x-show="topLevel.length > 0">
 						<button
-							class="namespace-btn"
+							class="doc-name-btn"
 							:aria-expanded="isExpanded( '__system__' )"
 							@click="toggleNamespace( '__system__' )"
 						>
@@ -180,11 +171,11 @@
 							<span class="flex-grow-1">System Commands</span>
 							<span class="badge" x-text="topLevel.length"></span>
 						</button>
-						<div class="namespace-commands" x-show="isExpanded( '__system__' )" x-cloak>
+						<div class="doc-subitems" x-show="isExpanded( '__system__' )" x-cloak>
 							<template x-for="cmd in topLevel" :key="cmd.name">
 								<a
 									href="##"
-									class="command-item"
+									class="doc-subitem"
 									:class="{ 'active': currentCommand?.name === cmd.name }"
 									@click.prevent="loadCommand( cmd )"
 									x-text="cmd.name"
@@ -212,16 +203,6 @@
 			<div x-show="currentView === 'overview'" x-cloak>
 				<div class="mb-4">
 					<h1 class="display-5 fw-bold">
-						<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 565.97 411.5" style="height: 35px;">
-							<g id="Layer_1-2" data-name="Layer 1">
-								<g>
-									<path class="swirl" d="M504.76,73.24c-47.74-38.38-157.72-64.12-240.56,19.19-90.33,112.33-50.55,280.35,120.74,297.2,94.55-2.81,140.88-42.6,140.88-42.6,9.84-1.87-124.02,125.91-288.76,26.69-76.29-55.23-96.41-139.01-83.31-206.4,13.57-66.46,62.25-119.82,89.86-136.2,123.09-75.35,240.1,5.15,261.15,42.12Z"/>
-									<path class="swirl" d="M451.41,64.81s72.54,22,80.03,129.18c7.96,107.64-116.54,161.94-190.01,136.19-71.14-19.65-107.18-114.2-99.22-172.23-6.55,10.3-16.84,93.14,15.45,145.09,41.18,66.46,180.66,118.4,274.73,9.82,68.8-85.65,13.1-192.82-2.34-202.18-7.02-14.52-54.76-43.07-78.63-45.87Z"/>
-									<path class="swirl" d="M275.9,144.85s76.29-81.91,157.25-17.32c74.44,70.21,17.8,157.73-13.1,168.96-25.74,18.73-82.37,18.26-82.37,18.26,17.79,7.49,125.43,21.06,157.72-80.03,25.28-97.35-60.37-153.98-108.12-154.92-65.05-.46-97.34,33.23-111.39,65.06Z"/>
-								</g>
-								<path class="chevron" d="M.5,47.65l132.03,137.37v56.6L.5,379.56v-62.29l100.31-103.53L.5,109.93v-62.29Z"/>
-							</g>
-						</svg>
 						#arguments.projectTitle#
 					</h1>
 					<p class="lead" style="color: var(--cb-text-secondary)">Browse and search CommandBox CLI command documentation.</p>
@@ -230,7 +211,7 @@
 				<!-- Stats -->
 				<div class="row g-3 mb-4">
 					<div class="col-6 col-md-3">
-						<div class="card text-center stats-card border-0">
+						<div class="card text-center stats-card">
 							<div class="card-body">
 								<div class="stats-icon" aria-hidden="true">📁</div>
 								<div class="stats-value" x-text="totalNamespaceCount"></div>
@@ -239,7 +220,7 @@
 						</div>
 					</div>
 					<div class="col-6 col-md-3">
-						<div class="card text-center stats-card border-0">
+						<div class="card text-center stats-card">
 							<div class="card-body">
 								<div class="stats-icon" aria-hidden="true">⚡</div>
 								<div class="stats-value" x-text="totalCommandCount"></div>
@@ -254,7 +235,7 @@
 					<template x-for="ns in namespaces" :key="ns.name">
 						<div class="col-md-6 col-lg-4">
 							<div
-								class="card namespace-card border-0"
+								class="card doc-card"
 								@click="toggleNamespace( ns.name ); showNamespace( ns )"
 								role="button"
 								tabindex="0"
@@ -354,9 +335,6 @@
 		</main>
 	</div>
 
-	<!-- Navigation data (generated by DocBox) -->
-	<script src="data/navigation.js"></script>
-
 	<!-- Bootstrap 5 js -->
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 
@@ -372,6 +350,9 @@
 
 	<!-- Alpine.js -->
 	<script defer src="alpine/cdn.min.js"></script>
+
+	<!-- Navigation data (generated by DocBox) -->
+	<script src="data/navigation.js"></script>
 
 	<!-- SPA application -->
 	<script src="js/app.js"></script>
