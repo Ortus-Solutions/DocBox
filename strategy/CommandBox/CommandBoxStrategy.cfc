@@ -87,6 +87,7 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 		variables.TEMPLATE_PATH          = "/docbox/strategy/CommandBox/themes/#variables.theme#/resources/templates";
 		variables.ASSETS_PATH            = "/docbox/strategy/api/themes/frames/resources/static";
 		variables.COMMANDBOX_STATIC_PATH = "/docbox/strategy/CommandBox/themes/#variables.theme#/resources/static";
+		variables.THEME_CSS_PATH         = "/docbox/strategy/api/themes/#variables.theme#/resources/static/css";
 
 		return this;
 	}
@@ -201,17 +202,24 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 			index++;
 		}
 
-		// copy over the static assets from the frames theme (highlighter, jstree, stylesheet)
+		// 1. Copy frames theme assets (highlighter, jstree, root stylesheet for standalone pages)
 		directoryCopy(
 			expandPath( variables.ASSETS_PATH ),
 			getOutputDir(),
 			true
 		);
 
-		// Overlay CommandBox-specific SPA assets (css/stylesheet.css, js/app.js)
+		// 2. Overlay CommandBox-specific JS from its own theme (js/app.js)
 		directoryCopy(
-			expandPath( variables.COMMANDBOX_STATIC_PATH ),
-			getOutputDir(),
+			expandPath( variables.COMMANDBOX_STATIC_PATH & "/js" ),
+			getOutputDir() & "/js",
+			true
+		);
+
+		// 3. Overlay shared CSS from the HTMLAPIStrategy's chosen theme (css/stylesheet.css)
+		directoryCopy(
+			expandPath( variables.THEME_CSS_PATH ),
+			getOutputDir() & "/css",
 			true
 		);
 
