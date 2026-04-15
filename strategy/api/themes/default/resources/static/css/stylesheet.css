@@ -310,7 +310,7 @@ pre{
 	color: var(--primary-color);
 }
 
-.doc-name.active i {
+.doc-name-btn.active i {
 	color: var(--primary-color);
 }
 
