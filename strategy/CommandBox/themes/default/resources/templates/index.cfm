@@ -292,7 +292,35 @@
 						<span x-text="currentNamespace?.name"></span>
 					</h1>
 
-					<div class="card border-0">
+					<div class="card border-0 mb-4" x-show="currentNamespace?.children?.length > 0">
+						<table class="table table-hover mb-0">
+							<thead>
+								<tr>
+									<th colspan="2" class="fs-5 py-3">
+										<i class="bi bi-folder2" style="color: var(--cb-primary)" aria-hidden="true"></i>
+										<strong>Namespaces</strong>
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<template x-for="child in currentNamespace?.children" :key="child.name">
+									<tr>
+										<td class="py-3" style="width: 28%; white-space: nowrap;">
+											<a
+												href="##"
+												@click.prevent="showNamespace( child ); toggleNamespace( currentNamespace.name + '/' + child.name )"
+												class="fw-semibold"
+												x-text="child.fullNamespace || ( currentNamespace.name + ' ' + child.name )"
+											></a>
+										</td>
+										<td class="py-3" style="color: var(--cb-text-secondary);"></td>
+									</tr>
+								</template>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="card border-0" x-show="currentNamespace?.commands?.length > 0">
 						<table class="table table-hover mb-0">
 							<thead>
 								<tr>
