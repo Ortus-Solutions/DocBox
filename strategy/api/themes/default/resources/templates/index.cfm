@@ -73,7 +73,12 @@
 		<aside class="sidebar" :class="{ 'collapsed': sidebarCollapsed }">
 			<div class="sidebar-header">
 				<h2 class="fs-6 mb-0">📚 Packages</h2>
-				<button class="btn btn-sm btn-link p-0" @click="sidebarCollapsed = !sidebarCollapsed">
+				<button
+					class="btn btn-sm btn-link p-0"
+					@click="sidebarCollapsed = !sidebarCollapsed"
+					:aria-label="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+					:aria-expanded="( !sidebarCollapsed ).toString()"
+				>
 					<i class="bi" :class="sidebarCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'"></i>
 				</button>
 			</div>
