@@ -105,9 +105,9 @@ for ( local.nsKey in local.nsKeys ) {
 	for ( local.nodeKey in local.nodeKeys ) {
 		if ( left( local.nodeKey, 1 ) == "$" ) continue;
 		local.nodeChild = local.nsNode[ local.nodeKey ];
-        if(IsStruct(local.nodeChild) && structIsEmpty(local.nodeChild)){
+		if ( IsStruct( local.nodeChild ) && structIsEmpty( local.nodeChild ) ) {
 			continue;
-		} 
+		}
 		if ( structKeyExists( local.nodeChild, "$command" ) ) {
 			// Direct command under this namespace
 			local.cmdData = local.nodeChild[ "$command" ];
