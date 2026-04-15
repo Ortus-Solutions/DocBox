@@ -18,6 +18,7 @@ function commandApp() {
 		contentLoading      : false,
 		contentHtml         : "",
 		parentNamespace     : null,
+		systemView          : false,
 
 		// ── Initialization ──────────────────────────────────────────────────
 		async init() {
@@ -57,6 +58,7 @@ function commandApp() {
 			this.currentCommand   = null;
 			this.currentNamespace = null;
 			this.parentNamespace  = null;
+			this.systemView       = false;
 			this.contentHtml      = "";
 			history.replaceState( null, "", window.location.pathname );
 			this.$nextTick( () => this.scrollContentTop() );
@@ -91,6 +93,18 @@ function commandApp() {
 				if ( !this.expandedNamespaces.includes( ns.name ) ) {
 					this.expandedNamespaces.push( ns.name );
 				}
+			}
+			this.$nextTick( () => this.scrollContentTop() );
+		},
+
+		showSystemCommands() {
+			this.currentView      = "system";
+			this.currentCommand   = null;
+			this.currentNamespace = null;
+			this.parentNamespace  = null;
+			this.contentHtml      = "";
+			if ( !this.expandedNamespaces.includes( "__system__" ) ) {
+				this.expandedNamespaces.push( "__system__" );
 			}
 			this.$nextTick( () => this.scrollContentTop() );
 		},

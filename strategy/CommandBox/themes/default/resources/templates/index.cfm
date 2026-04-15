@@ -175,8 +175,9 @@
 					<div class="namespace-item" x-show="topLevel.length > 0">
 						<button
 							class="doc-name-btn"
+							:class="{ 'active': currentView === 'system' }"
 							:aria-expanded="isExpanded( '__system__' )"
-							@click="toggleNamespace( '__system__' )"
+							@click="isExpanded( '__system__' ) ? toggleNamespace( '__system__' ) : ( toggleNamespace( '__system__' ), showSystemCommands() )"
 						>
 							<i class="bi bi-gear" aria-hidden="true"></i>
 							<span class="flex-grow-1">System Commands</span>
@@ -334,6 +335,48 @@
 							</thead>
 							<tbody>
 								<template x-for="cmd in currentNamespace?.commands" :key="cmd.link">
+									<tr>
+										<td class="py-3" style="width: 28%; white-space: nowrap;">
+											<a href="##" @click.prevent="loadCommand( cmd )" class="fw-semibold" x-text="cmd.command"></a>
+										</td>
+										<td class="py-3" style="color: var(--cb-text-secondary);" x-text="cmd.hint || ''"></td>
+									</tr>
+								</template>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</template>
+
+			<!-- System Commands view ─────────────────────────────── -->
+			<template x-if="currentView === 'system'">
+				<div>
+					<nav aria-label="breadcrumb" class="mb-3">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">
+								<a href="##" @click.prevent="showOverview()">All Namespaces</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">System Commands</li>
+						</ol>
+					</nav>
+
+					<h1 class="display-5 mb-4">
+						<i class="bi bi-gear" style="color: var(--cb-primary)" aria-hidden="true"></i>
+						System Commands
+					</h1>
+
+					<div class="card border-0">
+						<table class="table table-hover mb-0">
+							<thead>
+								<tr>
+									<th colspan="2" class="fs-5 py-3">
+										<i class="bi bi-lightning-charge" style="color: var(--cb-primary)" aria-hidden="true"></i>
+										<strong>Commands</strong>
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<template x-for="cmd in topLevel" :key="cmd.link">
 									<tr>
 										<td class="py-3" style="width: 28%; white-space: nowrap;">
 											<a href="##" @click.prevent="loadCommand( cmd )" class="fw-semibold" x-text="cmd.command"></a>
