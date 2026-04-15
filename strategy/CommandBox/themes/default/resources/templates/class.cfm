@@ -9,27 +9,6 @@
 	<meta name="keywords" content="#arguments.package# #arguments.command# CommandBox Command CLI">
 	<!-- common assets -->
 	<cfmodule template="inc/common.cfm" rootPath="#instance.class.root#">
-	<!-- syntax highlighter -->
-	<link type="text/css" rel="stylesheet" href="#instance.class.root#highlighter/styles/shCoreEmacs.css">
-	<script src="#instance.class.root#highlighter/scripts/shCore.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushBash.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushBoxLang.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushColdFusion.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushCss.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushJava.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushJScript.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushPlain.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushSql.js"></script>
-	<script src="#instance.class.root#highlighter/scripts/shBrushXml.js"></script>
-	<script type="text/javascript">
-		SyntaxHighlighter.config.stripBrs = true;
-		SyntaxHighlighter.defaults.gutter = false;
-		SyntaxHighlighter.defaults.toolbar = false;
-		SyntaxHighlighter.all();
-	</script>
-	<style>
-	.syntaxhighlighter table td.code { padding: 10px !important; }
-	</style>
 </head>
 
 <body class="withNavbar">
@@ -130,6 +109,22 @@
 </cfif>
 
 </div><!-- end container-fluid -->
+<script src="#instance.class.root#highlighter/scripts/shCore.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushBash.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushBoxLang.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushColdFusion.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushCss.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushJava.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushJScript.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushPlain.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushSql.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushXml.js"></script>
+	<script type="text/javascript">
+		SyntaxHighlighter.config.stripBrs = true;
+		SyntaxHighlighter.defaults.gutter = false;
+		SyntaxHighlighter.defaults.toolbar = false;
+		SyntaxHighlighter.all();
+	</script>
 </body>
 </html>
 </cfoutput>
