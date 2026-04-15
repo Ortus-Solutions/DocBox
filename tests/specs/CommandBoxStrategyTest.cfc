@@ -117,10 +117,22 @@ component extends="BaseTest" {
 
 				var navContent = fileRead( navFile );
 				expect( navContent )
-					.toInclude( "COMMANDBOX_NAV_DATA", "navigation data should set COMMANDBOX_NAV_DATA global" )
-					.toInclude( '"namespaces"', "navigation data should have a namespaces array" )
-					.toInclude( '"allCommands"', "navigation data should have a flat allCommands array" )
-					.toInclude( '"topLevel"', "navigation data should have a topLevel array for root commands" );
+					.toInclude(
+						"COMMANDBOX_NAV_DATA",
+						"navigation data should set COMMANDBOX_NAV_DATA global"
+					)
+					.toInclude(
+						'"namespaces"',
+						"navigation data should have a namespaces array"
+					)
+					.toInclude(
+						'"allCommands"',
+						"navigation data should have a flat allCommands array"
+					)
+					.toInclude(
+						'"topLevel"',
+						"navigation data should have a topLevel array for root commands"
+					);
 			} );
 
 			it( "places root-level commands in the topLevel navigation array", function(){
@@ -148,8 +160,14 @@ component extends="BaseTest" {
 				var navContent = fileRead( variables.testOutputDir & "/data/navigation.js" );
 				// config/show.cfc → command "config show", namespace "config"
 				expect( navContent )
-					.toInclude( '"config"', "namespaced config commands should create a config namespace entry" )
-					.toInclude( '"config show"', "config show command should appear in allCommands" );
+					.toInclude(
+						'"config"',
+						"namespaced config commands should create a config namespace entry"
+					)
+					.toInclude(
+						'"config show"',
+						"config show command should appear in allCommands"
+					);
 			} );
 
 			it( "places child namespace commands in namespace children array", function(){
@@ -163,9 +181,18 @@ component extends="BaseTest" {
 				// config/sync/pull.cfc → command "config sync pull", namespace "config sync"
 				// generateNavigation.cfm nests this as a child under the config namespace
 				expect( navContent )
-					.toInclude( '"children"', "namespaces with sub-namespaces should have a children array" )
-					.toInclude( '"config sync pull"', "child namespace command should appear in allCommands" )
-					.toInclude( '"config sync"', "child namespace fullNamespace should be recorded" );
+					.toInclude(
+						'"children"',
+						"namespaces with sub-namespaces should have a children array"
+					)
+					.toInclude(
+						'"config sync pull"',
+						"child namespace command should appear in allCommands"
+					)
+					.toInclude(
+						'"config sync"',
+						"child namespace fullNamespace should be recorded"
+					);
 			} );
 
 			it( "copies all required static assets", function(){

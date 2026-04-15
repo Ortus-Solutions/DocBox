@@ -11,8 +11,8 @@ component {
 	 * @overwrite     Overwrite local settings with remote values
 	 **/
 	function run(
-		string endpointName  = "",
-		boolean overwrite    = false
+		string endpointName = "",
+		boolean overwrite   = false
 	){
 	}
 

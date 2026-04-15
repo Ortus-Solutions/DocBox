@@ -153,17 +153,20 @@ function commandApp() {
 						|| ( containers.length > 0 ? containers[ containers.length - 1 ] : null );
 					this.contentHtml = container ? container.innerHTML : doc.body.innerHTML;
 				} else {
+					const safeCommand = this.escapeHtml( cmd.command );
 					this.contentHtml = `
 						<div class="alert alert-warning mt-4">
 							<h4><i class="bi bi-exclamation-triangle"></i> Not Found</h4>
-							<p>Unable to load documentation for <strong>${ cmd.command }</strong>.</p>
+							<p>Unable to load documentation for <strong>${ safeCommand }</strong>.</p>
 						</div>`;
 				}
 			} catch ( error ) {
+				const safeCommand = this.escapeHtml( cmd.command );
+				const safeMessage = this.escapeHtml( error.message );
 				this.contentHtml = `
 					<div class="alert alert-danger mt-4">
 						<h4><i class="bi bi-x-circle"></i> Error</h4>
-						<p>Failed to load <strong>${ cmd.command }</strong>: ${ error.message }</p>
+						<p>Failed to load <strong>${ safeCommand }</strong>: ${ safeMessage }</p>
 					</div>`;
 			}
 
@@ -235,6 +238,14 @@ function commandApp() {
 		scrollContentTop() {
 			const main = document.getElementById( "main-content" );
 			if ( main ) main.scrollTop = 0;
+		},
+
+		// Escape a string for safe insertion into HTML to prevent XSS
+		escapeHtml( str ) {
+			if ( typeof str !== "string" ) return "";
+			const div = document.createElement( "div" );
+			div.textContent = str;
+			return div.innerHTML;
 		},
 
 		// ── Computed ─────────────────────────────────────────────────────────
