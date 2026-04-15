@@ -212,138 +212,143 @@
 		>
 
 			<!-- Overview ─────────────────────────────────────────── -->
-			<div x-show="currentView === 'overview'" x-cloak>
-				<div class="mb-4">
-					<h1 class="display-5 fw-bold">
-						#arguments.projectTitle#
-					</h1>
-					<p class="lead" style="color: var(--cb-text-secondary)">Browse and search CommandBox CLI command documentation.</p>
-				</div>
-
-				<!-- Stats -->
-				<div class="row g-3 mb-4">
-					<div class="col-6 col-md-3">
-						<div class="card text-center stats-card">
-							<div class="card-body">
-								<div class="stats-icon" aria-hidden="true">📁</div>
-								<div class="stats-value" x-text="totalNamespaceCount"></div>
-								<div class="stats-label">Namespaces</div>
-							</div>
-						</div>
+			<template x-if="currentView === 'overview'">
+				<div>
+					<div class="mb-4">
+						<h1 class="display-5 fw-bold">
+							#arguments.projectTitle#
+						</h1>
+						<p class="lead" style="color: var(--cb-text-secondary)">Browse and search CommandBox CLI command documentation.</p>
 					</div>
-					<div class="col-6 col-md-3">
-						<div class="card text-center stats-card">
-							<div class="card-body">
-								<div class="stats-icon" aria-hidden="true">⚡</div>
-								<div class="stats-value" x-text="totalCommandCount"></div>
-								<div class="stats-label">Commands</div>
-							</div>
-						</div>
-					</div>
-				</div>
 
-				<!-- Namespace cards -->
-				<div class="row g-3">
-					<template x-for="ns in namespaces" :key="ns.name">
-						<div class="col-md-6 col-lg-4">
-							<div
-								class="card doc-card"
-								@click="toggleNamespace( ns.name ); showNamespace( ns )"
-								role="button"
-								tabindex="0"
-								@keydown.enter.prevent="toggleNamespace( ns.name ); showNamespace( ns )"
-								:aria-label="'Browse ' + ns.name + ' namespace'"
-							>
+					<!-- Stats -->
+					<div class="row g-3 mb-4">
+						<div class="col-6 col-md-3">
+							<div class="card text-center stats-card">
 								<div class="card-body">
-									<h2 class="card-title d-flex align-items-center gap-2 mb-2">
-										<i class="bi bi-folder2" aria-hidden="true"></i>
-										<span x-text="ns.name"></span>
-									</h2>
-									<span
-										class="badge bg-info text-dark"
-										x-text="( ns.commands.length + ns.children.reduce( ( s, c ) => s + c.commands.length, 0 ) ) + ' commands'"
-									></span>
+									<div class="stats-icon" aria-hidden="true">📁</div>
+									<div class="stats-value" x-text="totalNamespaceCount"></div>
+									<div class="stats-label">Namespaces</div>
 								</div>
 							</div>
 						</div>
-					</template>
+						<div class="col-6 col-md-3">
+							<div class="card text-center stats-card">
+								<div class="card-body">
+									<div class="stats-icon" aria-hidden="true">⚡</div>
+									<div class="stats-value" x-text="totalCommandCount"></div>
+									<div class="stats-label">Commands</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Namespace cards -->
+					<div class="row g-3">
+						<template x-for="ns in namespaces" :key="ns.name">
+							<div class="col-md-6 col-lg-4">
+								<div
+									class="card doc-card"
+									@click="toggleNamespace( ns.name ); showNamespace( ns )"
+									role="button"
+									tabindex="0"
+									@keydown.enter.prevent="toggleNamespace( ns.name ); showNamespace( ns )"
+									:aria-label="'Browse ' + ns.name + ' namespace'"
+								>
+									<div class="card-body">
+										<h2 class="card-title d-flex align-items-center gap-2 mb-2">
+											<i class="bi bi-folder2" aria-hidden="true"></i>
+											<span x-text="ns.name"></span>
+										</h2>
+										<span
+											class="badge bg-info text-dark"
+											x-text="( ns.commands.length + ns.children.reduce( ( s, c ) => s + c.commands.length, 0 ) ) + ' commands'"
+										></span>
+									</div>
+								</div>
+							</div>
+						</template>
+					</div>
 				</div>
-			</div>
+			</template>
 
 			<!-- Namespace view ────────────────────────────────────── -->
-			<div x-show="currentView === 'namespace' && currentNamespace" x-cloak>
-				<nav aria-label="breadcrumb" class="mb-3">
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item">
-							<a href="##" @click.prevent="showOverview()">All Namespaces</a>
-						</li>
-						<li class="breadcrumb-item active" aria-current="page">
-							<i class="bi bi-terminal" aria-hidden="true"></i>
-							<span x-text="currentNamespace?.name"></span>
-						</li>
-					</ol>
-				</nav>
+			<template x-if="currentView === 'namespace' && currentNamespace">
+				<div>
+					<nav aria-label="breadcrumb" class="mb-3">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">
+								<a href="##" @click.prevent="showOverview()">All Namespaces</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">
+								<i class="bi bi-terminal" aria-hidden="true"></i>
+								<span x-text="currentNamespace?.name"></span>
+							</li>
+						</ol>
+					</nav>
 
-				<h1 class="display-5 mb-4">
-					<i class="bi bi-terminal" style="color: var(--cb-primary)" aria-hidden="true"></i>
-					<span x-text="currentNamespace?.name"></span>
-				</h1>
+					<h1 class="display-5 mb-4">
+						<i class="bi bi-terminal" style="color: var(--cb-primary)" aria-hidden="true"></i>
+						<span x-text="currentNamespace?.name"></span>
+					</h1>
 
-				<div class="card border-0">
-					<table class="table table-hover mb-0">
-						<thead>
-							<tr>
-								<th colspan="2" class="fs-5 py-3">
-									<i class="bi bi-lightning-charge" style="color: var(--cb-primary)" aria-hidden="true"></i>
-									<strong>Commands</strong>
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<template x-for="cmd in currentNamespace?.commands" :key="cmd.link">
+					<div class="card border-0">
+						<table class="table table-hover mb-0">
+							<thead>
 								<tr>
-									<td class="py-3" style="width: 28%; white-space: nowrap;">
-										<a href="##" @click.prevent="loadCommand( cmd )" class="fw-semibold" x-text="cmd.command"></a>
-									</td>
-									<td class="py-3" style="color: var(--cb-text-secondary);" x-text="cmd.hint || ''"></td>
+									<th colspan="2" class="fs-5 py-3">
+										<i class="bi bi-lightning-charge" style="color: var(--cb-primary)" aria-hidden="true"></i>
+										<strong>Commands</strong>
+									</th>
 								</tr>
-							</template>
-						</tbody>
-					</table>
+							</thead>
+							<tbody>
+								<template x-for="cmd in currentNamespace?.commands" :key="cmd.link">
+									<tr>
+										<td class="py-3" style="width: 28%; white-space: nowrap;">
+											<a href="##" @click.prevent="loadCommand( cmd )" class="fw-semibold" x-text="cmd.command"></a>
+										</td>
+										<td class="py-3" style="color: var(--cb-text-secondary);" x-text="cmd.hint || ''"></td>
+									</tr>
+								</template>
+							</tbody>
+						</table>
+					</div>
 				</div>
-			</div>
+			</template>
 
 			<!-- Command view ──────────────────────────────────────── -->
-			<div x-show="currentView === 'command'" x-cloak>
-				<!-- Loading spinner -->
-				<div x-show="contentLoading" class="text-center py-5" role="status" aria-label="Loading command documentation">
-					<div class="spinner-border" aria-hidden="true"></div>
-					<p class="mt-3" style="color: var(--cb-text-secondary);">Loading…</p>
-				</div>
+			<template x-if="currentView === 'command' && currentCommand">
+				<div>
+					<!-- Loading spinner -->
+					<div x-show="contentLoading" class="text-center py-5" role="status" aria-label="Loading command documentation">
+						<div class="spinner-border" aria-hidden="true"></div>
+						<p class="mt-3" style="color: var(--cb-text-secondary);">Loading…</p>
+					</div>
 
-				<!-- Breadcrumb -->
-				<nav aria-label="breadcrumb" class="mb-3" x-show="!contentLoading && currentCommand">
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item me-2">
-							<a href="##" @click.prevent="showOverview()">⚡ All Namespaces /</a>
-						</li>
-						<template x-if="currentCommand?.namespace">
-							<li class="breadcrumb-item">
-								<a
-									href="##"
-									@click.prevent="showNamespace( namespaces.find( n => n.name === currentCommand.namespace.split( ' ' )[ 0 ] ) )"
-									x-text="currentCommand?.namespace"
-								></a>
+					<!-- Breadcrumb -->
+					<nav aria-label="breadcrumb" class="mb-3" x-show="!contentLoading && currentCommand">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item me-2">
+								<a href="##" @click.prevent="showOverview()">⚡ All Namespaces /</a>
 							</li>
-						</template>
-						<li class="breadcrumb-item active" aria-current="page" x-text="currentCommand?.command"></li>
-					</ol>
-				</nav>
+							<template x-if="currentCommand?.namespace">
+								<li class="breadcrumb-item">
+									<a
+										href="##"
+										@click.prevent="showNamespace( namespaces.find( n => n.name === currentCommand.namespace.split( ' ' )[ 0 ] ) )"
+										x-text="currentCommand?.namespace"
+									></a>
+								</li>
+							</template>
+							<li class="breadcrumb-item active" aria-current="page" x-text="currentCommand?.command"></li>
+						</ol>
+					</nav>
 
-				<!-- Injected command content -->
-				<div x-show="!contentLoading" x-html="contentHtml"></div>
-			</div>
-
+					<!-- Injected command content -->
+					<div x-show="!contentLoading" x-html="contentHtml"></div>
+				</div>
+			</template>
 		</main>
 	</div>
 
