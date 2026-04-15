@@ -247,7 +247,7 @@ pre{
 	background-color: var(--bg-secondary);
 }
 
-.sidebar.collapsed .sidebar-header h1 {
+.sidebar.collapsed .sidebar-header h2 {
 	display: none;
 }
 .sidebar-toggle {
