@@ -17,8 +17,9 @@ function commandApp() {
 		sidebarCollapsed    : false,
 		contentLoading      : false,
 		contentHtml         : "",
-		parentNamespace     : null,
-		systemView          : false,
+		parentNamespace          : null,
+		systemView               : false,
+		_navigatingProgrammatically : false,
 
 		// ── Initialization ──────────────────────────────────────────────────
 		async init() {
@@ -32,7 +33,14 @@ function commandApp() {
 
 			// Handle direct links and back/forward navigation
 			this.handleUrlHash();
-			window.addEventListener( "hashchange", () => this.handleUrlHash() );
+			window.addEventListener( "hashchange", () => {
+				// Ignore hash changes that we triggered ourselves inside loadCommand()
+				if ( this._navigatingProgrammatically ) {
+					this._navigatingProgrammatically = false;
+					return;
+				}
+				this.handleUrlHash();
+			} );
 		},
 
 		// ── URL Hash Routing ────────────────────────────────────────────────
@@ -127,7 +135,9 @@ function commandApp() {
 				} );
 			}
 
-			// Update URL hash so the browser back button works
+			// Update URL hash for browser back/forward — flag it so the hashchange
+			// listener knows this change originated here and skips re-routing.
+			this._navigatingProgrammatically = true;
 			window.location.hash = cmd.link.replace( /\.html$/, "" );
 
 			try {
