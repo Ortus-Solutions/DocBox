@@ -8,7 +8,11 @@
 <body>
 
 	<!-- ── Skip to content (accessibility) ─────────────────────────── -->
-	<a class="visually-hidden-focusable" href="##main-content">Skip to main content</a>
+	<a
+		class="visually-hidden-focusable"
+		href="##"
+		@click.prevent="document.getElementById( 'main-content' ).focus()"
+	>Skip to main content</a>
 
 	<!-- ── Top Navbar ──────────────────────────────────────────────── -->
 	<header class="cs-navbar fixed-top" role="banner">
@@ -77,10 +81,9 @@
 		<aside
 			class="sidebar"
 			:class="{ 'collapsed': sidebarCollapsed }"
-			aria-label="Command navigation"
-		>
+			aria-label="Command">
 			<div class="sidebar-header">
-				<h1 class="fs-6"><i class="bi bi-terminal" aria-hidden="true"></i> Commands</h1>
+				<h2 class="fs-6"><i class="bi bi-terminal" aria-hidden="true"></i> Commands</h2>
 				<button
 					class="sidebar-toggle"
 					@click="sidebarCollapsed = !sidebarCollapsed"
@@ -104,7 +107,7 @@
 				</div>
 
 				<!-- Namespace tree -->
-				<nav class="doc-tree" aria-label="Commands Navigation">
+				<nav class="doc-tree" aria-label="Commands">
 
 					<template x-for="ns in filteredNamespaces" :key="ns.name">
 						<div class="doc-item">
@@ -120,20 +123,23 @@
 							</button>
 
 							<!-- Commands in this namespace -->
-							<div class="doc-subitems" x-show="isExpanded( ns.name )" x-cloak>
+							<ul class="list-unstyled doc-subitems" x-show="isExpanded( ns.name )" x-cloak>
 								<template x-for="cmd in ns.commands" :key="cmd.link">
-									<a
-										href="##"
-										class="doc-subitem"
-										:class="{ 'active': currentCommand?.link === cmd.link }"
-										@click.prevent="loadCommand( cmd )"
-										x-text="cmd.name"
-									></a>
+									<li>
+										<a
+											href="##"
+											class="doc-subitem"
+											:class="{ 'active': currentCommand?.link === cmd.link }"
+											@click.prevent="loadCommand( cmd )"
+											x-text="cmd.name"
+										></a>
+									</li>
 								</template>
 
 								<!-- Child namespaces (one level deep) -->
+	
 								<template x-for="child in ns.children" :key="child.name">
-									<div class="child-ns-block">
+									<li class="child-ns-block">
 										<button
 											class="doc-name-btn child-ns"
 											:aria-expanded="isExpanded( ns.name + '/' + child.name )"
@@ -143,20 +149,24 @@
 											<span x-text="child.name" class="flex-grow-1"></span>
 											<span class="badge" x-text="child.commands.length"></span>
 										</button>
-										<div class="doc-subitems" x-show="isExpanded( ns.name + '/' + child.name )" x-cloak>
-											<template x-for="cmd in child.commands" :key="cmd.link">
-												<a
-													href="##"
-													class="doc-subitem"
-													:class="{ 'active': currentCommand?.link === cmd.link }"
-													@click.prevent="loadCommand( cmd )"
-													x-text="cmd.name"
-												></a>
-											</template>
-										</div>
-									</div>
+										<template x-if="child.commands && child.commands.length > 0">
+											<ul class="list-unstyled doc-subitems" x-show="isExpanded( ns.name + '/' + child.name )" x-cloak>
+												<template x-for="cmd in child.commands" :key="cmd.link">
+													<li>
+														<a
+															href="##"
+															class="doc-subitem"
+															:class="{ 'active': currentCommand?.link === cmd.link }"
+															@click.prevent="loadCommand( cmd )"
+															x-text="cmd.name"
+														></a>
+													</li>
+												</template>
+											</ul>
+										</template>
+									</li>
 								</template>
-							</div>
+							</ul>
 						</div>
 					</template>
 
@@ -171,17 +181,19 @@
 							<span class="flex-grow-1">System Commands</span>
 							<span class="badge" x-text="topLevel.length"></span>
 						</button>
-						<div class="doc-subitems" x-show="isExpanded( '__system__' )" x-cloak>
+						<ul class="list-unstyled doc-subitems" x-show="isExpanded( '__system__' )" x-cloak>
 							<template x-for="cmd in topLevel" :key="cmd.name">
-								<a
-									href="##"
-									class="doc-subitem"
-									:class="{ 'active': currentCommand?.name === cmd.name }"
-									@click.prevent="loadCommand( cmd )"
-									x-text="cmd.name"
-								></a>
+								<li>
+									<a
+										href="##"
+										class="doc-subitem"
+										:class="{ 'active': currentCommand?.name === cmd.name }"
+										@click.prevent="loadCommand( cmd )"
+										x-text="cmd.name"
+									></a>
+								</li>
 							</template>
-						</div>
+						</ul>
 					</div>
 
 				</nav>
@@ -263,7 +275,7 @@
 				<nav aria-label="breadcrumb" class="mb-3">
 					<ol class="breadcrumb">
 						<li class="breadcrumb-item">
-							<a href="##" @click.prevent="showOverview()">⚡ All Namespaces</a>
+							<a href="##" @click.prevent="showOverview()">All Namespaces</a>
 						</li>
 						<li class="breadcrumb-item active" aria-current="page">
 							<i class="bi bi-terminal" aria-hidden="true"></i>
