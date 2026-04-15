@@ -64,6 +64,12 @@ function commandApp() {
 
 		showNamespace( ns, parentNs = null ) {
 			if ( !ns ) return;
+			// Auto-detect parent namespace from fullNamespace (e.g. "config sync" → parent "config")
+			// when it isn't explicitly passed (e.g. sidebar navigation via Alpine x-for scope)
+			if ( !parentNs && ns.fullNamespace && ns.fullNamespace.includes( " " ) ) {
+				const parentName = ns.fullNamespace.split( " " )[ 0 ];
+				parentNs = this.namespaces.find( n => n.name === parentName ) || null;
+			}
 			this.currentView      = "namespace";
 			this.currentNamespace = ns;
 			this.parentNamespace  = parentNs || null;
@@ -80,6 +86,7 @@ function commandApp() {
 					this.expandedNamespaces.push( childKey );
 				}
 			} else {
+				this.parentNamespace = null;
 				// Top-level namespace
 				if ( !this.expandedNamespaces.includes( ns.name ) ) {
 					this.expandedNamespaces.push( ns.name );
@@ -222,6 +229,22 @@ function commandApp() {
 
 		get totalCommandCount() {
 			return this.allCommands.length;
+		},
+
+		// Root namespace object for the current command (first word of namespace)
+		get currentCommandParentNs() {
+			if ( !this.currentCommand?.namespace ) return null;
+			const parentName = this.currentCommand.namespace.split( " " )[ 0 ];
+			return this.namespaces.find( n => n.name === parentName ) || null;
+		},
+
+		// Child namespace object for the current command (second word of namespace, if present)
+		get currentCommandChildNs() {
+			if ( !this.currentCommand?.namespace ) return null;
+			const parts = this.currentCommand.namespace.split( " " );
+			if ( parts.length < 2 ) return null;
+			const parent = this.namespaces.find( n => n.name === parts[ 0 ] );
+			return parent?.children?.find( c => c.name === parts[ 1 ] ) || null;
 		},
 
 		get totalNamespaceCount() {

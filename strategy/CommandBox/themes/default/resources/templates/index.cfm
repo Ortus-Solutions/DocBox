@@ -282,8 +282,8 @@
 								<a href="##" @click.prevent="showOverview()">All Namespaces /</a>
 							</li>
 							<template x-if="parentNamespace">
-								<li class="breadcrumb-item me-2">
-									<a href="##" @click.prevent="showNamespace( parentNamespace )" x-text="parentNamespace.name"></a> /
+								<li class="breadcrumb-item">
+									<a href="##" @click.prevent="showNamespace( parentNamespace )" x-text="parentNamespace.name"></a>
 								</li>
 							</template>
 							<li class="breadcrumb-item active" aria-current="page" x-text="currentNamespace?.name"></li>
@@ -359,22 +359,18 @@
 					<!-- Breadcrumb -->
 					<nav aria-label="breadcrumb" class="mb-3" x-show="!contentLoading && currentCommand">
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item me-2">
-								<a href="##" @click.prevent="showOverview()">All Namespaces /</a>
+							<li class="breadcrumb-item">
+								<a href="##" @click.prevent="showOverview()">All Namespaces</a>
 							</li>
-							<template x-if="currentCommand?.namespace">
-								<li class="breadcrumb-item">
-									<a
-										href="##"
-										@click.prevent="showNamespace( namespaces.find( n => n.name === currentCommand.namespace.split( ' ' )[ 0 ] ) )"
-										x-text="currentCommand?.namespace"
-									></a>
-								</li>
-							</template>
+							<li class="breadcrumb-item" x-show="currentCommandParentNs">
+								<a href="##" @click.prevent="showNamespace( currentCommandParentNs )" x-text="currentCommandParentNs?.name"></a>
+							</li>
+							<li class="breadcrumb-item" x-show="currentCommandChildNs">
+								<a href="##" @click.prevent="showNamespace( currentCommandChildNs, currentCommandParentNs )" x-text="currentCommandChildNs?.name"></a>
+							</li>
 							<li class="breadcrumb-item active" aria-current="page" x-text="currentCommand?.command"></li>
 						</ol>
 					</nav>
-
 					<!-- Injected command content -->
 					<div x-show="!contentLoading" x-html="contentHtml"></div>
 				</div>
