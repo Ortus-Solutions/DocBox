@@ -15,35 +15,36 @@
 			projectTitle= "#arguments.projectTitle#"
 			file="overview-summary"
 			>
+<main class="main-container">
+	<div class="container-fluid">
+		<div class="mb-4">
+			<h1 class="display-6"><i class="bi bi-lightning-charge"></i> CLI Documentation</h1>
+			<p class="lead text-muted">Browse all command namespaces</p>
+		</div>
 
-<div class="container-fluid">
-	<div class="mb-4">
-		<h1 class="display-6"><i class="bi bi-lightning-charge"></i> CLI Documentation</h1>
-		<p class="lead text-muted">Browse all command namespaces</p>
-	</div>
-
-	<div class="card">
-		<div class="table-responsive">
-			<table class="table table-hover mb-0">
-				<thead class="table-light">
-					<tr>
-						<th class="fs-5 py-3"><i class="bi bi-terminal"></i> <strong>Namespace Overview</strong></th>
-					</tr>
-				</thead>
-				<tbody>
-					<cfloop query="arguments.qPackages">
+		<div class="card">
+			<div class="table-responsive">
+				<table class="table table-hover mb-0">
+					<thead class="table-light">
 						<tr>
-							<td class="py-3">
-								<i class="bi bi-terminal text-success"></i>
-								<a href="#replace( arguments.qPackages.package, ".", "/", "all")#/package-summary.html" class="fw-semibold">#arguments.qPackages.namespace#</a>
-							</td>
+							<th class="fs-5 py-3"><i class="bi bi-terminal"></i> <strong>Namespace Overview</strong></th>
 						</tr>
-					</cfloop>
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<cfloop query="arguments.qPackages">
+							<tr>
+								<td class="py-3">
+									<i class="bi bi-terminal text-success"></i>
+									<a href="#replace( arguments.qPackages.package, ".", "/", "all")#/package-summary.html" class="fw-semibold">#arguments.qPackages.namespace#</a>
+								</td>
+							</tr>
+						</cfloop>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
-</div>
+</main>
 
 </body>
 </html>
