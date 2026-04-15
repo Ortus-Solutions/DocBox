@@ -87,8 +87,15 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 		variables.TEMPLATE_PATH          = "/docbox/strategy/CommandBox/themes/#variables.theme#/resources/templates";
 		variables.ASSETS_PATH            = "/docbox/strategy/api/themes/frames/resources/static";
 		variables.COMMANDBOX_STATIC_PATH = "/docbox/strategy/CommandBox/themes/#variables.theme#/resources/static";
-		variables.THEME_CSS_PATH         = "/docbox/strategy/api/themes/#variables.theme#/resources/static/css";
 
+		// Theme CSS assets are not laid out consistently across themes.
+		// The frames theme stores its stylesheet directly under /resources/static
+		// instead of /resources/static/css, so resolve the source path accordingly.
+		if ( variables.theme == "frames" ) {
+			variables.THEME_CSS_PATH = "/docbox/strategy/api/themes/frames/resources/static";
+		} else {
+			variables.THEME_CSS_PATH = "/docbox/strategy/api/themes/#variables.theme#/resources/static/css";
+		}
 		return this;
 	}
 
