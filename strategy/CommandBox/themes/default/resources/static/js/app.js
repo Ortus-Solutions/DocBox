@@ -17,6 +17,7 @@ function commandApp() {
 		sidebarCollapsed    : false,
 		contentLoading      : false,
 		contentHtml         : "",
+		parentNamespace     : null,
 
 		// ── Initialization ──────────────────────────────────────────────────
 		async init() {
@@ -55,20 +56,34 @@ function commandApp() {
 			this.currentView      = "overview";
 			this.currentCommand   = null;
 			this.currentNamespace = null;
+			this.parentNamespace  = null;
 			this.contentHtml      = "";
 			history.replaceState( null, "", window.location.pathname );
 			this.$nextTick( () => this.scrollContentTop() );
 		},
 
-		showNamespace( ns ) {
+		showNamespace( ns, parentNs = null ) {
 			if ( !ns ) return;
 			this.currentView      = "namespace";
 			this.currentNamespace = ns;
+			this.parentNamespace  = parentNs || null;
 			this.currentCommand   = null;
 			this.contentHtml      = "";
-			// Expand the namespace in the sidebar
-			if ( !this.expandedNamespaces.includes( ns.name ) ) {
-				this.expandedNamespaces.push( ns.name );
+			// Expand the correct sidebar key(s)
+			if ( parentNs ) {
+				// Child namespace: expand parent AND parent/child key
+				if ( !this.expandedNamespaces.includes( parentNs.name ) ) {
+					this.expandedNamespaces.push( parentNs.name );
+				}
+				const childKey = parentNs.name + "/" + ns.name;
+				if ( !this.expandedNamespaces.includes( childKey ) ) {
+					this.expandedNamespaces.push( childKey );
+				}
+			} else {
+				// Top-level namespace
+				if ( !this.expandedNamespaces.includes( ns.name ) ) {
+					this.expandedNamespaces.push( ns.name );
+				}
 			}
 			this.$nextTick( () => this.scrollContentTop() );
 		},

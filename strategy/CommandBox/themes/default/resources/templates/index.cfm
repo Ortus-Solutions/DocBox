@@ -142,8 +142,9 @@
 									<li class="child-ns-block">
 										<button
 											class="doc-name-btn child-ns"
+											:class="{ 'active': currentNamespace?.name === child.name && parentNamespace?.name === ns.name }"
 											:aria-expanded="isExpanded( ns.name + '/' + child.name )"
-											@click="toggleNamespace( ns.name + '/' + child.name )"
+											@click="isExpanded( ns.name + '/' + child.name ) ? toggleNamespace( ns.name + '/' + child.name ) : ( toggleNamespace( ns.name + '/' + child.name ), showNamespace( child, ns ) )"
 										>
 											<i class="bi" :class="isExpanded( ns.name + '/' + child.name ) ? 'bi-folder2-open' : 'bi-folder2'" aria-hidden="true"></i>
 											<span x-text="child.name" class="flex-grow-1"></span>
@@ -277,21 +278,22 @@
 				<div>
 					<nav aria-label="breadcrumb" class="mb-3">
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item">
-								<a href="##" @click.prevent="showOverview()">All Namespaces</a>
+							<li class="breadcrumb-item me-2">
+								<a href="##" @click.prevent="showOverview()">All Namespaces /</a>
 							</li>
-							<li class="breadcrumb-item active" aria-current="page">
-								<i class="bi bi-terminal" aria-hidden="true"></i>
-								<span x-text="currentNamespace?.name"></span>
-							</li>
+							<template x-if="parentNamespace">
+								<li class="breadcrumb-item me-2">
+									<a href="##" @click.prevent="showNamespace( parentNamespace )" x-text="parentNamespace.name"></a> /
+								</li>
+							</template>
+							<li class="breadcrumb-item active" aria-current="page" x-text="currentNamespace?.name"></li>
 						</ol>
 					</nav>
 
 					<h1 class="display-5 mb-4">
 						<i class="bi bi-terminal" style="color: var(--cb-primary)" aria-hidden="true"></i>
-						<span x-text="currentNamespace?.name"></span>
+						<span x-text="currentNamespace?.fullNamespace || currentNamespace?.name"></span>
 					</h1>
-
 					<div class="card border-0 mb-4" x-show="currentNamespace?.children?.length > 0">
 						<table class="table table-hover mb-0">
 							<thead>
@@ -308,7 +310,7 @@
 										<td class="py-3" style="width: 28%; white-space: nowrap;">
 											<a
 												href="##"
-												@click.prevent="showNamespace( child ); toggleNamespace( currentNamespace.name + '/' + child.name )"
+												@click.prevent="showNamespace( child, currentNamespace )"
 												class="fw-semibold"
 												x-text="child.fullNamespace || ( currentNamespace.name + ' ' + child.name )"
 											></a>
@@ -358,7 +360,7 @@
 					<nav aria-label="breadcrumb" class="mb-3" x-show="!contentLoading && currentCommand">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item me-2">
-								<a href="##" @click.prevent="showOverview()">⚡ All Namespaces /</a>
+								<a href="##" @click.prevent="showOverview()">All Namespaces /</a>
 							</li>
 							<template x-if="currentCommand?.namespace">
 								<li class="breadcrumb-item">
