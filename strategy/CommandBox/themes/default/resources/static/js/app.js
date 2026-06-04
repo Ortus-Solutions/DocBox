@@ -31,6 +31,9 @@ function commandApp() {
 				console.error( "COMMANDBOX_NAV_DATA not found. Ensure data/navigation.js is loaded." );
 			}
 
+			// Check and modify legacy/frames link
+			this.handleLegacyLink();
+			
 			// Handle direct links and back/forward navigation
 			this.handleUrlHash();
 			window.addEventListener( "hashchange", () => {
@@ -42,7 +45,22 @@ function commandApp() {
 				this.handleUrlHash();
 			} );
 		},
-
+		// ── Clean incoming legacy/frames links ────────────────────────────────────────────────
+		handleLegacyLink() {
+			// if window.location.search is not empty, and starts with "?commandbox"
+			if ( window.location.search && window.location.search.startsWith( "?commandbox" ) ) {
+				var searchString = window.location.search.slice( 1 ); // remove the "?" at the start
+				// if searchString ends with ".html", remove it
+				if ( searchString.endsWith( ".html" ) ) {
+					searchString = searchString.slice( 0, -5 );
+				}
+				// replace "?" with "#" and update the URL without reloading the page
+				const newHash = "#" + searchString;
+				// remove the search part from the URL and add the hash
+				window.history.replaceState( null, "", window.location.pathname + newHash );
+				return;
+			}
+		},
 		// ── URL Hash Routing ────────────────────────────────────────────────
 		handleUrlHash() {
 			const hash = window.location.hash.slice( 1 );
