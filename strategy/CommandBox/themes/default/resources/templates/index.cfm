@@ -146,8 +146,10 @@
 									:class="{ 'active': currentCommand?.link === item.cmd.link }"
 									:style="{ paddingLeft: ( item.depth * 14 ) + 'px' }"
 									@click.prevent="loadCommand( item.cmd )"
-									x-text="item.cmd.name"
-								></a>
+								>
+									<i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
+									<span x-text="item.cmd.name"></span>
+								</a>
 							</template>
 
 						</div>
