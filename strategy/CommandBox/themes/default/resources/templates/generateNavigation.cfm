@@ -84,6 +84,61 @@ for ( local.row in navArgs.qMetaData ) {
 
 // ── Convert namespaceTree struct → Alpine.js-friendly array ──────────────────
 
+/**
+ * Recursively converts a namespace tree node into an Alpine.js-friendly item.
+ *
+ * @node          The struct node from namespaceTree to convert.
+ * @namespacePath Space-separated namespace path to this node (e.g. "server java").
+ * @return        A struct with name, fullNamespace, link, commands[], children[].
+ */
+function convertNamespaceNode( required struct node, required string namespacePath ) {
+	var parts = listToArray( trim( arguments.namespacePath ), " " );
+	var name  = parts[ arrayLen( parts ) ];
+
+	var item = {
+		"name"          : name,
+		"fullNamespace" : arguments.namespacePath,
+		"link"          : structKeyExists( arguments.node, "$link" ) ? arguments.node[ "$link" ] : "",
+		"commands"      : [],
+		"children"      : []
+	};
+
+	var nodeKeys = structKeyArray( arguments.node );
+	arraySort( nodeKeys, "text" );
+
+	for ( var nodeKey in nodeKeys ) {
+		if ( left( nodeKey, 1 ) == "$" ) continue;
+		var child = arguments.node[ nodeKey ];
+
+		if ( isStruct( child ) && structIsEmpty( child ) ) continue;
+
+		if ( structKeyExists( child, "$command" ) ) {
+			// Direct command under this namespace
+			var cmdData = child[ "$command" ];
+			arrayAppend( item.commands, {
+				"name"       : nodeKey,
+				"command"    : arguments.namespacePath & " " & nodeKey,
+				"link"       : structKeyExists( cmdData, "link" )       ? cmdData.link       : "",
+				"searchList" : structKeyExists( cmdData, "searchList" ) ? cmdData.searchList : nodeKey,
+				"hint"       : structKeyExists( cmdData, "hint" )       ? cmdData.hint       : ""
+			} );
+		} else {
+			// Child namespace — recurse to any depth
+			var childItem = convertNamespaceNode( child, arguments.namespacePath & " " & nodeKey );
+			arraySort( childItem.commands, function( a, b ) {
+				return a.name > b.name ? 1 : -1;
+			} );
+			arrayAppend( item.children, childItem );
+		}
+	}
+
+	arraySort( item.commands, function( a, b ) {
+		return a.name > b.name ? 1 : -1;
+	} );
+
+	return item;
+}
+
 local.nsKeys = structKeyArray( local.namespaceTree );
 arraySort( local.nsKeys, "text" );
 
@@ -91,71 +146,10 @@ for ( local.nsKey in local.nsKeys ) {
 	if ( left( local.nsKey, 1 ) == "$" ) continue;
 
 	local.nsNode = local.namespaceTree[ local.nsKey ];
-	local.nsItem = {
-		"name"     : local.nsKey,
-		"link"     : structKeyExists( local.nsNode, "$link" ) ? local.nsNode[ "$link" ] : "",
-		"commands" : [],
-		"children" : []
-	};
+	local.nsItem = convertNamespaceNode( local.nsNode, local.nsKey );
+	// Top-level namespace items don't need fullNamespace (it equals name)
+	structDelete( local.nsItem, "fullNamespace" );
 
-	// Separate direct commands from child namespaces
-	local.nodeKeys = structKeyArray( local.nsNode );
-	arraySort( local.nodeKeys, "text" );
-
-	for ( local.nodeKey in local.nodeKeys ) {
-		if ( left( local.nodeKey, 1 ) == "$" ) continue;
-		local.nodeChild = local.nsNode[ local.nodeKey ];
-		if ( IsStruct( local.nodeChild ) && structIsEmpty( local.nodeChild ) ) {
-			continue;
-		}
-		if ( structKeyExists( local.nodeChild, "$command" ) ) {
-			// Direct command under this namespace
-			local.cmdData = local.nodeChild[ "$command" ];
-			arrayAppend( local.nsItem.commands, {
-				"name"       : local.nodeKey,
-				"command"    : local.nsKey & " " & local.nodeKey,
-				"link"       : structKeyExists( local.cmdData, "link" )       ? local.cmdData.link       : "",
-				"searchList" : structKeyExists( local.cmdData, "searchList" ) ? local.cmdData.searchList : local.nodeKey,
-				"hint"       : structKeyExists( local.cmdData, "hint" )       ? local.cmdData.hint       : ""
-			} );
-		} else {
-			// Child namespace (one level deep)
-			local.childItem = {
-				"name"          : local.nodeKey,
-				"fullNamespace" : local.nsKey & " " & local.nodeKey,
-				"link"          : structKeyExists( local.nodeChild, "$link" ) ? local.nodeChild[ "$link" ] : "",
-				"commands"      : [],
-				"children"      : []
-			};
-
-			local.childKeys = structKeyArray( local.nodeChild );
-			arraySort( local.childKeys, "text" );
-
-			for ( local.childKey in local.childKeys ) {
-				if ( left( local.childKey, 1 ) == "$" ) continue;
-				local.grandChild = local.nodeChild[ local.childKey ];
-				if ( structKeyExists( local.grandChild, "$command" ) ) {
-					local.gcData = local.grandChild[ "$command" ];
-					arrayAppend( local.childItem.commands, {
-						"name"       : local.childKey,
-						"command"    : local.nsKey & " " & local.nodeKey & " " & local.childKey,
-						"link"       : structKeyExists( local.gcData, "link" )       ? local.gcData.link       : "",
-						"searchList" : structKeyExists( local.gcData, "searchList" ) ? local.gcData.searchList : local.childKey,
-						"hint"       : structKeyExists( local.gcData, "hint" )       ? local.gcData.hint       : ""
-					} );
-				}
-			}
-
-			arraySort( local.childItem.commands, function( a, b ) {
-				return a.name > b.name ? 1 : -1;
-			} );
-			arrayAppend( local.nsItem.children, local.childItem );
-		}
-	}
-
-	arraySort( local.nsItem.commands, function( a, b ) {
-		return a.name > b.name ? 1 : -1;
-	} );
 	arrayAppend( local.navData.namespaces, local.nsItem );
 }
 

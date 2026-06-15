@@ -109,65 +109,47 @@
 				<!-- Namespace tree -->
 				<nav class="doc-tree" aria-label="Commands">
 
-					<template x-for="ns in filteredNamespaces" :key="ns.name">
-						<div class="doc-item">
-							<button
-								class="doc-name-btn"
-								:class="{ 'active': currentNamespace?.name === ns.name }"
-								:aria-expanded="isExpanded( ns.name )"
-								@click="isExpanded( ns.name ) ? toggleNamespace( ns.name ) : ( toggleNamespace( ns.name ), showNamespace( ns ) )"
-							>
-								<i class="bi" :class="isExpanded( ns.name ) ? 'bi-folder2-open' : 'bi-folder2'" aria-hidden="true"></i>
-								<span x-text="ns.name" class="flex-grow-1"></span>
-								<span class="badge" x-text="ns.commands.length + ns.children.reduce( ( s, c ) => s + c.commands.length, 0 )"></span>
-							</button>
+					<!--
+						Flat namespace tree — Alpine.js does not support recursive templates,
+						so the tree is pre-flattened to a depth-annotated list by flatSidebarItems.
+						Only items whose ancestors are expanded are included in the list, so
+						show/hide is handled by the computed property rather than x-show.
+					-->
+					<template x-for="item in flatSidebarItems" :key="item.type + ':' + ( item.type === 'ns' ? item.key : item.cmd.link )">
+						<!-- display:contents collapses the wrapper so it is invisible to layout -->
+						<div style="display: contents">
 
-							<!-- Commands in this namespace -->
-							<ul class="list-unstyled doc-subitems" x-show="isExpanded( ns.name )" x-cloak>
-								<template x-for="cmd in ns.commands" :key="cmd.link">
-									<li>
-										<a
-											href="##"
-											class="doc-subitem"
-											:class="{ 'active': currentCommand?.link === cmd.link }"
-											@click.prevent="loadCommand( cmd )"
-											x-text="cmd.name"
-										></a>
-									</li>
-								</template>
+							<!-- Namespace header row -->
+							<template x-if="item.type === 'ns'">
+								<div class="doc-item" :style="{ paddingLeft: ( item.depth * 14 ) + 'px' }">
+									<button
+										class="doc-name-btn"
+										:class="{
+											'active'   : currentNamespace && ( item.ns.fullNamespace ? currentNamespace.fullNamespace === item.ns.fullNamespace : currentNamespace.name === item.ns.name ),
+											'child-ns' : item.depth > 0
+										}"
+										:aria-expanded="isExpanded( item.key )"
+										@click="isExpanded( item.key ) ? toggleNamespace( item.key ) : ( toggleNamespace( item.key ), showNamespace( item.ns ) )"
+									>
+										<i class="bi" :class="isExpanded( item.key ) ? 'bi-folder2-open' : 'bi-folder2'" aria-hidden="true"></i>
+										<span x-text="item.ns.name" class="flex-grow-1"></span>
+										<span class="badge" x-text="countCommands( item.ns )"></span>
+									</button>
+								</div>
+							</template>
 
-								<!-- Child namespaces (one level deep) -->
-	
-								<template x-for="child in ns.children" :key="child.name">
-									<li class="child-ns-block">
-										<button
-											class="doc-name-btn child-ns"
-											:class="{ 'active': currentNamespace?.name === child.name && parentNamespace?.name === ns.name }"
-											:aria-expanded="isExpanded( ns.name + '/' + child.name )"
-											@click="isExpanded( ns.name + '/' + child.name ) ? toggleNamespace( ns.name + '/' + child.name ) : ( toggleNamespace( ns.name + '/' + child.name ), showNamespace( child, ns ) )"
-										>
-											<i class="bi" :class="isExpanded( ns.name + '/' + child.name ) ? 'bi-folder2-open' : 'bi-folder2'" aria-hidden="true"></i>
-											<span x-text="child.name" class="flex-grow-1"></span>
-											<span class="badge" x-text="child.commands.length"></span>
-										</button>
-										<template x-if="child.commands && child.commands.length > 0">
-											<ul class="list-unstyled doc-subitems" x-show="isExpanded( ns.name + '/' + child.name )" x-cloak>
-												<template x-for="cmd in child.commands" :key="cmd.link">
-													<li>
-														<a
-															href="##"
-															class="doc-subitem"
-															:class="{ 'active': currentCommand?.link === cmd.link }"
-															@click.prevent="loadCommand( cmd )"
-															x-text="cmd.name"
-														></a>
-													</li>
-												</template>
-											</ul>
-										</template>
-									</li>
-								</template>
-							</ul>
+							<!-- Command link row -->
+							<template x-if="item.type === 'cmd'">
+								<a
+									href="##"
+									class="doc-subitem"
+									:class="{ 'active': currentCommand?.link === item.cmd.link }"
+									:style="{ paddingLeft: ( item.depth * 14 ) + 'px' }"
+									@click.prevent="loadCommand( item.cmd )"
+									x-text="item.cmd.name"
+								></a>
+							</template>
+
 						</div>
 					</template>
 

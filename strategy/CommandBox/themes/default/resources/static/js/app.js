@@ -92,34 +92,38 @@ function commandApp() {
 
 		showNamespace( ns, parentNs = null ) {
 			if ( !ns ) return;
-			// Auto-detect parent namespace from fullNamespace (e.g. "config sync" → parent "config")
-			// when it isn't explicitly passed (e.g. sidebar navigation via Alpine x-for scope)
-			if ( !parentNs && ns.fullNamespace && ns.fullNamespace.includes( " " ) ) {
-				const parentName = ns.fullNamespace.split( " " )[ 0 ];
-				parentNs = this.namespaces.find( n => n.name === parentName ) || null;
-			}
 			this.currentView      = "namespace";
 			this.currentNamespace = ns;
-			this.parentNamespace  = parentNs || null;
 			this.currentCommand   = null;
 			this.contentHtml      = "";
-			// Expand the correct sidebar key(s)
-			if ( parentNs ) {
-				// Child namespace: expand parent AND parent/child key
-				if ( !this.expandedNamespaces.includes( parentNs.name ) ) {
-					this.expandedNamespaces.push( parentNs.name );
+
+			// Expand all ancestor sidebar keys using the space-separated fullNamespace path.
+			// e.g. fullNamespace "server java sub" → expands "server", "server/java", "server/java/sub"
+			if ( ns.fullNamespace ) {
+				const parts = ns.fullNamespace.split( " " );
+				for ( let i = 0; i < parts.length; i++ ) {
+					const key = parts.slice( 0, i + 1 ).join( "/" );
+					if ( !this.expandedNamespaces.includes( key ) ) {
+						this.expandedNamespaces.push( key );
+					}
 				}
-				const childKey = parentNs.name + "/" + ns.name;
-				if ( !this.expandedNamespaces.includes( childKey ) ) {
-					this.expandedNamespaces.push( childKey );
+				// Resolve immediate parent namespace object when not explicitly supplied
+				if ( !parentNs && parts.length > 1 ) {
+					const parentParts = parts.slice( 0, -1 );
+					let node = this.namespaces.find( n => n.name === parentParts[ 0 ] );
+					for ( let i = 1; i < parentParts.length && node; i++ ) {
+						node = ( node.children || [] ).find( c => c.name === parentParts[ i ] );
+					}
+					parentNs = node || null;
 				}
 			} else {
-				this.parentNamespace = null;
-				// Top-level namespace
+				// Top-level namespace (no fullNamespace property)
 				if ( !this.expandedNamespaces.includes( ns.name ) ) {
 					this.expandedNamespaces.push( ns.name );
 				}
 			}
+
+			this.parentNamespace = parentNs || null;
 			this.$nextTick( () => this.scrollContentTop() );
 		},
 
@@ -203,6 +207,14 @@ function commandApp() {
 		},
 
 		// ── Sidebar ──────────────────────────────────────────────────────────
+
+		// Recursively count all commands under a namespace at any depth.
+		countCommands( ns ) {
+			let n = ( ns.commands || [] ).length;
+			for ( const ch of ns.children || [] ) n += this.countCommands( ch );
+			return n;
+		},
+
 		toggleNamespace( key ) {
 			const idx = this.expandedNamespaces.indexOf( key );
 			if ( idx > -1 ) {
@@ -267,17 +279,49 @@ function commandApp() {
 		},
 
 		// ── Computed ─────────────────────────────────────────────────────────
-		get filteredNamespaces() {
-			if ( !this.commandFilter.trim() ) return this.namespaces;
-			const f = this.commandFilter.toLowerCase();
-			return this.namespaces.filter( ns =>
-				ns.name.toLowerCase().includes( f ) ||
-				ns.commands.some( c => c.command.toLowerCase().includes( f ) ) ||
-				ns.children.some( ch =>
-					ch.name.toLowerCase().includes( f ) ||
-					ch.commands.some( c => c.command.toLowerCase().includes( f ) )
-				)
-			);
+
+		/**
+		 * Flattens the namespace tree into a depth-annotated list for the sidebar.
+		 * Only items whose ancestors are currently expanded are included, so
+		 * visibility is driven by list membership rather than x-show.
+		 * commandFilter is applied recursively at every depth.
+		 *
+		 * Each item is one of:
+		 *   { type: "ns",  depth, key, ns  }   — namespace header (folder button)
+		 *   { type: "cmd", depth, cmd       }   — command link
+		 */
+		get flatSidebarItems() {
+			const items = [];
+			const f     = this.commandFilter.toLowerCase().trim();
+
+			const matchesFilter = ( ns ) => {
+				if ( !f ) return true;
+				if ( ns.name.toLowerCase().includes( f ) ) return true;
+				if ( ( ns.commands || [] ).some( c => c.command.toLowerCase().includes( f ) ) ) return true;
+				return ( ns.children || [] ).some( ch => matchesFilter( ch ) );
+			};
+
+			const flatten = ( nsList, depth, parentKey ) => {
+				for ( const ns of nsList ) {
+					if ( !matchesFilter( ns ) ) continue;
+					const key = parentKey ? parentKey + "/" + ns.name : ns.name;
+					items.push( { type: "ns", depth, key, ns } );
+					if ( this.isExpanded( key ) ) {
+						const visibleCmds = !f
+							? ( ns.commands || [] )
+							: ( ns.commands || [] ).filter( c => c.command.toLowerCase().includes( f ) );
+						for ( const cmd of visibleCmds ) {
+							items.push( { type: "cmd", depth: depth + 1, cmd } );
+						}
+						if ( ns.children && ns.children.length ) {
+							flatten( ns.children, depth + 1, key );
+						}
+					}
+				}
+			};
+
+			flatten( this.namespaces, 0, "" );
+			return items;
 		},
 
 		get totalCommandCount() {
@@ -291,13 +335,20 @@ function commandApp() {
 			return this.namespaces.find( n => n.name === parentName ) || null;
 		},
 
-		// Child namespace object for the current command (second word of namespace, if present)
+		// Deepest child namespace object for the current command.
+		// For "server java sub", walks namespaces → server → children → java → children → sub.
 		get currentCommandChildNs() {
 			if ( !this.currentCommand?.namespace ) return null;
 			const parts = this.currentCommand.namespace.split( " " );
 			if ( parts.length < 2 ) return null;
-			const parent = this.namespaces.find( n => n.name === parts[ 0 ] );
-			return parent?.children?.find( c => c.name === parts[ 1 ] ) || null;
+			let node = this.namespaces.find( n => n.name === parts[ 0 ] );
+			if ( !node ) return null;
+			for ( let i = 1; i < parts.length; i++ ) {
+				const next = ( node.children || [] ).find( c => c.name === parts[ i ] );
+				if ( !next ) return null;
+				node = next;
+			}
+			return node;
 		},
 
 		get totalNamespaceCount() {
