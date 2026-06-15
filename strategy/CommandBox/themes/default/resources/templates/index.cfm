@@ -121,7 +121,7 @@
 
 							<!-- Namespace header row -->
 							<template x-if="item.type === 'ns'">
-								<div class="doc-item" :style="{ paddingLeft: ( item.depth * 14 ) + 'px' }">
+								<div class="doc-item" :style="{ paddingLeft: ( item.depth * 16 ) + 'px' }">
 									<button
 										class="doc-name-btn"
 										:class="{
