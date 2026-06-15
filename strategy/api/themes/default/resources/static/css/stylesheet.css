@@ -278,6 +278,10 @@ pre{
 	margin-bottom: 0.5rem;
 }
 
+.doc-tree.compact .doc-item {
+	margin-bottom: 0;
+}
+
 .doc-name-btn {
 	width: 100%;
 	background: none;

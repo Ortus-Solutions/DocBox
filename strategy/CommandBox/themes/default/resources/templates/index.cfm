@@ -107,7 +107,7 @@
 				</div>
 
 				<!-- Namespace tree -->
-				<nav class="doc-tree" aria-label="Commands">
+				<nav class="doc-tree compact" aria-label="Commands">
 
 					<!--
 						Flat namespace tree — Alpine.js does not support recursive templates,
