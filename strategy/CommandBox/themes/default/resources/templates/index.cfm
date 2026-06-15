@@ -131,7 +131,7 @@
 										:aria-expanded="isExpanded( item.key )"
 										@click="isExpanded( item.key ) ? toggleNamespace( item.key ) : ( toggleNamespace( item.key ), showNamespace( item.ns ) )"
 									>
-										<i class="bi" :class="isExpanded( item.key ) ? 'bi-folder2-open' : 'bi-folder2'" aria-hidden="true"></i>
+										<i class="bi" :class="isExpanded( item.key ) ? 'bi-grid-fill' : 'bi-grid'" aria-hidden="true"></i>
 										<span x-text="item.ns.name" class="flex-grow-1"></span>
 										<span class="badge" x-text="countCommands( item.ns )"></span>
 									</button>
@@ -241,7 +241,7 @@
 								>
 									<div class="card-body">
 										<h2 class="card-title d-flex align-items-center gap-2 mb-2">
-											<i class="bi bi-folder2" aria-hidden="true"></i>
+											<i class="bi bi-grid" aria-hidden="true"></i>
 											<span x-text="ns.name"></span>
 										</h2>
 										<span
