@@ -107,7 +107,7 @@
 				</div>
 
 				<!-- Namespace tree -->
-				<nav class="doc-tree compact" aria-label="Commands">
+				<nav class="doc-tree compact" role="tree" aria-label="Commands" @keydown="treeKeydown( $event )">
 
 					<!--
 						Flat namespace tree — Alpine.js does not support recursive templates,
@@ -121,19 +121,24 @@
 
 							<!-- Namespace header row -->
 							<template x-if="item.type === 'ns'">
-								<div class="doc-item" :style="{ paddingLeft: ( item.depth * 16 ) + 'px' }">
+								<div class="doc-item" role="none" :style="{ paddingLeft: ( item.depth * 16 ) + 'px' }">
 									<button
 										class="doc-name-btn"
+										role="treeitem"
+										:aria-level="item.depth + 1"
+										:aria-expanded="isExpanded( item.key )"
+										:aria-selected="currentNamespace && ( item.ns.fullNamespace ? currentNamespace.fullNamespace === item.ns.fullNamespace : currentNamespace.name === item.ns.name )"
 										:class="{
 											'active'   : currentNamespace && ( item.ns.fullNamespace ? currentNamespace.fullNamespace === item.ns.fullNamespace : currentNamespace.name === item.ns.name ),
 											'child-ns' : item.depth > 0
 										}"
-										:aria-expanded="isExpanded( item.key )"
+										:data-depth="item.depth"
 										@click="isExpanded( item.key ) ? toggleNamespace( item.key ) : ( toggleNamespace( item.key ), showNamespace( item.ns ) )"
 									>
 										<i class="bi" :class="isExpanded( item.key ) ? 'bi-grid-fill' : 'bi-grid'" aria-hidden="true"></i>
 										<span x-text="item.ns.name" class="flex-grow-1"></span>
-										<span class="badge" x-text="countCommands( item.ns )"></span>
+										<span class="badge" x-text="countCommands( item.ns )" aria-hidden="true"></span>
+										<span class="visually-hidden" x-text="countCommands( item.ns ) + ' commands'"></span>
 									</button>
 								</div>
 							</template>
@@ -142,9 +147,13 @@
 							<template x-if="item.type === 'cmd'">
 								<a
 									href="##"
+									role="treeitem"
+									:aria-level="item.depth + 1"
+									:aria-selected="currentCommand?.link === item.cmd.link"
 									class="doc-subitem"
 									:class="{ 'active': currentCommand?.link === item.cmd.link }"
 									:style="{ paddingLeft: ( item.depth * 14 ) + 'px' }"
+									:data-depth="item.depth"
 									@click.prevent="loadCommand( item.cmd )"
 								>
 									<i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>

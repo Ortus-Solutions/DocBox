@@ -228,6 +228,48 @@ function commandApp() {
 			return this.expandedNamespaces.includes( key );
 		},
 
+		// ── Tree keyboard navigation (ARIA tree pattern) ──────────────────────
+		treeKeydown( event ) {
+			const arrowKeys = [ "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" ];
+			if ( !arrowKeys.includes( event.key ) ) return;
+			event.preventDefault();
+
+			const tree    = event.currentTarget;
+			const items   = Array.from( tree.querySelectorAll( "[role='treeitem']" ) );
+			const focused = document.activeElement;
+			const idx     = items.indexOf( focused );
+
+			if ( event.key === "ArrowDown" ) {
+				if ( idx < items.length - 1 ) items[ idx + 1 ].focus();
+			} else if ( event.key === "ArrowUp" ) {
+				if ( idx > 0 ) items[ idx - 1 ].focus();
+			} else if ( event.key === "Home" ) {
+				items[ 0 ]?.focus();
+			} else if ( event.key === "End" ) {
+				items[ items.length - 1 ]?.focus();
+			} else if ( event.key === "ArrowRight" ) {
+				// Expand collapsed namespace, or move to first child if already expanded
+				if ( focused?.getAttribute( "aria-expanded" ) === "false" ) {
+					focused.click();
+				} else if ( idx < items.length - 1 ) {
+					items[ idx + 1 ].focus();
+				}
+			} else if ( event.key === "ArrowLeft" ) {
+				// Collapse expanded namespace, or move focus to parent namespace
+				if ( focused?.getAttribute( "aria-expanded" ) === "true" ) {
+					focused.click();
+				} else {
+					const level = parseInt( focused?.getAttribute( "aria-level" ) || "1", 10 );
+					for ( let i = idx - 1; i >= 0; i-- ) {
+						if ( parseInt( items[ i ].getAttribute( "aria-level" ) || "1", 10 ) < level ) {
+							items[ i ].focus();
+							break;
+						}
+					}
+				}
+			}
+		},
+
 		// ── Search ────────────────────────────────────────────────────────────
 		performSearch() {
 			if ( !this.searchQuery.trim() ) {
