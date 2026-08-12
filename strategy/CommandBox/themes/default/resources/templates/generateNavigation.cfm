@@ -84,61 +84,6 @@ for ( local.row in navArgs.qMetaData ) {
 
 // ── Convert namespaceTree struct → Alpine.js-friendly array ──────────────────
 
-/**
- * Recursively converts a namespace tree node into an Alpine.js-friendly item.
- *
- * @node          The struct node from namespaceTree to convert.
- * @namespacePath Space-separated namespace path to this node (e.g. "server java").
- * @return        A struct with name, fullNamespace, link, commands[], children[].
- */
-function convertNamespaceNode( required struct node, required string namespacePath ) {
-	var parts = listToArray( trim( arguments.namespacePath ), " " );
-	var name  = parts[ arrayLen( parts ) ];
-
-	var item = {
-		"name"          : name,
-		"fullNamespace" : arguments.namespacePath,
-		"link"          : structKeyExists( arguments.node, "$link" ) ? arguments.node[ "$link" ] : "",
-		"commands"      : [],
-		"children"      : []
-	};
-
-	var nodeKeys = structKeyArray( arguments.node );
-	arraySort( nodeKeys, "text" );
-
-	for ( var nodeKey in nodeKeys ) {
-		if ( left( nodeKey, 1 ) == "$" ) continue;
-		var child = arguments.node[ nodeKey ];
-
-		if ( isStruct( child ) && structIsEmpty( child ) ) continue;
-
-		if ( structKeyExists( child, "$command" ) ) {
-			// Direct command under this namespace
-			var cmdData = child[ "$command" ];
-			arrayAppend( item.commands, {
-				"name"       : nodeKey,
-				"command"    : arguments.namespacePath & " " & nodeKey,
-				"link"       : structKeyExists( cmdData, "link" )       ? cmdData.link       : "",
-				"searchList" : structKeyExists( cmdData, "searchList" ) ? cmdData.searchList : nodeKey,
-				"hint"       : structKeyExists( cmdData, "hint" )       ? cmdData.hint       : ""
-			} );
-		} else {
-			// Child namespace — recurse to any depth
-			var childItem = convertNamespaceNode( child, arguments.namespacePath & " " & nodeKey );
-			arraySort( childItem.commands, function( a, b ) {
-				return a.name > b.name ? 1 : -1;
-			} );
-			arrayAppend( item.children, childItem );
-		}
-	}
-
-	arraySort( item.commands, function( a, b ) {
-		return a.name > b.name ? 1 : -1;
-	} );
-
-	return item;
-}
-
 local.nsKeys = structKeyArray( local.namespaceTree );
 arraySort( local.nsKeys, "text" );
 

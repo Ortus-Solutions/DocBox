@@ -444,4 +444,71 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 		return this;
 	}
 
+	/**
+	 * Formats a command documentation hint for HTML output.
+	 *
+	 * @hint The raw command documentation hint
+	 *
+	 * @return The formatted HTML
+	 */
+	private string function writeHint( required string hint ){
+		var formattedHint = arguments.hint;
+		var codeRegex     = "(\n?\s*{\s*code\s*(:.*?)?\s*}\s*\n)(.*?)(\n\s*{\s*code\s*}\s*\n?)";
+
+		formattedHint = reReplace( formattedHint, "\n\s*\.\s*\n", chr( 10 ) & chr( 10 ), "all" );
+		formattedHint = reReplaceNoCase( formattedHint, codeRegex, '<pre class="brush\2">\3</pre>', "all" );
+
+		return reReplace( formattedHint, "\n", "#chr( 10 )#<br>", "all" );
+	}
+
+	/**
+	 * Recursively converts a namespace tree node into navigation data.
+	 *
+	 * @node The namespace tree node to convert
+	 * @namespacePath The full namespace path for the node
+	 *
+	 * @return The navigation node
+	 */
+	private struct function convertNamespaceNode( required struct node, required string namespacePath ){
+		var parts    = listToArray( trim( arguments.namespacePath ), " " );
+		var item     = {
+			"name"          : parts[ arrayLen( parts ) ],
+			"fullNamespace" : arguments.namespacePath,
+			"link"          : structKeyExists( arguments.node, "$link" ) ? arguments.node[ "$link" ] : "",
+			"commands"      : [],
+			"children"      : []
+		};
+		var nodeKeys = structKeyArray( arguments.node );
+
+		arraySort( nodeKeys, "text" );
+		for ( var nodeKey in nodeKeys ) {
+			if ( left( nodeKey, 1 ) == "$" ) continue;
+			var child = arguments.node[ nodeKey ];
+			if ( isStruct( child ) && structIsEmpty( child ) ) continue;
+
+			if ( structKeyExists( child, "$command" ) ) {
+				var commandData = child[ "$command" ];
+				arrayAppend( item.commands, {
+					"name"       : nodeKey,
+					"command"    : arguments.namespacePath & " " & nodeKey,
+					"link"       : structKeyExists( commandData, "link" ) ? commandData.link : "",
+					"searchList" : structKeyExists( commandData, "searchList" ) ? commandData.searchList : nodeKey,
+					"hint"       : structKeyExists( commandData, "hint" ) ? commandData.hint : ""
+				} );
+			} else {
+				var childItem = convertNamespaceNode( child, arguments.namespacePath & " " & nodeKey );
+				arraySort( childItem.commands, function( a, b ) {
+					return a.name > b.name ? 1 : -1;
+				} );
+				arrayAppend( item.children, childItem );
+			}
+		}
+
+		arraySort( item.commands, function( a, b ) {
+			return a.name > b.name ? 1 : -1;
+		} );
+
+		return item;
+	}
+
 }

@@ -104,7 +104,7 @@
 	<cfif StructKeyExists( documentation, "hint")>
 		<h2><i class="bi bi-info-circle" aria-hidden="true"></i> Command Usage</h2>
 		<div id="class-hint" class="mb-4">
-			#writeHint(  documentation.hint )#
+			#writeHint( documentation.hint )#
 		</div>
 	</cfif>
 
@@ -134,22 +134,3 @@
 </body>
 </html>
 </cfoutput>
-<cfscript>
-	function writeHint( hint ) {
-
-		// Clean up lines with only a period which is my work around for the Railo bug ignoring
-		// line breaks in component annotations: https://issues.jboss.org/browse/RAILO-3128
-		hint = reReplace( hint, '\n\s*\.\s*\n', chr( 10 )&chr( 10 ), 'all' );
-
-		// Find code blocks
-		// A {code} block on it's own line with an optional ":brush" inside it
-		// followed by any amount of text
-		// followed by another {code} block on it's own line
-		var codeRegex = '(\n?\s*{\s*code\s*(:.*?)?\s*}\s*\n)(.*?)(\n\s*{\s*code\s*}\s*\n?)';
-		hint = reReplaceNoCase( hint, codeRegex, '<pre class="brush\2">\3</pre>', 'all' );
-
-		// Fix line breaks
-		hint = reReplace( hint, '\n', '#chr(10)#<br>', 'all' );
-		return hint;
-	}
-</cfscript>
