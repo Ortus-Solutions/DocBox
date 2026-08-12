@@ -45,9 +45,7 @@ component extends="BaseTest" {
 				);
 
 				var overviewFile = variables.testOutputDir & "/overview-frame.html";
-				expect( fileExists( overviewFile ) ).toBeTrue(
-					"should generate overview-frame.html file"
-				);
+				expect( fileExists( overviewFile ) ).toBeTrue( "should generate overview-frame.html file" );
 				var overviewHTML = fileRead( overviewFile );
 				expect( overviewHTML ).toInclude(
 					"frameless SPA design",
@@ -63,9 +61,7 @@ component extends="BaseTest" {
 				);
 
 				var overviewFile = variables.testOutputDir & "/overview-frame.html";
-				expect( fileExists( overviewFile ) ).toBeTrue(
-					"should generate overview-frame.html file"
-				);
+				expect( fileExists( overviewFile ) ).toBeTrue( "should generate overview-frame.html file" );
 
 				var overviewHTML = fileRead( overviewFile );
 				expect( overviewHTML ).toInclude(
@@ -122,15 +118,15 @@ component extends="BaseTest" {
 						"navigation data should set COMMANDBOX_NAV_DATA global"
 					)
 					.toInclude(
-						'"namespaces"',
+						"""namespaces""",
 						"navigation data should have a namespaces array"
 					)
 					.toInclude(
-						'"allCommands"',
+						"""allCommands""",
 						"navigation data should have a flat allCommands array"
 					)
 					.toInclude(
-						'"topLevel"',
+						"""topLevel""",
 						"navigation data should have a topLevel array for root commands"
 					);
 			} );
@@ -145,7 +141,7 @@ component extends="BaseTest" {
 				var navContent = fileRead( variables.testOutputDir & "/data/navigation.js" );
 				// generate.cfc lives at the root mapping, so its command is "generate" (one word = top-level)
 				expect( navContent ).toInclude(
-					'"generate"',
+					"""generate""",
 					"root-level generate command should appear in topLevel navigation array"
 				);
 			} );
@@ -161,11 +157,11 @@ component extends="BaseTest" {
 				// config/show.cfc → command "config show", namespace "config"
 				expect( navContent )
 					.toInclude(
-						'"config"',
+						"""config""",
 						"namespaced config commands should create a config namespace entry"
 					)
 					.toInclude(
-						'"config show"',
+						"""config show""",
 						"config show command should appear in allCommands"
 					);
 			} );
@@ -182,15 +178,15 @@ component extends="BaseTest" {
 				// generateNavigation.cfm nests this as a child under the config namespace
 				expect( navContent )
 					.toInclude(
-						'"children"',
+						"""children""",
 						"namespaces with sub-namespaces should have a children array"
 					)
 					.toInclude(
-						'"config sync pull"',
+						"""config sync pull""",
 						"child namespace command should appear in allCommands"
 					)
 					.toInclude(
-						'"config sync"',
+						"""config sync""",
 						"child namespace fullNamespace should be recorded"
 					);
 			} );
@@ -233,7 +229,7 @@ component extends="BaseTest" {
 				var indexHTML = fileRead( indexFile );
 				expect( indexHTML )
 					.toInclude(
-						'x-data="commandApp()"',
+						"x-data=""commandApp()""",
 						"index.html should mount the Alpine.js commandApp() component"
 					)
 					.toInclude(
