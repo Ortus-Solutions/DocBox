@@ -650,6 +650,9 @@ abstract component accessors="true" implements="IStrategy" {
 
 			//  If this is a class, output it
 			if ( structKeyExists( itemValue, "$#arguments.classTerm#" ) ) {
+				if ( structIsEmpty( itemValue[ "$#arguments.classTerm#" ] ) ) {
+					continue;
+				}
 				var linkData = itemValue[ "$#arguments.classTerm#" ];
 				writeOutput( "<li data-jstree='{ ""type"" : ""#arguments.classTerm#"" }' linkhref=""#linkData.link#"" searchlist=""#linkData.searchList#"" thissort=""2"">" );
 				writeOutput( item );

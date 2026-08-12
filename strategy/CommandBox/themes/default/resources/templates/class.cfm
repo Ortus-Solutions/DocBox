@@ -1,0 +1,136 @@
+<cfoutput>
+<cfset instance.class.root = RepeatString( '../', ListLen( arguments.package, ".") ) />
+<cfset annotations = server.keyExists( "boxlang" ) ? arguments.metadata.annotations : arguments.metadata>
+<cfset documentation = server.keyExists( "boxlang" ) ? arguments.metadata.documentation : arguments.metadata>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>#arguments.projectTitle# #arguments.command#</title>
+	<meta name="keywords" content="#arguments.package# #arguments.command# CommandBox Command CLI">
+	<!-- common assets -->
+	<cfmodule template="inc/common.cfm" rootPath="#instance.class.root#">
+</head>
+
+<body class="withNavbar">
+
+<cfmodule template="inc/nav.cfm"
+			page="Class"
+			projectTitle= "#arguments.projectTitle#"
+			package = "#arguments.package#"
+			file="#replace(arguments.package, '.', '/', 'all')#/#arguments.name#"
+			>
+
+<!-- ======== start of class data ======== -->
+<main class="main-container">
+	<div class="container-fluid" id="command-content">
+	<a name="class"><!-- --></a>
+	<h1 class="display-5 mb-3">
+		<i class="bi bi-lightning-charge" aria-hidden="true"></i> #arguments.command#
+	</h1>
+	<cfif structKeyExists( annotations, 'aliases' ) and len( annotations.aliases ) >
+		<cfset aliases = listToArray( annotations.aliases )>
+		<div class="card mb-3">
+			<div class="card-body">
+				<strong>Aliases:&nbsp;</strong>
+				<cfloop array="#aliases#" index="local.alias">
+					<span class="badge bg-danger me-1">
+						#local.alias#
+					</span>
+				</cfloop>
+			</div>
+		</div>
+	</cfif>
+
+	<cfscript>
+		// All we care about is the "run()" method
+		local.qFunctions = buildFunctionMetaData( arguments.metadata );
+		local.qFunctions = getMetaSubQuery(local.qFunctions, "UPPER(name)='RUN'");
+	</cfscript>
+
+	<cfif local.qFunctions.recordCount>
+		<cfset local.func = local.qFunctions.metadata>
+		<cfset local.funcDocumentation = server.keyExists( "boxlang" ) ? local.func.documentation : local.func>
+		<cfset local.funcAnnotations = server.keyExists( "boxlang" ) ? local.func.annotations : local.func>
+		<cfset local.params = local.func.parameters>
+
+		<cfif arrayLen( local.params )>
+			<div class="card mb-4">
+				<div class="card-header"><strong>Parameters:</strong></div>
+				<table class="table table-bordered table-hover mb-0">
+					<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default</th>
+						<th>Hint</th>
+					</tr>
+					</thead>
+					<tbody>
+					<cfloop array="#local.params#" index="local.param">
+						<cfset local.paramDocumentation = server.keyExists( "boxlang" ) ? local.param.documentation : local.param>
+						<cfset local.paramAnnotations = server.keyExists( "boxlang" ) ? local.param.annotations : local.param>
+						<tr>
+							<td>#local.param.name#</td>
+							<td>
+								<cfif local.param.type eq "any">
+									string
+								<cfelse>
+									#local.param.type#
+								</cfif>
+							</td>
+							<td>#local.paramAnnotations.required ?: false#</td>
+							<td>
+								<cfif !isNull(local.paramAnnotations.default) and local.paramAnnotations.default!= '[runtime expression]' >
+									#local.paramAnnotations.default#
+								</cfif>
+							</td>
+							<td>
+								<cfif structKeyExists( local.paramDocumentation, 'hint' )>
+									#local.paramDocumentation.hint#
+								</cfif>
+							</td>
+						</tr>
+					</cfloop>
+					</tbody>
+				</table>
+			</div>
+		</cfif>
+
+	</cfif>
+
+	<hr>
+
+	<cfif StructKeyExists( documentation, "hint")>
+		<h2><i class="bi bi-info-circle" aria-hidden="true"></i> Command Usage</h2>
+		<div id="class-hint" class="mb-4">
+			#writeHint( documentation.hint )#
+		</div>
+	</cfif>
+
+	</div><!-- end container-fluid -->
+</main>
+<!-- Bootstrap 5 js -->
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<!-- syntax highlighter -->
+	<link type="text/css" rel="stylesheet" href="#instance.class.root#highlighter/styles/shCoreEmacs.css">
+	<script src="#instance.class.root#highlighter/scripts/shCore.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushBash.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushBoxLang.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushColdFusion.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushCss.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushJava.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushJScript.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushPlain.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushSql.js"></script>
+	<script src="#instance.class.root#highlighter/scripts/shBrushXml.js"></script>
+	<script type="text/javascript">
+		SyntaxHighlighter.config.stripBrs = true;
+		SyntaxHighlighter.defaults.gutter = false;
+		SyntaxHighlighter.defaults.toolbar = false;
+		SyntaxHighlighter.all();
+	</script>
+</body>
+</html>
+</cfoutput>
