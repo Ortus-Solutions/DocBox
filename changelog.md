@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.1.0] - 2026-08-12
+
 ## [5.0.2] - 2026-01-19
 
 ### Fixed
@@ -200,7 +202,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to DocBox styles
 
-[Unreleased]: https://github.com/Ortus-Solutions/DocBox/compare/v5.0.2...HEAD
+[Unreleased]: https://github.com/Ortus-Solutions/DocBox/compare/v5.1.0...HEAD
+
+[5.1.0]: https://github.com/Ortus-Solutions/DocBox/compare/v5.0.2...v5.1.0
 
 [5.0.2]: https://github.com/Ortus-Solutions/DocBox/compare/v5.0.1...v5.0.2
 
