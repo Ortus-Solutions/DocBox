@@ -78,14 +78,24 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 	 */
 	function init(
 		required outputDir,
-		string projectTitle = "Untitled"
+		string projectTitle = "Untitled",
+		string theme        = "default"
 	){
 		super.init( argumentCollection = arguments );
 
 		// Override the parent's theme-based paths with CommandBox-specific paths
-		variables.TEMPLATE_PATH = "/docbox/strategy/CommandBox/resources/templates";
-		variables.ASSETS_PATH   = "/docbox/strategy/api/themes/frames/resources/static";
+		variables.TEMPLATE_PATH          = "/docbox/strategy/CommandBox/themes/#variables.theme#/resources/templates";
+		variables.ASSETS_PATH            = "/docbox/strategy/api/themes/frames/resources/static";
+		variables.COMMANDBOX_STATIC_PATH = "/docbox/strategy/CommandBox/themes/#variables.theme#/resources/static";
 
+		// Theme CSS assets are not laid out consistently across themes.
+		// The frames theme stores its stylesheet directly under /resources/static
+		// instead of /resources/static/css, so resolve the source path accordingly.
+		if ( variables.theme == "frames" ) {
+			variables.THEME_CSS_PATH = "/docbox/strategy/api/themes/frames/resources/static";
+		} else {
+			variables.THEME_CSS_PATH = "/docbox/strategy/api/themes/#variables.theme#/resources/static/css";
+		}
 		return this;
 	}
 
@@ -199,10 +209,24 @@ component extends="docbox.strategy.api.HTMLAPIStrategy" {
 			index++;
 		}
 
-		// copy over the static assets
+		// 1. Copy frames theme assets (highlighter, jstree, root stylesheet for standalone pages)
 		directoryCopy(
 			expandPath( variables.ASSETS_PATH ),
 			getOutputDir(),
+			true
+		);
+
+		// 2. Overlay CommandBox-specific JS from its own theme (js/app.js)
+		directoryCopy(
+			expandPath( variables.COMMANDBOX_STATIC_PATH & "/js" ),
+			getOutputDir() & "/js",
+			true
+		);
+
+		// 3. Overlay shared CSS from the HTMLAPIStrategy's chosen theme (css/stylesheet.css)
+		directoryCopy(
+			expandPath( variables.THEME_CSS_PATH ),
+			getOutputDir() & "/css",
 			true
 		);
 

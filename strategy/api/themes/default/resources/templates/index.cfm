@@ -72,8 +72,13 @@
 		<!-- Sidebar Navigation -->
 		<aside class="sidebar" :class="{ 'collapsed': sidebarCollapsed }">
 			<div class="sidebar-header">
-				<h6 class="mb-0">📚 Packages</h6>
-				<button aria-label="SideSidebar collapse button" class="btn btn-sm btn-link p-0" @click="sidebarCollapsed = !sidebarCollapsed">
+				<h2 class="fs-6 mb-0">📚 Packages</h2>
+				<button
+					class="btn btn-sm btn-link p-0"
+					@click="sidebarCollapsed = !sidebarCollapsed"
+					:aria-label="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+					:aria-expanded="( !sidebarCollapsed ).toString()"
+				>
 					<i class="bi" :class="sidebarCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'"></i>
 				</button>
 			</div>
@@ -90,28 +95,28 @@
 				</div>
 
 				<!-- Package Tree -->
-				<div class="package-tree">
+				<nav class="doc-tree" aria-label="Package navigation">
 					<template x-for="pkg in filteredPackages" :key="pkg.name">
-						<div class="package-item">
-							<div
-								class="package-name"
+						<div class="doc-item">
+							<button
+								class="doc-name-btn"
 								:class="{ 'active': currentPackage === pkg.name }"
 								@click="togglePackage(pkg.name)"
 							>
 								<i class="bi" :class="expandedPackages.includes(pkg.name) ? 'bi-folder2-open' : 'bi-folder2'"></i>
 								<span x-text="pkg.name"></span>
 								<span class="badge bg-secondary ms-auto" x-text="pkg.classes.length + pkg.interfaces.length"></span>
-							</div>
+							</button>
 
 							<!-- Classes in Package -->
-							<div class="package-classes" x-show="expandedPackages.includes(pkg.name)" x-cloak>
+							<div class="doc-subitems" x-show="expandedPackages.includes(pkg.name)" x-cloak>
 								<template x-if="pkg.interfaces.length > 0">
 									<div class="class-group">
 										<div class="class-group-header">🔌 Interfaces</div>
 										<template x-for="cls in pkg.interfaces" :key="cls.fullname">
 											<a
 												href="##"
-												class="class-item"
+												class="doc-subitem"
 												:class="{ 'active': currentClass?.fullname === cls.fullname }"
 												@click.prevent="navigateToClass(cls)"
 												x-text="cls.name"
@@ -126,7 +131,7 @@
 										<template x-for="cls in pkg.classes" :key="cls.fullname">
 											<a
 												href="##"
-												class="class-item"
+												class="doc-subitem"
 												:class="{ 'active': currentClass?.fullname === cls.fullname }"
 												@click.prevent="navigateToClass(cls)"
 												x-text="cls.name"
@@ -137,12 +142,12 @@
 							</div>
 						</div>
 					</template>
-				</div>
+				</nav>
 			</div>
 		</aside>
 
 		<!-- Main Content -->
-		<main class="content overflow-y-auto" tabindex="0" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+		<main class="content" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
 			<!-- Overview Page -->
 			<div x-show="currentView === 'overview'" x-cloak>
 				<h1 class="display-4 mb-4">#arguments.projectTitle#</h1>
@@ -194,7 +199,7 @@
 				<div class="row g-4 mt-4">
 					<template x-for="pkg in packages" :key="pkg.name">
 						<div class="col-md-6 col-lg-4">
-							<div class="card h-100 package-card" @click="togglePackage(pkg.name); currentView = 'package'">
+							<div class="card h-100 doc-card" @click="togglePackage(pkg.name); currentView = 'package'">
 								<div class="card-body">
 									<h5 class="card-title">
 										<i class="bi bi-folder2"></i>
@@ -288,7 +293,6 @@
 	<script src="data/navigation.js"></script>
 
 	<!-- Alpine.js -->
-	<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
 	<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 	<!-- App Script -->

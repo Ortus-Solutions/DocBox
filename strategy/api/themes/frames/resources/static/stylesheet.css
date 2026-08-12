@@ -3,7 +3,7 @@
    ======================================== */
 
 :root {
-	--docbox-primary: #5e72e4;
+	--docbox-primary: #3469ee;
 	--docbox-secondary: #6c757d;
 	--docbox-success: #2dce89;
 	--docbox-info: #11cdef;
@@ -15,6 +15,9 @@
 	--docbox-border: #e9ecef;
 	--docbox-nav-height: 70px;
 	--docbox-card-header-bg: #f7fafc;
+	--docbox-link: #036fad;
+	--docbox-link-hover: #013f8a;
+	--bs-primary-rgb: 0, 76, 138;
 }
 
 body {
@@ -47,13 +50,13 @@ h4 { font-size: 1.25rem; }
 
 /* Links */
 a {
-	color: var(--docbox-primary);
+	color: var(--docbox-link);
 	text-decoration: none;
 	transition: color 0.15s ease-in-out;
 }
 
 a:hover {
-	color: #0a58ca;
+	color: var(--docbox-link-hover);
 	text-decoration: underline;
 }
 
@@ -240,7 +243,7 @@ input[type="text"]:focus {
 }
 
 .package-breadcrumb a {
-	color: #5e72e4;
+	color: var(--docbox-link);
 	text-decoration: none;
 	transition: all 0.2s ease;
 	padding: 0.25rem 0.5rem;
@@ -251,7 +254,7 @@ input[type="text"]:focus {
 }
 
 .package-breadcrumb a:hover {
-	color: #324cdd;
+	color: var(--docbox-link-hover);
 	background-color: #f8f9fa;
 }
 
