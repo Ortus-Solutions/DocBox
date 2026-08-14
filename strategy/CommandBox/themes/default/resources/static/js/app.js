@@ -31,6 +31,10 @@ function commandApp() {
 				console.error( "COMMANDBOX_NAV_DATA not found. Ensure data/navigation.js is loaded." );
 			}
 
+			if ( !window.COMMANDBOX_CONTENT_DATA ) {
+				console.error( "COMMANDBOX_CONTENT_DATA not found. Ensure data/content.js is loaded." );
+			}
+
 			// Check and modify legacy/frames link
 			this.handleLegacyLink();
 			
@@ -161,34 +165,23 @@ function commandApp() {
 			// listener knows this change originated here and skips re-routing.
 			this._navigatingProgrammatically = true;
 			window.location.hash = cmd.link.replace( /\.html$/, "" );
-
-			try {
-				const response = await fetch( cmd.link );
-				if ( response.ok ) {
-					const html      = await response.text();
-					const parser    = new DOMParser();
-					const doc       = parser.parseFromString( html, "text/html" );
-					// Use the stable id first; nav.cfm also emits a .container-fluid so
-					// querySelector( '.container-fluid' ) would return the wrong element.
-					const containers = doc.querySelectorAll( ".container-fluid" );
-					const container  = doc.getElementById( "command-content" )
-						|| ( containers.length > 0 ? containers[ containers.length - 1 ] : null );
-					this.contentHtml = container ? container.innerHTML : doc.body.innerHTML;
-				} else {
-					const safeCommand = this.escapeHtml( cmd.command );
-					this.contentHtml = `
-						<div class="alert alert-warning mt-4">
-							<h4><i class="bi bi-exclamation-triangle"></i> Not Found</h4>
-							<p>Unable to load documentation for <strong>${ safeCommand }</strong>.</p>
-						</div>`;
-				}
-			} catch ( error ) {
+			
+			// Content is pre-rendered at build time and embedded in data/content.js
+			// (see generateNavigation.cfm), keyed by the same cmd.link used here.
+			// This used to fetch( cmd.link ) and parse the response, but browsers
+			// block fetch()/XHR from a file:// origin ("null") as a CORS violation,
+			// so docs opened directly from disk (no web server) failed to load any
+			// command. Reading the pre-embedded data avoids a network request entirely.
+			const content = window.COMMANDBOX_CONTENT_DATA && window.COMMANDBOX_CONTENT_DATA[ cmd.link ];
+			if ( content ) {
+				this.contentHtml = content;
+			} else {
 				const safeCommand = this.escapeHtml( cmd.command );
-				const safeMessage = this.escapeHtml( error.message );
+				
 				this.contentHtml = `
-					<div class="alert alert-danger mt-4">
-						<h4><i class="bi bi-x-circle"></i> Error</h4>
-						<p>Failed to load <strong>${ safeCommand }</strong>: ${ safeMessage }</p>
+					<div class="alert alert-warning mt-4">
+						<h4><i class="bi bi-exclamation-triangle"></i> Not Found</h4>
+						<p>Unable to load documentation for <strong>${ safeCommand }</strong>.</p>
 					</div>`;
 			}
 
