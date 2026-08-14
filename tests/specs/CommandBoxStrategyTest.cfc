@@ -241,9 +241,49 @@ component extends="BaseTest" {
 						"index.html should reference the generated navigation data script"
 					)
 					.toInclude(
+						"data/content.js",
+						"index.html should reference the generated command content data script"
+					)
+					.toInclude(
 						"alpine",
 						"index.html should reference Alpine.js"
 					);
+			} );
+
+			it( "generates the command content data file so the SPA never needs fetch()", function(){
+				variables.docbox.generate(
+					source   = expandPath( "/tests/resources/commandbox-docbox/commands" ),
+					mapping  = "commands",
+					excludes = "(coldbox|build\-docbox)"
+				);
+
+				// Embedding pre-rendered command HTML in a local <script> file (instead of
+				// fetch()-ing each command page) is what lets index.html be opened directly
+				// from disk without hitting the "blocked by CORS policy" error browsers
+				// throw for fetch()/XHR made from a file:// origin.
+				var contentFile = variables.testOutputDir & "/data/content.js";
+				expect( fileExists( contentFile ) ).toBeTrue(
+					"should generate data/content.js for the SPA to read command content from"
+				);
+
+				var contentJS = fileRead( contentFile );
+				expect( contentJS ).toInclude(
+					"COMMANDBOX_CONTENT_DATA",
+					"content data should set COMMANDBOX_CONTENT_DATA global"
+				);
+
+				// config/show.cfc → commands/config/show.html should have its rendered
+				// #command-content# markup embedded, keyed by that same link.
+				expect( contentJS ).toInclude(
+					"commands/config/show.html",
+					"content data should be keyed by the command's link"
+				);
+
+				var showHTML = fileRead( variables.testOutputDir & "/commands/config/show.html" );
+				expect( showHTML ).toInclude(
+					"config show",
+					"sanity check: the standalone command page documents the full command path"
+				);
 			} );
 
 			it( "generates an overview-summary page", function(){
