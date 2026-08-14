@@ -177,7 +177,7 @@ function commandApp() {
 				this.contentHtml = content;
 			} else {
 				const safeCommand = this.escapeHtml( cmd.command );
-				// const safeMessage = this.escapeHtml( error.message );
+				
 				this.contentHtml = `
 					<div class="alert alert-warning mt-4">
 						<h4><i class="bi bi-exclamation-triangle"></i> Not Found</h4>
